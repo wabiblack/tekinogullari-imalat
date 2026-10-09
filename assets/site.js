@@ -8,7 +8,6 @@ const form=document.querySelector('#quoteForm');if(!form)return;
 const params=new URLSearchParams(location.search),requested=params.get('hizmet');const service=form.querySelector('#service');if(requested&&service&&[...service.options].some(o=>o.value===requested))service.value=requested;
 
 const apiUrl="https://xrlipgbetpohjewhlbml.supabase.co/functions/v1/submit-quote";
-const publicKey="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhybGlwZ2JldHBvaGpld2hsYm1sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE1NDMyMTgsImV4cCI6MjEwNzExOTIxOH0.6FSUxlqhACpqsZBcz7c6jSwf8fD2j7V-6LGsxNsiunI";
 function readPhoto(file){return new Promise((resolve,reject)=>{const reader=new FileReader();const timer=setTimeout(()=>{reader.abort();reject(new Error("Fotoğraf hazırlanamadı. Lütfen daha küçük bir fotoğraf seçip tekrar deneyin."))},12000);reader.onload=()=>{clearTimeout(timer);resolve(reader.result)};reader.onerror=()=>{clearTimeout(timer);reject(new Error("Fotoğraf okunamadı. Lütfen başka bir fotoğraf deneyin."))};reader.onabort=()=>{clearTimeout(timer);reject(new Error("Fotoğraf yükleme işlemi durduruldu. Tekrar deneyin."))};reader.readAsDataURL(file)})}
 form.addEventListener('submit',async e=>{
  e.preventDefault();
@@ -24,7 +23,7 @@ form.addEventListener('submit',async e=>{
   const timeout=setTimeout(()=>controller.abort(),20000);
   let response, payload;
   try {
-    response=await fetch(apiUrl,{method:'POST',mode:'cors',credentials:'omit',cache:'no-store',headers:{'Content-Type':'application/json','apikey':publicKey},body:JSON.stringify(body),signal:controller.signal});
+    response=await fetch(apiUrl,{method:'POST',mode:'cors',credentials:'omit',cache:'no-store',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(body),signal:controller.signal});
     payload=await response.json().catch(()=>({}));
   } finally { clearTimeout(timeout); }
   if(!response.ok||!payload.ok)throw new Error(payload.error||'Talep gönderilemedi. Lütfen tekrar deneyin.');
