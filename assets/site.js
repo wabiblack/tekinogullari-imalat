@@ -20,11 +20,16 @@ form.addEventListener('submit',async e=>{
  btn.disabled=true;btn.textContent='Gönderiliyor…';status.textContent='Talebiniz gönderiliyor, lütfen bekleyin.';
  try{
   if(file)body.photo=await readPhoto(file);
-  const response=await fetch(apiUrl,{method:'POST',headers:{'Content-Type':'application/json','apikey':publicKey,'Authorization':'Bearer '+publicKey},body:JSON.stringify(body)});
+  const controller=new AbortController();
+  const timeout=setTimeout(()=>controller.abort(),20000);
+  let response;
+  try {
+    response=await fetch(apiUrl,{method:'POST',mode:'cors',credentials:'omit',cache:'no-store',headers:{'Content-Type':'application/json','apikey':publicKey},body:JSON.stringify(body),signal:controller.signal});
+  } finally { clearTimeout(timeout); }
   const payload=await response.json().catch(()=>({}));
   if(!response.ok||!payload.ok)throw new Error(payload.error||'Talep gönderilemedi. Lütfen tekrar deneyin.');
   form.reset();status.textContent='Teklif talebiniz başarıyla alındı! En kısa sürede değerlendirilmek üzere kaydedildi.';
- }catch(error){status.textContent=error.message||'Bağlantı hatası. Lütfen tekrar deneyin.'}
+ }catch(error){status.textContent=error?.name==='AbortError'?'Sunucu yanıt vermedi. Lütfen yeniden deneyin.':(error instanceof TypeError?'Bağlantı kurulamadı. İnternet bağlantınızı kontrol edip tekrar deneyin.':(error.message||'Bağlantı hatası. Lütfen tekrar deneyin.'))}
  finally{btn.disabled=false;btn.textContent='Teklif Gönder ↗'}
 });
 })();
