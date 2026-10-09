@@ -14,7 +14,7 @@ form.addEventListener('submit',async e=>{
  e.preventDefault();
  const btn=form.querySelector('#sendQuote'),status=form.querySelector('#feedback'),file=form.querySelector('#photo')?.files?.[0],phone=form.querySelector('#customerPhone').value.trim();
  if(!form.reportValidity())return;
- if(!/^[+\\d\\s()\\-]{7,35}$/.test(phone)){status.textContent='Telefon numarasını kontrol edin.';return}
+ if(!/^[+\d\s()-]{7,35}$/.test(phone)){status.textContent='Telefon numarasını kontrol edin.';return}
  if(file&&(file.size>3145728||!['image/jpeg','image/png','image/webp'].includes(file.type))){status.textContent='Fotoğraf JPG, PNG veya WEBP olmalı ve 3 MB\'yi geçmemeli.';return}
  const body={customer_name:form.querySelector('#customer').value.trim(),customer_phone:phone,service:service.value,details:form.querySelector('#details').value.trim(),website:form.querySelector('#website').value};
  btn.disabled=true;btn.textContent='Gönderiliyor…';status.textContent='Talebiniz gönderiliyor, lütfen bekleyin.';
