@@ -80,4 +80,27 @@ $("logout").addEventListener("click",async()=>{await sb.auth.signOut();chosenId=
 $("refresh").addEventListener("click",()=>void loadQuotes());
 $("search").addEventListener("input",renderList);
 $("filter").addEventListener("change",renderList);
-validateUser().catch(()=>showLogin("Bağlantı kurulamadı. Lütfen tekrar deneyin."));
+const bootstrap=new URLSearchParams(location.hash.slice(1)).get("kurulum");
+const setup=$("setup");
+const setupApi="https://xrlipgbetpohjewhlbml.supabase.co/functions/v1/setup-tek-admin";
+const bootstrapAnonKey="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhybGlwZ2JldHBvaGpld2hsYm1sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE1NDMyMTgsImV4cCI6MjEwNzExOTIxOH0.6FSUxlqhACpqsZBcz7c6jSwf8fD2j7V-6LGsxNsiunI";
+$("setupForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ const button=e.currentTarget.querySelector('button[type="submit"]'),notice=$("setupError"),email=$("setupEmail").value.trim(),password=$("setupPassword").value;
+ button.disabled=true;button.textContent="Hesap oluşturuluyor…";notice.textContent="";
+ try{
+  const res=await fetch(setupApi,{method:"POST",headers:{"Content-Type":"application/json","apikey":bootstrapAnonKey,"Authorization":"Bearer "+bootstrapAnonKey},body:JSON.stringify({setup_token:bootstrap,email,password})});
+  const payload=await res.json().catch(()=>({}));
+  if(!res.ok||!payload.ok)throw new Error(payload.error||"Hesap oluşturulamadı.");
+  history.replaceState(null,"","/admin/");
+  $("setupPassword").value="";
+  const login=await sb.auth.signInWithPassword({email,password});
+  if(login.error){setup.classList.add("is-hidden");showLogin("Hesap oluşturuldu. Şimdi giriş yapabilirsin.");}
+  else{setup.classList.add("is-hidden");await validateUser();}
+ }catch(error){notice.textContent=error.message||"Kurulum hatası. Lütfen tekrar deneyin."}
+ finally{button.disabled=false;button.textContent="Hesabı Oluştur ↗"}
+});
+if(bootstrap&&/^[a-f0-9]{64}$/.test(bootstrap)){
+ loading.classList.add("is-hidden");login.classList.add("is-hidden");dashboard.classList.add("is-hidden");setup.classList.remove("is-hidden");
+}else validateUser().catch(()=>showLogin("Bağlantı kurulamadı. Lütfen tekrar deneyin."));
+
