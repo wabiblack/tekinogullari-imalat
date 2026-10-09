@@ -9,7 +9,7 @@ const params=new URLSearchParams(location.search),requested=params.get('hizmet')
 
 const apiUrl="https://xrlipgbetpohjewhlbml.supabase.co/functions/v1/submit-quote";
 const publicKey="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhybGlwZ2JldHBvaGpld2hsYm1sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE1NDMyMTgsImV4cCI6MjEwNzExOTIxOH0.6FSUxlqhACpqsZBcz7c6jSwf8fD2j7V-6LGsxNsiunI";
-function readPhoto(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(new Error("Fotoğraf okunamadı."));reader.readAsDataURL(file)})}
+function readPhoto(file){return new Promise((resolve,reject)=>{const reader=new FileReader();const timer=setTimeout(()=>{reader.abort();reject(new Error("Fotoğraf hazırlanamadı. Lütfen daha küçük bir fotoğraf seçip tekrar deneyin."))},12000);reader.onload=()=>{clearTimeout(timer);resolve(reader.result)};reader.onerror=()=>{clearTimeout(timer);reject(new Error("Fotoğraf okunamadı. Lütfen başka bir fotoğraf deneyin."))};reader.onabort=()=>{clearTimeout(timer);reject(new Error("Fotoğraf yükleme işlemi durduruldu. Tekrar deneyin."))};reader.readAsDataURL(file)})}
 form.addEventListener('submit',async e=>{
  e.preventDefault();
  const btn=form.querySelector('#sendQuote'),status=form.querySelector('#feedback'),file=form.querySelector('#photo')?.files?.[0],phone=form.querySelector('#customerPhone').value.trim();
@@ -17,19 +17,19 @@ form.addEventListener('submit',async e=>{
  if(!/^[+\d\s()-]{7,35}$/.test(phone)){status.textContent='Telefon numarasını kontrol edin.';return}
  if(file&&(file.size>3145728||!['image/jpeg','image/png','image/webp'].includes(file.type))){status.textContent='Fotoğraf JPG, PNG veya WEBP olmalı ve 3 MB\'yi geçmemeli.';return}
  const body={customer_name:form.querySelector('#customer').value.trim(),customer_phone:phone,service:service.value,details:form.querySelector('#details').value.trim(),website:form.querySelector('#website').value};
- btn.disabled=true;btn.textContent='Gönderiliyor…';status.textContent='Talebiniz gönderiliyor, lütfen bekleyin.';
+ btn.disabled=true;btn.textContent='Gönderiliyor…';status.className='form-feedback';status.textContent=file?'Fotoğraf hazırlanıyor…':'Talebiniz gönderiliyor…';
  try{
-  if(file)body.photo=await readPhoto(file);
+  if(file){body.photo=await readPhoto(file);status.textContent='Fotoğraf hazır. Teklifiniz gönderiliyor…'}
   const controller=new AbortController();
   const timeout=setTimeout(()=>controller.abort(),20000);
-  let response;
+  let response, payload;
   try {
     response=await fetch(apiUrl,{method:'POST',mode:'cors',credentials:'omit',cache:'no-store',headers:{'Content-Type':'application/json','apikey':publicKey},body:JSON.stringify(body),signal:controller.signal});
+    payload=await response.json().catch(()=>({}));
   } finally { clearTimeout(timeout); }
-  const payload=await response.json().catch(()=>({}));
   if(!response.ok||!payload.ok)throw new Error(payload.error||'Talep gönderilemedi. Lütfen tekrar deneyin.');
-  form.reset();status.textContent='Teklif talebiniz başarıyla alındı! En kısa sürede değerlendirilmek üzere kaydedildi.';
- }catch(error){status.textContent=error?.name==='AbortError'?'Sunucu yanıt vermedi. Lütfen yeniden deneyin.':(error instanceof TypeError?'Bağlantı kurulamadı. İnternet bağlantınızı kontrol edip tekrar deneyin.':(error.message||'Bağlantı hatası. Lütfen tekrar deneyin.'))}
+  form.reset();status.className='form-feedback success';status.textContent='Teklif talebiniz başarıyla alındı! En kısa sürede değerlendirilmek üzere kaydedildi.';
+ }catch(error){status.className='form-feedback error';status.textContent=error?.name==='AbortError'?'Sunucu yanıt vermedi. Lütfen yeniden deneyin.':(error instanceof TypeError?'Bağlantı kurulamadı. İnternet bağlantınızı kontrol edip tekrar deneyin.':(error.message||'Bağlantı hatası. Lütfen tekrar deneyin.'))}
  finally{btn.disabled=false;btn.textContent='Teklif Gönder ↗'}
 });
 })();
