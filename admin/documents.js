@@ -90,6 +90,7 @@ export function initDocuments(){
   }catch(error){$("docError").textContent=error.message||"Belge oluşturulamadı"}
  });
  return {
+  openBlank:()=>open({customer:"",phone:"",service:"",title:"",notes:"",price:null},"offer"),
   openForQuote:q=>open({quoteId:q.id,customer:q.customer_name,phone:q.customer_phone,service:q.service,title:q.service,notes:q.details},"offer"),
   openForWork:job=>open({quoteId:job.quote_id,customer:job.quote?.customer_name,phone:job.quote?.customer_phone,service:job.quote?.service,title:job.title,price:job.agreed_price,notes:job.notes},"work")
  };
