@@ -169,5 +169,29 @@ export function initFinance(sb){
  $("finApply").addEventListener("click",()=>void load());
  $("finStart").value=finPeriodDates("month").start;
  $("finEnd").value=date();
+ async function startForQuote(quoteId){
+  activate(true);
+  quotesFetched=true;
+  await Promise.all([loadQuoteOptions(),load()]);
+  resetForm();
+  $("finKind").value="income";
+  categories("İş Tahsilatı");
+  $("finDescription").value="İş tahsilatı";
+  const {data,error}=await sb.from("quote_requests")
+   .select("id,customer_name,service,created_at").eq("id",quoteId).single();
+  if(error||!data){
+   message("İlgili müşteri teklifi bulunamadı. Kayıt oluşturulmadı.",true);
+   return;
+  }
+  if(![...$("finQuote").options].some(option=>option.value===quoteId)){
+   const option=make("option",data.customer_name+" · "+data.service);
+   option.value=quoteId;$("finQuote").append(option);
+  }
+  $("finQuote").value=quoteId;
+  message("Bu ödeme müşterinin hesabına işlenecek. Tutarı girip Kaydı Ekle'ye bas.");
+  $("finForm").scrollIntoView({behavior:"smooth",block:"start"});
+  $("finAmount").focus({preventScroll:true});
+ }
  resetForm();
+ return {startForQuote};
 }
