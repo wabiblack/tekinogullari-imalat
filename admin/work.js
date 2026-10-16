@@ -17,10 +17,10 @@ const workNear=job=>{
  future.setHours(12,0,0,0);future.setDate(future.getDate()+7);
  return deadline<=future;
 };
-export function initWork(sb){
+export function initWork(sb,{documents}){
  const $=id=>document.getElementById(id);
  const el=(type,text,cls)=>{const n=document.createElement(type);if(text!==undefined&&text!==null)n.textContent=String(text);if(cls)n.className=cls;return n};
- let jobs=[],quotes=[],editingId=null,loaded=false,requestSerial=0;
+ let jobs=[],quotes=[],editingId=null,loaded=false,requestSerial=0,profitMap=new Map();
  const feedback=(message,error=false)=>{
   const out=$("workFeedback");out.textContent=message;
   out.className="work-feedback "+(message?(error?"error":"success"):"");
@@ -32,6 +32,9 @@ export function initWork(sb){
  }
  function resetForm(closeOnMobile=false){
   editingId=null;$("workForm").reset();
+  $("workProfitBox").classList.add("is-hidden");
+  $("workPdf").classList.add("is-hidden");
+  $("workProfitRefresh").classList.add("is-hidden");
   $("workQuote").disabled=false;
   $("workFormTitle").textContent="Yeni İş Kaydı";
   $("workSave").textContent="İşi Kaydet";
@@ -113,6 +116,10 @@ export function initWork(sb){
    bottom.append(el("span",dateText+statusText,"work-date"+(workLate(job)?" late":workNear(job)?" soon":"")));
    if(job.agreed_price!==null&&job.agreed_price!==undefined)bottom.append(el("b",workMoney.format(Number(job.agreed_price)),"work-price"));
    card.append(bottom);
+   const profit=profitMap.get(job.id);
+   if(profit){
+    card.append(el("span",profit.estimated_profit==null?"Kâr için iş bedeli gir":("Tahmini kâr: "+workMoney.format(profit.estimated_profit)),"work-item-meta"+(profit.estimated_profit<0?" work-profit-negative":"")));
+   }
    card.addEventListener("click",()=>editJob(job.id));
    list.append(card);
   }
@@ -120,13 +127,30 @@ export function initWork(sb){
  async function load(){
   const seq=++requestSerial;
   $("workList").replaceChildren(el("p","İşler yükleniyor…","empty"));
-  const {data,error}=await sb.from("tek_work_orders")
-   .select("id,quote_id,title,agreed_price,start_date,due_date,status,notes,created_at,updated_at,quote:quote_requests(customer_name,customer_phone,service)")
-   .order("created_at",{ascending:false}).limit(500);
+  const [jobResult,profitResult]=await Promise.all([
+   sb.from("tek_work_orders")
+    .select("id,quote_id,title,agreed_price,start_date,due_date,status,notes,created_at,updated_at,quote:quote_requests(customer_name,customer_phone,service)")
+    .order("created_at",{ascending:false}).limit(500),
+   sb.rpc("tek_work_profit_summary").limit(500)
+  ]);
   if(seq!==requestSerial)return;
-  if(error){$("workList").replaceChildren(el("p","İş kayıtları açılamadı. Girişini kontrol edip Yenile'ye bas.","error"));return}
-  jobs=data||[];loaded=true;
+  if(jobResult.error){$("workList").replaceChildren(el("p","İş kayıtları açılamadı. Girişini kontrol edip Yenile'ye bas.","error"));return}
+  jobs=jobResult.data||[];loaded=true;
+  profitMap=profitResult.error?new Map():new Map((profitResult.data||[]).map(p=>[p.work_id,p]));
   render();fillQuoteOptions();
+  if(editingId)showProfit(editingId);
+
+ }
+ function showProfit(id){
+  const p=profitMap.get(id);
+  $("workProfitBox").classList.toggle("is-hidden",!p);
+  if(!p)return;
+  $("workProfitPrice").textContent=p.agreed_price==null?"Belirlenmedi":workMoney.format(p.agreed_price);
+  $("workProfitMaterial").textContent=workMoney.format(p.material_cost);
+  $("workProfitExpense").textContent=workMoney.format(p.job_expenses);
+  $("workProfitNet").textContent=p.estimated_profit==null?"Hesaplanamaz":workMoney.format(p.estimated_profit);
+  $("workProfitNet").classList.toggle("work-profit-negative",Number(p.estimated_profit)<0);
+  $("workProfitMargin").textContent=p.margin_percent===null||p.margin_percent===undefined?"":"Kâr marjı: %"+Number(p.margin_percent).toLocaleString("tr-TR");
  }
  function editJob(id){
   const job=jobs.find(j=>j.id===id);if(!job)return;
@@ -142,6 +166,9 @@ export function initWork(sb){
   $("workDue").value=job.due_date||"";
   $("workStatus").value=job.status;
   $("workNotes").value=job.notes||"";
+  $("workPdf").classList.remove("is-hidden");
+  $("workProfitRefresh").classList.remove("is-hidden");
+  showProfit(id);
   $("workFormTitle").textContent="İşi Düzenle";
   $("workSave").textContent="Değişiklikleri Kaydet";
   render();showEditor();
@@ -152,13 +179,14 @@ export function initWork(sb){
   $("quoteView").classList.add("is-hidden");
   $("financeView").classList.add("is-hidden");
   $("accountView").classList.add("is-hidden");
+  $("stockView").classList.add("is-hidden");
   $("workView").classList.remove("is-hidden");
-  for(const id of ["homeTab","quoteTab","financeTab","accountTab","workTab"]){
+  for(const id of ["homeTab","quoteTab","financeTab","accountTab","stockTab","workTab"]){
    const selected=id==="workTab";
    $(id).classList.toggle("active",selected);
    $(id).setAttribute("aria-selected",String(selected));
   }
-  for(const id of ["mobileHome","mobileQuotes","mobileFinance","mobileAccounts","mobileWork"]){
+  for(const id of ["mobileHome","mobileQuotes","mobileFinance","mobileAccounts","mobileStock","mobileWork"]){
    const selected=id==="mobileWork";
    $(id).classList.toggle("active",selected);
    if(selected)$(id).setAttribute("aria-current","page");
@@ -186,6 +214,11 @@ export function initWork(sb){
   $("workNotes").value=(q.details||"").slice(0,2000);
   showEditor();
  }
+ $("workPdf").addEventListener("click",()=>{
+  const job=jobs.find(j=>j.id===editingId);
+  if(job)documents.openForWork(job);
+ });
+ $("workProfitRefresh").addEventListener("click",()=>void load());
  $("workNew").addEventListener("click",()=>{resetForm();showEditor()});
  $("workCancel").addEventListener("click",()=>{resetForm(true);render()});
  $("workRefresh").addEventListener("click",async()=>{await Promise.all([load(),loadQuoteOptions()])});
