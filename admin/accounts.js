@@ -185,7 +185,7 @@ export function initAccounts(sb,{finance}){
   }finally{if(current===loadVersion)$("accountRefresh").disabled=false}
  }
  async function activate(){
-  for(const [tab,view,mobile] of [["homeTab","homeView","mobileHome"],["quoteTab","quoteView","mobileQuotes"],["workTab","workView","mobileWork"],["accountTab","accountView","mobileAccounts"],["financeTab","financeView","mobileFinance"]]){
+  for(const [tab,view,mobile] of [["homeTab","homeView","mobileHome"],["quoteTab","quoteView","mobileQuotes"],["workTab","workView","mobileWork"],["accountTab","accountView","mobileAccounts"],["financeTab","financeView","mobileFinance"],["stockTab","stockView","mobileStock"]]){
    const current=tab==="accountTab";
    $(view).classList.toggle("is-hidden",!current);
    $(tab).classList.toggle("active",current);
