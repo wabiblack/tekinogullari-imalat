@@ -32,6 +32,7 @@ export function initDocuments(){
  function open(data,kind){
   currentQuote=data.quoteId||null;
   $("docForm").reset();
+  $("docError").textContent="";
   $("docKind").value=kind==="work"?"work":"offer";
   $("docDate").value=localDate();
   $("docCustomer").value=data.customer||"";
