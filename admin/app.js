@@ -12,6 +12,71 @@ const getRatingLabel=stars=>stars?customerRatings[stars]:"Değerlendirilmedi";
 const loading=$("loading"),login=$("login"),dashboard=$("dashboard"),logout=$("logout");
 const el=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined&&text!==null)e.textContent=String(text);if(cls)e.className=cls;return e};
 const date=iso=>new Date(iso).toLocaleString("tr-TR",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"});
+
+function whatsappNumber(phone){
+ let digits=String(phone||"").replace(/\D/g,"");
+ if(digits.startsWith("00"))digits=digits.slice(2);
+ if(digits.length===11&&digits.startsWith("0"))digits="90"+digits.slice(1);
+ else if(digits.length===10)digits="90"+digits;
+ return /^[1-9][0-9]{9,14}$/.test(digits)?digits:null;
+}
+function whatsappMessages(q){
+ const name=q.customer_name.trim();
+ const intro="Merhaba "+name+",\n\nTEKİNOĞULLARI İMALAT olarak";
+ const work=q.service.toLocaleLowerCase("tr-TR");
+ const regards="\n\nİyi günler dileriz.\nTEKİNOĞULLARI İMALAT";
+ const templates=[
+  ["received","Teklif talebi alındı",intro+" ilettiğiniz "+work+" talebinizi aldık. Başvurunuzu inceleyip sizinle iletişime geçeceğiz."+regards],
+  ["question","Ek bilgi iste",intro+" "+work+" talebinizle ilgili birkaç detaya ihtiyacımız var. Müsait olduğunuzda bize dönüş yapabilir misiniz?"+regards],
+  ["offer","Fiyat teklifi görüşmesi",intro+" "+work+" işinizin fiyat teklifini görüşmek istiyoruz. Uygun olduğunuz bir zamanı paylaşabilir misiniz?"+regards]
+ ];
+ if(q.status==="completed")templates.push(["done","İş tamamlandı",intro+" "+work+" işinizin tamamlandığını bildirmek isteriz. Teslimat detayları için bize dönüş yapabilirsiniz."+regards]);
+ templates.push(["custom","Kendi mesajımı yaz",""]);
+ return templates;
+}
+function renderWhatsApp(q){
+ const block=el("section",null,"wa-card"),heading=el("h4","WhatsApp ile Müşteriye Yaz");
+ const desc=el("p","Hazır mesaj seç, istersen düzenle; ardından şirket hesabının açık olduğu WhatsApp'ta gönder.","wa-description");
+ const label=el("label","Mesaj Şablonu","wa-label"),select=el("select",null,"wa-select"),messageLabel=el("label","Mesaj Metni","wa-label");
+ const message=el("textarea",null,"wa-message");message.rows=6;message.maxLength=2000;
+ const templates=whatsappMessages(q);
+ for(const [key,title] of templates){const option=el("option",title);option.value=key;select.append(option)}
+ const note=el("p","Mesaj otomatik gönderilmez. WhatsApp'ta göndereceğin hesabı kontrol et.","wa-note");
+ const phone=whatsappNumber(q.customer_phone),actions=el("div",null,"wa-actions"),feedback=el("p",null,"wa-feedback");
+ feedback.setAttribute("role","status");feedback.setAttribute("aria-live","polite");
+ label.append(select);messageLabel.append(message);
+ const open=el("a","WhatsApp'ta Mesajı Aç ↗","btn wa-open");
+ open.target="_blank";open.rel="noopener noreferrer";
+ const updateLink=()=>{
+  const msg=message.value.trim();
+  if(!phone||!msg){
+   open.removeAttribute("href");open.classList.add("wa-disabled");
+   open.setAttribute("aria-disabled","true");return;
+  }
+  open.href="https://wa.me/"+phone+"?text="+encodeURIComponent(msg);
+  open.classList.remove("wa-disabled");open.removeAttribute("aria-disabled");
+ };
+ const applyTemplate=()=>{
+  message.value=templates.find(t=>t[0]===select.value)?.[2]||"";
+  message.focus();updateLink();
+ };
+ select.addEventListener("change",applyTemplate);
+ message.addEventListener("input",updateLink);
+ open.addEventListener("click",event=>{
+  if(!phone||!message.value.trim()){
+   event.preventDefault();
+   feedback.textContent=phone?"Önce mesaj metni yazmalısın.":"Telefon numarası WhatsApp bağlantısı için uygun değil.";
+   return;
+  }
+  feedback.textContent="WhatsApp açılacak. Mesajı göndermek için WhatsApp'taki Gönder'e bas.";
+ });
+ select.value="received";message.value=templates[0][2];updateLink();
+ actions.append(open);
+ if(!phone)feedback.textContent="Telefon numarası geçersiz görünüyor. Müşteri numarasını kontrol et.";
+ block.append(heading,desc,label,messageLabel,actions,note,feedback);
+ return block;
+}
+
 const showLogin=msg=>{loading.classList.add("is-hidden");login.classList.remove("is-hidden");dashboard.classList.add("is-hidden");logout.style.display="none";$("loginError").textContent=msg||""};
 const showDashboard=()=>{loading.classList.add("is-hidden");login.classList.add("is-hidden");dashboard.classList.remove("is-hidden");logout.style.display="block"};
 async function validateUser(){
@@ -104,6 +169,7 @@ async function renderDetail(){
  detail.append(ratingBox);
  const contact=el("a","Telefonla Ara ↗","text-link");contact.href="tel:"+q.customer_phone.replace(/[^+\d]/g,"");detail.append(contact);
  field("HİZMET",q.service);field("İŞİN DETAYLARI",q.details);
+ detail.append(renderWhatsApp(q));
  if(q.attachment_path){
   const p=el("p","FOTOĞRAF","label");detail.append(p);
   const a=el("a","Fotoğrafı Aç ↗","text-link");a.target="_blank";a.rel="noopener noreferrer";a.href="#";a.addEventListener("click",e=>{if(a.href.endsWith("#"))e.preventDefault()});detail.append(a);
