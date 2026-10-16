@@ -151,7 +151,7 @@ export function initHome(sb,{openQuote}){
   }
  }
  async function activate(){
-  for(const [tab,view,mobile] of [["homeTab","homeView","mobileHome"],["quoteTab","quoteView","mobileQuotes"],["workTab","workView","mobileWork"],["financeTab","financeView","mobileFinance"],["accountTab","accountView","mobileAccounts"]]){
+  for(const [tab,view,mobile] of [["homeTab","homeView","mobileHome"],["quoteTab","quoteView","mobileQuotes"],["workTab","workView","mobileWork"],["financeTab","financeView","mobileFinance"],["accountTab","accountView","mobileAccounts"],["stockTab","stockView","mobileStock"]]){
    const active=tab==="homeTab";
    $(view).classList.toggle("is-hidden",!active);
    $(tab).classList.toggle("active",active);
