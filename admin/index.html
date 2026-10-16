@@ -21,7 +21,67 @@ body{background:#f1f2ef}#app{min-height:75vh}.admin-header{background:#1b2321;co
 .wa-card .wa-note,.wa-card .wa-feedback{font-size:12px;line-height:1.5;color:#607064;margin:7px 0 0}
 .wa-card .wa-feedback:not(:empty){color:#205c38}
 @media(max-width:550px){.wa-card{padding:15px}.wa-actions .wa-open{width:100%}}
-</style><script type="module" src="/admin/app.js?v=6"></script></head>
+
+/* Tekinoğulları mobile admin: original site logo remains unchanged. */
+.detail-title{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #edf0ec;gap:10px}
+.detail-title h2{border-bottom:0!important}
+.back-list{display:none;background:#fff7f1;color:#9b481a;border:1px solid #edccb8;border-radius:8px;padding:10px 12px;min-height:44px;font-size:13px;font-weight:800;margin-right:16px}
+.customer-actions{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 20px}
+.quick-action{display:inline-flex;justify-content:center;align-items:center;text-decoration:none;border:1px solid #d8dcd5;border-radius:10px;background:#f5f7f3;color:#27382e;min-height:48px;padding:12px 19px;font-size:15px;font-weight:800}
+.quick-action.whatsapp{background:#e8f7ee;color:#17643a;border-color:#c3e5ce}
+.quick-action:hover{opacity:.9}
+.quote-photo{margin:7px 0 20px;padding:0;border-radius:12px;overflow:hidden;border:1px solid #e1e7e0;background:#f3f5f2;min-height:120px;position:relative}
+.quote-photo .photo-link{display:block;line-height:0}
+.quote-photo img{display:block;max-width:100%;width:100%;max-height:420px;object-fit:contain;background:#e9ede9}
+.quote-photo .photo-state{font-size:13px;color:#6b776f;padding:30px 12px;text-align:center;line-height:1.4;margin:0}
+.wa-card{margin:22px 0 5px}
+.wa-card summary{font-weight:850;display:list-item;font-size:15px;line-height:1.5;color:#215438;cursor:pointer;padding:4px 0;list-style-position:inside}
+.wa-card summary:focus-visible{outline:2px solid #1a7545;outline-offset:4px}
+.wa-card[open] summary{margin-bottom:10px}
+@media(max-width:800px){
+ .admin-wrap{margin:16px auto 52px;padding:0 12px}
+ .dashboard-head{margin-bottom:14px;flex-direction:row;align-items:center}
+ .dashboard-head h1{font-size:23px}
+ .dashboard-head .eyebrow{font-size:10px}
+ .dashboard-head .btn{padding:10px 11px;min-height:44px}
+ .admin-tabs{position:sticky;top:0;z-index:20;background:#f1f2ef;padding-top:5px;margin:0 0 12px;box-shadow:0 7px 12px -14px #111}
+ .admin-tab{flex:1;text-align:center;padding:10px 8px;min-width:0}
+ .stats{gap:7px;margin-bottom:13px}
+ .stat{padding:11px 12px;border-radius:10px}
+ .stat b{font-size:25px}
+ .stat small{font-size:11px}
+ .grid-admin{gap:0}
+ .grid-admin:not(.mobile-detail-active)>#requestDetailPanel{display:none}
+ .grid-admin.mobile-detail-active>#requestListPanel{display:none}
+ .admin-panel{border-radius:11px}
+ .admin-panel h2{padding:14px 15px;font-size:17px}
+ .request-list{max-height:none;overflow:visible}
+ .request{padding:14px 14px;min-height:86px}
+ .request .head{gap:6px}
+ .request .head>span:first-child{font-size:15px;overflow-wrap:anywhere}
+ .request .meta{font-size:12px}
+ .filters{padding:12px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+ .filters input{grid-column:1/-1}
+ .filters input,.filters select{min-width:0;min-height:46px;font-size:14px}
+ .back-list{display:inline-flex;align-items:center;justify-content:center}
+ .detail-pad{padding:15px}
+ .detail-pad h3{font-size:22px}
+ .detail-pad .label{margin:14px 0 4px}
+ .detail-pad .value{font-size:15px;line-height:1.5}
+ .detail-pad textarea,.detail-pad .select-status{font-size:16px;min-height:48px}
+ .detail-pad .btn{min-height:48px}
+ .customer-actions>.quick-action{flex:1}
+ .quote-photo img{max-height:365px}
+ .fin-card{border-radius:10px}
+}
+@media(max-width:380px){
+ .admin-header .container{padding-left:12px;padding-right:12px}
+ .admin-header strong{font-size:13px}
+ .detail-title h2{font-size:15px}
+ .back-list{font-size:12px;padding:7px;margin-right:8px}
+}
+
+</style><script type="module" src="/admin/app.js?v=7"></script></head>
 <body><header class="admin-header"><div class="container"><div><strong>TEKİNOĞULLARI İMALAT</strong> <span style="opacity:.65">/ Yönetici Paneli</span></div><button class="button" id="logout">Çıkış Yap</button></div></header>
 <main id="app" class="admin-wrap"><p id="loading" role="status">Yönetim paneli açılıyor…</p>
 <section id="setup" class="login-card is-hidden">
@@ -36,8 +96,8 @@ body{background:#f1f2ef}#app{min-height:75vh}.admin-header{background:#1b2321;co
 <section id="login" class="login-card is-hidden"><p class="eyebrow">Yetkili Girişi</p><h1>Yönetici Paneli</h1><p>Gelen teklifleri görüntülemek için yetkili hesabınızla giriş yapın.</p><form id="loginForm"><label class="field">E-posta<input type="email" id="email" value="ercan@tekin.com" required autocomplete="username" placeholder="ornek@firma.com"></label><label class="field">Şifre<input type="password" id="password" required autocomplete="current-password" placeholder="Şifreniz"></label><button class="btn" type="submit">Giriş Yap ↗</button><p id="loginError" class="error" role="alert"></p></form></section>
 <section id="dashboard" class="is-hidden"><div class="dashboard-head"><div><p class="eyebrow">TEKİNOĞULLARI İMALAT / Yönetim</p><h1>Teklif Talepleri</h1></div><button class="btn outline" id="refresh">Yenile ↻</button></div>
 <div class="admin-tabs" role="tablist" aria-label="Yönetim bölümleri"><button type="button" id="quoteTab" class="admin-tab active" role="tab" aria-selected="true" aria-controls="quoteView">Teklif Talepleri</button><button type="button" id="financeTab" class="admin-tab" role="tab" aria-selected="false" aria-controls="financeView">Mali Yönetim</button></div><section id="quoteView" role="tabpanel" aria-labelledby="quoteTab"><div class="stats"><div class="stat"><b id="statAll">0</b><small>Görüntülenen</small></div><div class="stat"><b id="statNew">0</b><small>Yeni</small></div><div class="stat"><b id="statReview">0</b><small>İşlemde</small></div><div class="stat"><b id="statDone">0</b><small>Tamamlandı</small></div></div>
-<div class="grid-admin"><div class="admin-panel"><h2>Gelen Talepler <small style="font-size:11px;color:#737c76;font-weight:500"> (son 300 kayıt)</small></h2><div class="filters"><input id="search" placeholder="İsim, telefon veya hizmet ara" aria-label="Taleplerde ara"><select id="filter" aria-label="Durum filtrele"><option value="">Tüm Durumlar</option><option value="new">Yeni</option><option value="reviewing">Görüşülüyor</option><option value="approved">Onaylandı</option><option value="in_production">Üretimde</option><option value="completed">Tamamlandı</option><option value="cancelled">İptal</option></select><select id="ratingFilter" aria-label="Müşteri değerlendirmesi filtrele"><option value="">Tüm Müşteriler</option><option value="3">★★★ İyi</option><option value="2">★★ Orta</option><option value="1">★ Kötü</option><option value="unrated">Değerlendirilmedi</option></select></div><div id="requestList" class="request-list"><p class="empty">Yükleniyor…</p></div></div>
-<div class="admin-panel"><h2>Talep Detayı</h2><div id="detail" class="detail-pad"><p class="empty">Detayları görmek için soldan talep seçin.</p></div></div></div>
+<div class="grid-admin" id="requestGrid"><div class="admin-panel" id="requestListPanel"><h2>Gelen Talepler <small style="font-size:11px;color:#737c76;font-weight:500"> (son 300 kayıt)</small></h2><div class="filters"><input id="search" placeholder="İsim, telefon veya hizmet ara" aria-label="Taleplerde ara"><select id="filter" aria-label="Durum filtrele"><option value="">Tüm Durumlar</option><option value="new">Yeni</option><option value="reviewing">Görüşülüyor</option><option value="approved">Onaylandı</option><option value="in_production">Üretimde</option><option value="completed">Tamamlandı</option><option value="cancelled">İptal</option></select><select id="ratingFilter" aria-label="Müşteri değerlendirmesi filtrele"><option value="">Tüm Puanlar</option><option value="3">★★★ İyi</option><option value="2">★★ Orta</option><option value="1">★ Kötü</option><option value="unrated">Değerlendirilmedi</option></select></div><div id="requestList" class="request-list"><p class="empty">Yükleniyor…</p></div></div>
+<div class="admin-panel" id="requestDetailPanel"><div class="detail-title"><h2>Talep Detayı</h2><button type="button" id="backToRequests" class="back-list">← Taleplere Dön</button></div><div id="detail" class="detail-pad"><p class="empty">Detayları görmek için soldan talep seçin.</p></div></div></div>
 </section>
 <section id="financeView" class="is-hidden" role="tabpanel" aria-labelledby="financeTab">
   <div class="fin-heading"><div><p class="eyebrow">MALİ YÖNETİM</p><h2>Gelir, Gider ve Nakit Takibi</h2><p>Tahsilatları ve yapılan ödemeleri takip et. Teklifler otomatik gelir olarak sayılmaz.</p></div><button id="finRefresh" type="button" class="btn outline">Yenile ↻</button></div>
