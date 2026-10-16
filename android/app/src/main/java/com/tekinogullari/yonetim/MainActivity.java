@@ -170,8 +170,27 @@ public final class MainActivity extends Activity {
             }
         });
 
-        if (savedInstanceState == null) webView.loadUrl(ADMIN_URL);
+        if (savedInstanceState == null) webView.loadUrl(startUrl(getIntent()));
         else webView.restoreState(savedInstanceState);
+    }
+
+    private String startUrl(Intent intent) {
+        if (intent != null &&
+            "com.tekinogullari.yonetim.OPEN_JOBS".equals(intent.getAction())) {
+            return ADMIN_URL + "?view=jobs";
+        }
+        if (intent != null &&
+            "com.tekinogullari.yonetim.OPEN_QUOTES".equals(intent.getAction())) {
+            return ADMIN_URL + "?view=quotes";
+        }
+        return ADMIN_URL;
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        if (webView != null) webView.loadUrl(startUrl(intent));
     }
 
     private boolean isAdminUrl(Uri uri) {
