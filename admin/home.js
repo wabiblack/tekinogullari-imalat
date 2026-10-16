@@ -151,7 +151,7 @@ export function initHome(sb,{openQuote}){
   }
  }
  async function activate(){
-  for(const [tab,view,mobile] of [["homeTab","homeView","mobileHome"],["quoteTab","quoteView","mobileQuotes"],["workTab","workView","mobileWork"],["financeTab","financeView","mobileFinance"]]){
+  for(const [tab,view,mobile] of [["homeTab","homeView","mobileHome"],["quoteTab","quoteView","mobileQuotes"],["workTab","workView","mobileWork"],["financeTab","financeView","mobileFinance"],["accountTab","accountView","mobileAccounts"]]){
    const active=tab==="homeTab";
    $(view).classList.toggle("is-hidden",!active);
    $(tab).classList.toggle("active",active);
@@ -179,5 +179,6 @@ export function initHome(sb,{openQuote}){
  $("homeAllQuotes").addEventListener("click",()=>goQuotes("new"));
  $("homeAllJobs").addEventListener("click",()=>goJobs());
  $("homeFinanceGo").addEventListener("click",goFinance);
+ $("homeAccountsGo").addEventListener("click",()=>openTab("accountTab"));
  return {activate,refresh};
 }
