@@ -26,6 +26,7 @@ export function initWork(sb){
   out.className="work-feedback "+(message?(error?"error":"success"):"");
  };
  function showEditor(){
+  $("workNotice").classList.add("is-hidden");
   $("workEditor").classList.add("work-form-open");
   $("workEditor").scrollIntoView({behavior:"smooth",block:"start"});
  }
@@ -49,6 +50,14 @@ export function initWork(sb){
    if(used.has(q.id)&&q.id!==selected)continue;
    const option=el("option",q.customer_name+" • "+q.service+" • "+new Date(q.created_at).toLocaleDateString("tr-TR"));
    option.value=q.id;$("workQuote").append(option);
+  }
+  // Retain the current linked quote even if its quote status changed after job creation.
+  if(selected&&![...$("workQuote").options].some(x=>x.value===selected)){
+   const current=jobs.find(j=>j.quote_id===selected);
+   if(current){
+    const label=(current.quote?.customer_name||"Müşteri")+" • "+(current.quote?.service||current.title);
+    const option=el("option",label);option.value=selected;$("workQuote").append(option);
+   }
   }
   if(selected&&[...$("workQuote").options].some(x=>x.value===selected))$("workQuote").value=selected;
  }
@@ -215,7 +224,8 @@ export function initWork(sb){
    resetForm(true);
    await load();
    await loadQuoteOptions();
-   feedback("İş başarıyla kaydedildi.");
+   $("workNotice").textContent="İş başarıyla kaydedildi. İş listesinden istediğin zaman düzenleyebilirsin.";
+   $("workNotice").classList.remove("is-hidden");
    $("workList").scrollIntoView({behavior:"smooth",block:"start"});
   }catch(error){
    const duplicate=error?.code==="23505";
