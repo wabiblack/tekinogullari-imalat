@@ -7,7 +7,21 @@ body{background:#f1f2ef}#app{min-height:75vh}.admin-header{background:#1b2321;co
 .fin-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:21px}.fin-stat{background:white;border:1px solid #dce2dd;border-radius:12px;padding:19px;min-width:0}.fin-stat small{display:block;color:#69766c;font-size:13px;margin-bottom:8px}.fin-stat strong{font-size:clamp(17px,2vw,25px);overflow-wrap:anywhere;font-variant-numeric:tabular-nums}.fin-stat:first-child strong,.fin-net.positive strong{color:#207044}.fin-stat:nth-child(2) strong,.fin-net.negative strong{color:#ac3e34}.fin-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:16px;align-items:start}.fin-card{background:white;border:1px solid #dce2dd;border-radius:12px;overflow:hidden;min-width:0}.fin-card header{padding:19px 20px;border-bottom:1px solid #e8ece8}.fin-card header h3{font-size:18px;margin:0 0 4px}.fin-card header p{font-size:13px;color:#728074;margin:0}.fin-form{padding:19px 20px;display:grid;gap:17px}.fin-duo{display:grid;grid-template-columns:1fr 1fr;gap:12px}.fin-note{font-size:12px;line-height:1.5;color:#6d796f;margin:0}.fin-actions{display:flex;gap:8px;flex-wrap:wrap}.fin-feedback{margin:0;font-size:13px}.fin-feedback.error{color:#ad332b}.fin-feedback.success{color:#257341}
 .fin-list{max-height:660px;overflow-y:auto}.fin-record{border-bottom:1px solid #e9eee9;padding:15px 20px}.fin-record-top{display:flex;align-items:start;justify-content:space-between;gap:11px}.fin-record-name{font-size:14px;font-weight:800;overflow-wrap:anywhere}.fin-record-meta{font-size:12px;color:#6d7b70;margin-top:5px;overflow-wrap:anywhere}.fin-record-price{font-size:16px;white-space:nowrap;font-weight:850}.fin-record-price.income{color:#287646}.fin-record-price.expense{color:#a94135}.fin-record-actions{display:flex;gap:14px;margin-top:10px}.fin-record-actions button{font-size:12px;background:none;border:none;color:#557063;text-decoration:underline;padding:4px 0}.fin-record-actions button.danger{color:#b14b42}.fin-footer{padding:13px 20px;border-top:1px solid #eaeeea;font-size:12px;color:#7b867e;margin:0}
 @media(max-width:900px){.fin-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.fin-grid{grid-template-columns:1fr}}@media(max-width:550px){.fin-duo{grid-template-columns:1fr}.fin-heading{flex-direction:column;align-items:start}.fin-record-top{flex-direction:column}.fin-record-price{white-space:normal}.fin-stat{padding:15px}.admin-tab{padding:10px 12px}}
-</style><script type="module" src="/admin/app.js?v=5"></script></head>
+
+.wa-card{border:1px solid #dbe7da;border-radius:12px;background:#f8fbf7;padding:18px 17px;margin:24px 0 19px}
+.wa-card h4{font-size:16px;margin:0 0 5px;letter-spacing:-.015em;color:#1a3725}
+.wa-card .wa-description{color:#52685a;font-size:13px;line-height:1.5;margin:0 0 14px}
+.wa-card .wa-label{display:block;font-size:13px;font-weight:800;color:#233b2c;margin:13px 0 0}
+.wa-card .wa-select,.wa-card .wa-message{display:block;background:white;border:1px solid #cbd9cd;border-radius:8px;padding:10px 11px;width:100%;margin-top:7px;color:#1b2321;font-size:14px;font-family:inherit}
+.wa-card .wa-message{min-height:150px;resize:vertical;line-height:1.55}
+.wa-actions{margin:16px 0 11px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.wa-actions .wa-open{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:11px 16px;margin:0;text-decoration:none;background:#1a7545;color:white;border-radius:8px;border:0;font-size:14px;font-weight:800}
+.wa-actions .wa-open:hover{background:#155b37;color:white}
+.wa-actions .wa-open.wa-disabled{opacity:.45;pointer-events:none;cursor:not-allowed}
+.wa-card .wa-note,.wa-card .wa-feedback{font-size:12px;line-height:1.5;color:#607064;margin:7px 0 0}
+.wa-card .wa-feedback:not(:empty){color:#205c38}
+@media(max-width:550px){.wa-card{padding:15px}.wa-actions .wa-open{width:100%}}
+</style><script type="module" src="/admin/app.js?v=6"></script></head>
 <body><header class="admin-header"><div class="container"><div><strong>TEKİNOĞULLARI İMALAT</strong> <span style="opacity:.65">/ Yönetici Paneli</span></div><button class="button" id="logout">Çıkış Yap</button></div></header>
 <main id="app" class="admin-wrap"><p id="loading" role="status">Yönetim paneli açılıyor…</p>
 <section id="setup" class="login-card is-hidden">
