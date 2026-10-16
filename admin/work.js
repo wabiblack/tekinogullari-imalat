@@ -147,15 +147,16 @@ export function initWork(sb){
   render();showEditor();
  }
  async function activate(){
+  $("homeView").classList.add("is-hidden");
   $("quoteView").classList.add("is-hidden");
   $("financeView").classList.add("is-hidden");
   $("workView").classList.remove("is-hidden");
-  for(const id of ["quoteTab","financeTab","workTab"]){
+  for(const id of ["homeTab","quoteTab","financeTab","workTab"]){
    const selected=id==="workTab";
    $(id).classList.toggle("active",selected);
    $(id).setAttribute("aria-selected",String(selected));
   }
-  for(const id of ["mobileQuotes","mobileFinance","mobileWork"]){
+  for(const id of ["mobileHome","mobileQuotes","mobileFinance","mobileWork"]){
    const selected=id==="mobileWork";
    $(id).classList.toggle("active",selected);
    if(selected)$(id).setAttribute("aria-current","page");
