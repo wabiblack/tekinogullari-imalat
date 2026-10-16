@@ -4,6 +4,36 @@ const sb=createClient("https://xrlipgbetpohjewhlbml.supabase.co","sb_publishable
 const statusLabels={new:"Yeni",reviewing:"Görüşülüyor",approved:"Onaylandı",in_production:"Üretimde",completed:"Tamamlandı",cancelled:"İptal"};
 const $=id=>document.getElementById(id);
 let requests=[],chosenId=null;
+const isMobile=()=>window.matchMedia("(max-width:800px)").matches;
+function setMobileDetail(open){
+ const grid=$("requestGrid");
+ grid.classList.toggle("mobile-detail-active",open);
+ if(isMobile()){
+  const target=open?$("requestDetailPanel"):$("requestListPanel");
+  requestAnimationFrame(()=>target.scrollIntoView({block:"start",behavior:"auto"}));
+ }
+}
+function selectRequest(id){
+ chosenId=id;
+ renderList();
+ void renderDetail();
+ if(isMobile()){
+  setMobileDetail(true);
+  if(history.state?.tekDetailId!==id)history.pushState({tekDetailId:id},"","#talep-"+id);
+ }
+}
+function backToRequests(){
+ if(isMobile()&&history.state?.tekDetailId){history.back();return}
+ chosenId=null;setMobileDetail(false);renderList();
+}
+window.addEventListener("popstate",event=>{
+ if(event.state?.tekDetailId&&isMobile()){
+  chosenId=event.state.tekDetailId;renderList();void renderDetail();setMobileDetail(true);
+ }else{
+  chosenId=null;setMobileDetail(false);renderList();
+ }
+});
+$("backToRequests").addEventListener("click",backToRequests);
 const customerRatings={1:"Kötü",2:"Orta",3:"İyi"};
 // Ratings are stored on quotes and synchronized only for matching name + phone identities.
 const getStars=q=>Number(q.customer_rating)||0;
@@ -35,7 +65,7 @@ function whatsappMessages(q){
  return templates;
 }
 function renderWhatsApp(q){
- const block=el("section",null,"wa-card"),heading=el("h4","WhatsApp ile Müşteriye Yaz");
+ const block=el("details",null,"wa-card"),heading=el("summary","WhatsApp ile Mesaj Gönder");
  const desc=el("p","Hazır mesaj seç, istersen düzenle; ardından şirket hesabının açık olduğu WhatsApp'ta gönder.","wa-description");
  const label=el("label","Mesaj Şablonu","wa-label"),select=el("select",null,"wa-select"),messageLabel=el("label","Mesaj Metni","wa-label");
  const message=el("textarea",null,"wa-message");message.rows=6;message.maxLength=2000;
@@ -115,7 +145,7 @@ function renderList(){
   const score=getStars(q);
   const starTag=el("span",score?"★".repeat(score)+"☆".repeat(3-score)+"  "+getRatingLabel(score):"☆☆☆  Değerlendirilmedi","customer-rating-tag"+(score?" scored":""));
   button.append(starTag);
-  button.addEventListener("click",()=>{chosenId=q.id;renderList();void renderDetail()});
+  button.addEventListener("click",()=>selectRequest(q.id));
   list.append(button);
  }
 }
@@ -147,6 +177,17 @@ async function renderDetail(){
  const field=(title,value)=>{detail.append(el("p",title,"label"),el("p",value||"Belirtilmemiş","value"))};
 
  field("TELEFON",q.customer_phone);
+ const actions=el("div",null,"customer-actions");
+ const call=el("a","Ara","quick-action");
+ call.href="tel:"+q.customer_phone.replace(/[^+\\d]/g,"");
+ actions.append(call);
+ const waPhone=whatsappNumber(q.customer_phone);
+ if(waPhone){
+  const quick=el("a","WhatsApp","quick-action whatsapp");
+  quick.href="https://wa.me/"+waPhone;quick.target="_blank";quick.rel="noopener noreferrer";
+  actions.append(quick);
+ }
+ detail.append(actions);
  const ratingKey=q.id,currentScore=getStars(q);
  const ratingBox=el("div",null,"rating-box");
  const ratingTitle=el("div","MÜŞTERİ DEĞERLENDİRMESİ","rating-title");
@@ -167,14 +208,23 @@ async function renderDetail(){
  }else{starsRow.append(el("span","Kayıt bulunamadı.","smallprint"))}
  ratingBox.append(ratingTitle,starsRow,ratingText,ratingHelp,ratingFeedback);
  detail.append(ratingBox);
- const contact=el("a","Telefonla Ara ↗","text-link");contact.href="tel:"+q.customer_phone.replace(/[^+\d]/g,"");detail.append(contact);
  field("HİZMET",q.service);field("İŞİN DETAYLARI",q.details);
- detail.append(renderWhatsApp(q));
  if(q.attachment_path){
-  const p=el("p","FOTOĞRAF","label");detail.append(p);
-  const a=el("a","Fotoğrafı Aç ↗","text-link");a.target="_blank";a.rel="noopener noreferrer";a.href="#";a.addEventListener("click",e=>{if(a.href.endsWith("#"))e.preventDefault()});detail.append(a);
-  const {data,error}=await sb.storage.from("tek-quote-photos").createSignedUrl(q.attachment_path,120);
-  if(chosenId===q.id){if(!error&&data?.signedUrl)a.href=data.signedUrl;else a.textContent="Fotoğraf açılamadı."}
+  const label=el("p","İŞ FOTOĞRAFI","label"),figure=el("figure",null,"quote-photo"),state=el("p","Fotoğraf yükleniyor…","photo-state");
+  const image=el("img");image.alt=q.customer_name+" tarafından eklenen iş fotoğrafı";image.loading="eager";image.decoding="async";
+  const anchor=el("a",null,"photo-link");
+  anchor.target="_blank";anchor.rel="noopener noreferrer";anchor.setAttribute("aria-label","İş fotoğrafını büyüt");
+  image.addEventListener("load",()=>{if(figure.isConnected)state.remove()});
+  image.addEventListener("error",()=>{
+   image.remove();
+   state.textContent="Fotoğraf gösterilemedi. Sayfayı yenileyerek tekrar deneyin.";
+  });
+  figure.append(state,anchor);detail.append(label,figure);
+  const {data,error}=await sb.storage.from("tek-quote-photos").createSignedUrl(q.attachment_path,3600);
+  if(chosenId!==q.id)return;
+  if(!error&&data?.signedUrl){
+   anchor.href=data.signedUrl;anchor.append(image);image.src=data.signedUrl;
+  }else state.textContent="Fotoğraf şu an yüklenemiyor. Lütfen yeniden deneyin.";
  }
  const form=el("form");const statLabel=el("label","Talep Durumu");
  const select=el("select",null,"select-status");for(const [key,value] of Object.entries(statusLabels)){const option=el("option",value);option.value=key;select.append(option)}select.value=q.status;statLabel.append(select);
@@ -189,6 +239,7 @@ async function renderDetail(){
   else{feedback.className="success";feedback.textContent="Değişiklikler kaydedildi.";q.status=select.value;q.admin_notes=note.value;renderList();$("statNew").textContent=requests.filter(x=>x.status==="new").length;$("statReview").textContent=requests.filter(x=>["reviewing","approved","in_production"].includes(x.status)).length;$("statDone").textContent=requests.filter(x=>x.status==="completed").length}
   save.disabled=false;save.textContent="Değişiklikleri Kaydet";
  });
+ detail.append(renderWhatsApp(q));
 }
 $("loginForm").addEventListener("submit",async e=>{
  e.preventDefault();const button=e.currentTarget.querySelector("button"),email=$("email").value.trim(),password=$("password").value;
