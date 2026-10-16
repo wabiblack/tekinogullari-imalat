@@ -46,11 +46,13 @@ export function initHome(sb,{openQuote}){
   $("ratingFilter").value="";
   $("search").value="";
   openTab("quoteTab");
+  $("filter").dispatchEvent(new Event("change"));
  }
  function goJobs(filter=""){
   $("workFilter").value=filter;
   $("workSearch").value="";
   openTab("workTab");
+  $("workFilter").dispatchEvent(new Event("change"));
  }
  function goFinance(){openTab("financeTab")}
  function renderQuotes(response){
@@ -169,7 +171,7 @@ export function initHome(sb,{openQuote}){
  $("homeLateCard").addEventListener("click",()=>goJobs("overdue"));
  $("homeSoonCard").addEventListener("click",()=>goJobs("soon"));
  $("homeAllQuotes").addEventListener("click",()=>goQuotes("new"));
- $("homeAllJobs").addEventListener("click",()=>goJobs("soon"));
+ $("homeAllJobs").addEventListener("click",()=>goJobs());
  $("homeFinanceGo").addEventListener("click",goFinance);
  return {activate,refresh};
 }
