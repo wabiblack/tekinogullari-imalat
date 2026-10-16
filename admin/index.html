@@ -183,7 +183,12 @@ body{background:#f1f2ef}#app{min-height:75vh}.admin-header{background:#1b2321;co
  .mobile-bottom-nav{gap:2px;padding-left:5px;padding-right:5px}
 }
 
-</style><script type="module" src="/admin/app.js?v=10"></script></head>
+
+.quote-work-btn{width:100%;display:inline-flex;align-items:center;justify-content:center;min-height:47px;margin:1px 0 15px;padding:11px 14px;border:1px solid #e4b689;border-radius:10px;background:#fff2e7;color:#965022;font-size:14px;font-weight:850;text-align:center}
+.quote-work-btn:hover{background:#ffe6d5}
+.work-notice{font-size:13px;line-height:1.4;padding:11px 14px;border:1px solid #b7dfc8;background:#eaf7ef;color:#27613e;border-radius:9px;margin:0 0 13px}
+
+</style><script type="module" src="/admin/app.js?v=11"></script></head>
 <body><header class="admin-header"><div class="container"><div><strong>TEKİNOĞULLARI İMALAT</strong> <span style="opacity:.65">/ Yönetici Paneli</span></div><button class="button" id="logout">Çıkış Yap</button></div></header>
 <main id="app" class="admin-wrap"><p id="loading" role="status">Yönetim paneli açılıyor…</p>
 <section id="setup" class="login-card is-hidden">
@@ -204,6 +209,7 @@ body{background:#f1f2ef}#app{min-height:75vh}.admin-header{background:#1b2321;co
 </section>
 
 <section id="workView" class="is-hidden" role="tabpanel" aria-labelledby="workTab">
+ <p class="work-notice is-hidden" id="workNotice" role="status" aria-live="polite"></p>
  <div class="work-head"><div><h2>İş Takip Sistemi</h2><p>Onaylanan teklifleri işe dönüştür, üretimi ve teslim tarihlerini takip et.</p></div><div class="work-head-buttons"><button id="workNew" type="button" class="btn">+ Yeni İş</button><button id="workRefresh" type="button" class="btn outline">Yenile ↻</button></div></div>
  <div class="work-stats" aria-label="İş durumu özeti">
   <div class="work-stat"><strong id="workActive">0</strong><small>Aktif İş</small></div>
