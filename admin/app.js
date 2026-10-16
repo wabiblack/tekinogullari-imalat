@@ -1,7 +1,9 @@
 import {createClient} from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import {initFinance} from "./finance.js?v=5";
 import {initAccounts} from "./accounts.js?v=2";
-import {initWork} from "./work.js?v=4";
+import {initWork} from "./work.js?v=5";
+import {initStock} from "./stock.js?v=1";
+import {initDocuments} from "./documents.js?v=1";
 import {initHome} from "./home.js?v=3";
 const sb=createClient("https://xrlipgbetpohjewhlbml.supabase.co","sb_publishable_KR4wJm1CbhzSSJqwTbk57A_f8LThNpD",{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const statusLabels={new:"Yeni",reviewing:"Görüşülüyor",approved:"Onaylandı",in_production:"Üretimde",completed:"Tamamlandı",cancelled:"İptal"};
@@ -292,6 +294,8 @@ async function renderDetail(){
   actions.append(quick);
  }
  detail.append(actions);
+ const pdf=el("button","PDF Fiyat Teklifi Oluştur","quote-pdf-btn");
+ pdf.type="button";pdf.addEventListener("click",()=>documents.openForQuote(q));detail.append(pdf);
  if(["approved","in_production","completed"].includes(q.status)){
   const jobBtn=el("button","İş Kaydını Aç / Oluştur","quote-work-btn");
   jobBtn.type="button";
@@ -371,6 +375,7 @@ $("logout").addEventListener("click",async()=>{
 $("refresh").addEventListener("click",()=>{
  if(!$("homeView").classList.contains("is-hidden"))void home.refresh();
  else if(!$("accountView").classList.contains("is-hidden"))void accounts.refresh();
+ else if(!$("stockView").classList.contains("is-hidden"))void stock.refresh();
  else if(!$("workView").classList.contains("is-hidden"))$("workRefresh").click();
  else if(!$("financeView").classList.contains("is-hidden"))$("finRefresh").click();
  else void loadQuotes();
@@ -405,7 +410,9 @@ if(bootstrap&&/^[a-f0-9]{64}$/.test(bootstrap)){
 
 const finance=initFinance(sb);
 const accounts=initAccounts(sb,{finance});
-const work=initWork(sb);
+const documents=initDocuments();
+const stock=initStock(sb);
+const work=initWork(sb,{documents});
 const home=initHome(sb,{openQuote:id=>{$("quoteTab").click();selectRequest(id)}});
 $("mobileHome").addEventListener("click",()=>{$("homeTab").click()});
 $("mobileQuotes").addEventListener("click",()=>{
@@ -414,6 +421,7 @@ $("mobileQuotes").addEventListener("click",()=>{
  window.scrollTo({top:0,behavior:"auto"});
 });
 $("mobileAccounts").addEventListener("click",()=>{$("accountTab").click();window.scrollTo({top:0,behavior:"auto"})});
+$("mobileStock").addEventListener("click",()=>{$("stockTab").click();window.scrollTo({top:0,behavior:"auto"})});
 $("mobileFinance").addEventListener("click",()=>{
  $("financeTab").click();
  window.scrollTo({top:0,behavior:"auto"});
