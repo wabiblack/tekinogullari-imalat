@@ -160,12 +160,13 @@ export function initHome(sb,{openQuote}){
    if(active)$(mobile).setAttribute("aria-current","page");
    else $(mobile).removeAttribute("aria-current");
   }
+  $("refresh").classList.add("is-hidden");
   display("adminPageTitle","İşletme Özeti");
   window.scrollTo({top:0,behavior:"auto"});
   await refresh();
  }
  document.addEventListener("visibilitychange",()=>{
-  if(document.visibilityState==="visible"&&!$("homeView").classList.contains("is-hidden"))
+  if(document.visibilityState==="visible"&&!$("dashboard").classList.contains("is-hidden")&&!$("homeView").classList.contains("is-hidden"))
    void refresh();
  });
  $("homeTab").addEventListener("click",()=>void activate());
