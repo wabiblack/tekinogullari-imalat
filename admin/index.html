@@ -103,7 +103,7 @@ body{background:#f1f2ef}#app{min-height:75vh}.admin-header{background:#1b2321;co
  .request-quick-actions{padding:0 12px 13px}
  .request-next{min-height:44px;min-width:130px}
  .status-toast{bottom:calc(83px + env(safe-area-inset-bottom,0px));max-width:calc(100vw - 24px);width:calc(100vw - 24px);padding:10px 12px}
- .mobile-bottom-nav{position:fixed;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));bottom:0;left:0;right:0;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));gap:5px;z-index:120;background:#fff;border-top:1px solid #d9e0d9;box-shadow:0 -7px 20px #14221612}
+ .mobile-bottom-nav{position:fixed;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));bottom:0;left:0;right:0;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));gap:5px;z-index:120;background:#fff;border-top:1px solid #d9e0d9;box-shadow:0 -7px 20px #14221612}
  .mobile-bottom-item{border:0;border-radius:10px;background:transparent;color:#69766c;min-height:53px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;font-weight:800}
  .mobile-bottom-item svg{flex-shrink:0}
  .mobile-bottom-item.active{background:#fff1e7;color:#9a481d}
@@ -344,7 +344,87 @@ body{background:#f1f2ef}#app{min-height:75vh}.admin-header{background:#1b2321;co
  .account-controls input,.account-controls select{font-size:16px}
 }
 
-</style><script type="module" src="/admin/app.js?v=15"></script></head>
+
+/* Mobile stock, document editor */
+.stock-intro,.stock-toolbar,.stock-panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.stock-intro h2{font-size:23px;margin:0 0 5px}
+.stock-intro p{font-size:13px;color:#69786d;margin:0}
+.stock-intro .btn{min-height:44px}
+.stock-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:16px 0}
+.stock-stats>div{background:#fff;border:1px solid #dae2da;border-radius:10px;padding:14px;min-width:0}
+.stock-stats small{font-size:11px;color:#718076;display:block}
+.stock-stats strong{display:block;font-size:20px;margin-top:6px;overflow-wrap:anywhere}
+.stock-toolbar{justify-content:flex-start;margin:14px 0;flex-wrap:wrap}
+.stock-toolbar .btn{min-height:45px}
+.stock-panel,.stock-form-card{background:#fff;border:1px solid #dee5dd;border-radius:11px;overflow:hidden}
+.stock-form-card{padding:15px;margin-bottom:13px}
+.stock-form-card h3{font-size:17px;margin:0 0 12px}
+.stock-panels{display:grid;grid-template-columns:1.3fr .7fr;gap:13px}
+.stock-panel-head{padding:13px 15px;border-bottom:1px solid #edf0ed}
+.stock-panel-head h3{font-size:16px;margin:0}
+.stock-filters{padding:10px;display:grid;grid-template-columns:1fr .7fr;gap:8px}
+.stock-filters input,.stock-filters select,.stock-fields input,.stock-fields select{padding:10px;min-height:44px;min-width:0;background:#fff;border:1px solid #cbd4cd;border-radius:8px;color:#283b30;font-size:15px}
+.stock-filters input,.stock-filters select{width:100%}
+.stock-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.stock-fields label{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:700}
+.stock-help{grid-column:1/-1;font-size:12px;color:#738077;margin:0}
+.stock-buttons{grid-column:1/-1;display:flex;gap:8px}
+.stock-notice{padding:12px;border-radius:9px;background:#e9f6eb;color:#227143;font-size:13px;margin:0 0 12px}
+.stock-notice.bad{background:#fff0e8;color:#a34a28}
+.stock-item,.stock-history-line{padding:13px 14px;border-top:1px solid #eef1ee}
+.stock-item-head,.stock-item-line,.stock-history-line{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.stock-item-head strong{font-size:14px;overflow-wrap:anywhere}
+.stock-item-line{color:#6a786f;font-size:12px;margin:8px 0}
+.stock-item-actions{display:flex;gap:8px;flex-wrap:wrap}
+.stock-action{border:1px solid #edc9b0;border-radius:8px;background:#fff6f0;color:#9e5327;padding:9px 13px;font-size:12px;font-weight:800;min-height:41px}
+.stock-action.subdued{background:#f7f8f6;color:#5e7064;border-color:#dae0da}
+.stock-action:disabled{opacity:.45}
+.stock-pill{border-radius:99px;padding:5px 8px;background:#e2f4e8;color:#2b7147;font-size:11px;font-weight:800;white-space:nowrap}
+.stock-pill.danger{background:#fce7df;color:#af382d}
+.stock-history-name{display:flex;flex-direction:column;gap:3px;min-width:0}
+.stock-history-name strong{font-size:13px;overflow-wrap:anywhere}
+.stock-history-name small{font-size:11px;color:#7a857b;overflow-wrap:anywhere}
+.stock-history-line b{font-size:12px;white-space:nowrap}
+.stock-positive{color:#2b874e}
+.stock-negative{color:#b2472f}
+.stock-empty{padding:18px;font-size:13px;color:#7b877c;margin:0}
+.doc-overlay{position:fixed;inset:0;overflow-y:auto;z-index:500;background:#0009;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px}
+.doc-sheet{background:#fff;width:min(770px,100%);border-radius:14px;padding:21px;box-shadow:0 14px 44px #0003}
+.doc-head,.doc-items-heading,.doc-total{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.doc-head{border-bottom:1px solid #e2e7e2;padding-bottom:12px;margin-bottom:15px}
+.doc-head strong{font-size:18px}.doc-head p{margin:3px 0;color:#788478;font-size:12px}
+#docClose{background:#f4f5f3;border:0;border-radius:8px;font-size:18px;min-width:43px;min-height:43px}
+.doc-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.doc-fields label{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:750}
+.doc-fields input,.doc-fields select,.doc-fields textarea{width:100%;min-width:0;background:#fff;border:1px solid #cdd7cd;border-radius:8px;padding:11px;font-size:16px}
+.doc-fields label:nth-child(7),.doc-fields label:nth-child(10),.doc-items,.doc-items-heading,.doc-total,.doc-guidance,.doc-error,#docPrint{grid-column:1/-1}
+.doc-items-heading strong{font-size:15px}.doc-items-heading .btn{min-height:42px}
+.doc-items{display:grid;gap:7px}
+.doc-line{display:grid;grid-template-columns:1.5fr .6fr .9fr 38px;gap:7px}
+.doc-line input{font-size:14px;padding:9px}
+.doc-item-remove{min-height:44px;border:0;background:#fff0eb;color:#a44228;border-radius:8px;font-size:19px}
+.doc-total{background:#f4f7f2;padding:12px;border-radius:8px;font-size:15px}
+.doc-total strong{font-size:22px}
+.doc-guidance{font-size:12px;color:#748174;line-height:1.45;margin:0}
+.doc-error{font-size:13px;color:#b83e30;margin:0}
+#docPrint{min-height:49px}
+.work-profit-box{margin:13px 0;padding:13px;background:#f7faf5;border:1px solid #d9e9d9;border-radius:10px}
+.work-profit-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.work-profit-head strong{font-size:14px}
+.work-profit-head small{font-size:11px;color:#78867d}
+.work-profit-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:10px 0}
+.work-profit-grid>div{padding:9px;background:#fff;border-radius:8px;min-width:0}
+.work-profit-grid small{display:block;font-size:11px;color:#6e7c71}
+.work-profit-grid b{display:block;font-size:15px;overflow-wrap:anywhere}
+.work-profit-note{font-size:11px;line-height:1.55;color:#738075;margin:8px 0 0}
+.work-profit-negative{color:#b3412d}
+.work-profit-actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.work-profit-actions button{min-height:43px;padding:9px 12px;background:#fff4ea;border:1px solid #edc3a6;color:#924b25;border-radius:9px;font-weight:800;font-size:13px}
+.quote-pdf-btn{min-height:46px;width:100%;border:1px solid #d4ddd5;background:#fff;color:#405444;border-radius:9px;margin:4px 0 12px;font-weight:800}
+@media(max-width:850px){.stock-panels{grid-template-columns:1fr}.stock-fields{grid-template-columns:1fr}.stock-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stock-stats>div:last-child{grid-column:1/-1}}
+@media(max-width:800px){.mobile-bottom-item{font-size:9px}.mobile-bottom-nav{gap:0;padding-left:2px;padding-right:2px}.stock-intro h2{font-size:21px}.stock-filters{grid-template-columns:1fr}.stock-action{flex:1}.doc-overlay{padding:0}.doc-sheet{min-height:100vh;border-radius:0;padding:15px 12px 95px}.doc-fields{grid-template-columns:1fr}.doc-line{grid-template-columns:1fr 60px 90px 33px}.doc-line input{padding:8px 6px;font-size:13px}.doc-fields label{grid-column:1/-1}.doc-items-heading{align-items:center}.doc-items-heading .btn{padding:9px}.doc-total strong{font-size:18px}}
+
+</style><script type="module" src="/admin/app.js?v=16"></script></head>
 <body><header class="admin-header"><div class="container"><div><strong>TEKİNOĞULLARI İMALAT</strong> <span style="opacity:.65">/ Yönetici Paneli</span></div><button class="button" id="logout">Çıkış Yap</button></div></header>
 <main id="app" class="admin-wrap"><p id="loading" role="status">Yönetim paneli açılıyor…</p>
 <section id="setup" class="login-card is-hidden">
@@ -359,7 +439,7 @@ body{background:#f1f2ef}#app{min-height:75vh}.admin-header{background:#1b2321;co
 <section id="login" class="login-card is-hidden"><p class="eyebrow">Yetkili Girişi</p><h1>Yönetici Paneli</h1><p>Gelen teklifleri görüntülemek için yetkili hesabınızla giriş yapın.</p><form id="loginForm"><label class="field">E-posta<input type="email" id="email" value="ercan@tekin.com" required autocomplete="username" placeholder="ornek@firma.com"></label><label class="field">Şifre<input type="password" id="password" required autocomplete="current-password" placeholder="Şifreniz"></label><button class="btn" type="submit">Giriş Yap ↗</button><p id="loginError" class="error" role="alert"></p></form></section>
 <section id="dashboard" class="is-hidden"><div class="dashboard-head"><div><p class="eyebrow">TEKİNOĞULLARI İMALAT / Yönetim</p><h1 id="adminPageTitle">İşletme Özeti</h1></div><button class="btn outline" id="refresh">Yenile ↻</button></div>
 <p id="notificationHint" class="notification-hint is-hidden" role="status" aria-live="polite"></p>
-<div class="admin-tabs" role="tablist" aria-label="Yönetim bölümleri"><button type="button" id="homeTab" class="admin-tab active" role="tab" aria-selected="true" aria-controls="homeView">Ana Ekran</button><button type="button" id="quoteTab" class="admin-tab" role="tab" aria-selected="false" aria-controls="quoteView">Teklif Talepleri</button><button type="button" id="workTab" class="admin-tab" role="tab" aria-selected="false" aria-controls="workView">İş Takibi</button><button type="button" id="accountTab" class="admin-tab" role="tab" aria-selected="false" aria-controls="accountView">Müşteri Hesapları</button><button type="button" id="financeTab" class="admin-tab" role="tab" aria-selected="false" aria-controls="financeView">Mali Yönetim</button></div>
+<div class="admin-tabs" role="tablist" aria-label="Yönetim bölümleri"><button type="button" id="homeTab" class="admin-tab active" role="tab" aria-selected="true" aria-controls="homeView">Ana Ekran</button><button type="button" id="quoteTab" class="admin-tab" role="tab" aria-selected="false" aria-controls="quoteView">Teklif Talepleri</button><button type="button" id="workTab" class="admin-tab" role="tab" aria-selected="false" aria-controls="workView">İş Takibi</button><button type="button" id="accountTab" class="admin-tab" role="tab" aria-selected="false" aria-controls="accountView">Müşteri Hesapları</button><button type="button" id="stockTab" class="admin-tab" role="tab" aria-selected="false" aria-controls="stockView">Stok ve Malzeme</button><button type="button" id="financeTab" class="admin-tab" role="tab" aria-selected="false" aria-controls="financeView">Mali Yönetim</button></div>
 <section id="homeView" role="tabpanel" aria-labelledby="homeTab" class="home-view">
  <div class="home-top">
   <div>
@@ -461,6 +541,45 @@ body{background:#f1f2ef}#app{min-height:75vh}.admin-header{background:#1b2321;co
  <p id="accountUpdated" class="account-updated"></p>
 </section>
 
+
+<section id="stockView" class="is-hidden" role="tabpanel" aria-labelledby="stockTab">
+ <div class="stock-intro"><div><h2>Stok ve Malzemeler</h2><p>Demir, profil, sac, kaynak sarfı ve diğer malzemeler için giriş/çıkış takibi.</p></div><button id="stockRefresh" class="btn outline" type="button">Yenile ↻</button></div>
+ <p id="stockNotice" class="stock-notice is-hidden" role="status"></p>
+ <div class="stock-stats">
+  <div><small>Malzeme Çeşidi</small><strong id="stockTotal">—</strong></div>
+  <div><small>Azalan Stok</small><strong id="stockLow">—</strong></div>
+  <div><small>Tahmini Stok Değeri</small><strong id="stockValue">—</strong></div>
+ </div>
+ <div class="stock-toolbar"><button id="stockNew" type="button" class="btn">+ Yeni Malzeme</button><button id="stockMovementNew" type="button" class="btn outline">+ Stok Hareketi</button></div>
+ <section class="stock-form-card is-hidden" id="stockEditor">
+  <h3 id="stockEditorTitle">Yeni Malzeme</h3>
+  <form id="stockEditorForm" class="stock-fields">
+   <label>Malzeme Adı<input id="stockName" required minlength="2" maxlength="130" placeholder="Örn. 40x40 kutu profil"></label>
+   <label>Birim<select id="stockUnit"><option>adet</option><option>kg</option><option>metre</option><option>m²</option><option>litre</option><option>paket</option><option>ton</option></select></label>
+   <label>Asgari Stok<input id="stockMin" type="number" min="0" max="100000000" step="0.001" inputmode="decimal" value="0" required></label>
+   <label>Birim Maliyet (TL)<input id="stockCost" type="number" min="0" max="999999999999.99" step="0.01" inputmode="decimal" value="0" required></label>
+   <p class="stock-help">Mevcut stok miktarı malzeme oluşturulduğunda sıfırdır. Stok Girişi ile kayıt ekle. Birim maliyeti sonradan değiştirmek geçmiş tüketim maliyetlerini değiştirmez.</p>
+   <div class="stock-buttons"><button id="stockSave" type="submit" class="btn">Kaydet</button><button id="stockEditorCancel" type="button" class="btn outline">Vazgeç</button></div>
+  </form>
+ </section>
+ <section class="stock-form-card is-hidden" id="stockMovementForm">
+  <h3>Stok Giriş / Çıkış</h3>
+  <form id="stockMoveForm" class="stock-fields">
+   <label>Malzeme<select id="stockMaterial" required></select></label>
+   <label>İşlem<select id="stockType"><option value="in">Stok Girişi</option><option value="out">Stok Çıkışı / Tüketim</option></select></label>
+   <label>Miktar<input id="stockQty" type="number" min="0.001" max="100000000" step="0.001" inputmode="decimal" required></label>
+   <label>İlgili İş (çıkış için, isteğe bağlı)<select id="stockJob"><option value="">Atölye tüketimi (işe bağlı değil)</option></select></label>
+   <label>Açıklama<input id="stockMemo" maxlength="350" placeholder="Tedarik, kullanım notu vb."></label>
+   <p class="stock-help">İşe bağlı stok çıkışı o işin malzeme maliyetini artırır. Genel atölye çıkışı iş kârına yansımaz.</p>
+   <div class="stock-buttons"><button type="submit" id="stockMoveSave" class="btn">Hareketi Kaydet</button><button type="button" id="stockMoveCancel" class="btn outline">Vazgeç</button></div>
+  </form>
+ </section>
+ <div class="stock-panels">
+  <section class="stock-panel"><div class="stock-panel-head"><h3>Mevcut Stok</h3></div><div class="stock-filters"><input id="stockSearch" type="search" placeholder="Malzeme ara" aria-label="Malzeme ara"><select id="stockFilter" aria-label="Stok durumu"><option value="">Tüm Malzemeler</option><option value="low">Azalan Stok</option></select></div><div id="stockList" class="stock-list"><p class="stock-empty">Yükleniyor…</p></div></section>
+  <section class="stock-panel"><div class="stock-panel-head"><h3>Son Hareketler</h3></div><div id="stockHistory" class="stock-list"><p class="stock-empty">Yükleniyor…</p></div></section>
+ </div>
+</section>
+
 <section id="financeView" class="is-hidden" role="tabpanel" aria-labelledby="financeTab">
   <div class="fin-heading"><div><p class="eyebrow">MALİ YÖNETİM</p><h2>Gelir, Gider ve Nakit Takibi</h2><p>Tahsilatları ve yapılan ödemeleri takip et. Teklifler otomatik gelir olarak sayılmaz.</p></div><button id="finRefresh" type="button" class="btn outline">Yenile ↻</button></div>
   <div class="fin-period"><label>Dönem <select id="finPeriod"><option value="month">Bu Ay</option><option value="lastmonth">Geçen Ay</option><option value="year">Bu Yıl</option><option value="all">Tüm Zamanlar</option><option value="custom">Tarih Aralığı</option></select></label><div id="finDates" class="is-hidden"><label>Başlangıç <input type="date" id="finStart"></label><label>Bitiş <input type="date" id="finEnd"></label><button type="button" id="finApply" class="btn outline">Uygula</button></div></div>
@@ -477,6 +596,29 @@ body{background:#f1f2ef}#app{min-height:75vh}.admin-header{background:#1b2321;co
    <section class="fin-card"><header><h3>Gelir-Gider Hareketleri</h3><p id="finListLabel">Bu dönem kayıtları</p></header><div id="finList" class="fin-list"><p class="empty">Mali bölüm açıldığında kayıtlar yüklenir.</p></div><p class="fin-footer">En yeni 300 kayıt gösterilir. Üstteki toplamlar seçili dönemin bütün kayıtlarını kapsar.</p></section>
   </div>
 </section>
+
+<div id="docOverlay" class="doc-overlay is-hidden" role="dialog" aria-modal="true" aria-label="Fiyat teklifi ve iş formu">
+ <div class="doc-sheet">
+  <div class="doc-head"><div><strong>Tekinoğulları Belgeler</strong><p>TO logolu PDF teklif / sipariş formu</p></div><button id="docClose" type="button" aria-label="Kapat">✕</button></div>
+  <form id="docForm" class="doc-fields">
+   <label>Belge Türü<select id="docKind"><option value="offer">Fiyat Teklifi</option><option value="work">İş / Sipariş Formu</option></select></label>
+   <label>Tarih<input id="docDate" type="date" required></label>
+   <label>Müşteri<input id="docCustomer" minlength="2" maxlength="150" required></label>
+   <label>Telefon<input id="docPhone" maxlength="40"></label>
+   <label>Hizmet<input id="docService" maxlength="150" required></label>
+   <label>Teklif Geçerliliği / Teslim Notu<input id="docTerms" maxlength="200" placeholder="Örn. Teklif 7 gün geçerlidir"></label>
+   <label>KDV Beyanı<select id="docTax"><option value="none">Belirtilmedi</option><option value="included">KDV Dahil</option><option value="excluded">KDV Hariç</option></select></label>
+   <div class="doc-items-heading"><strong>Teklif / İş Kalemleri</strong><button id="docAddItem" type="button" class="btn outline">+ Kalem Ekle</button></div>
+   <div id="docItems" class="doc-items"></div>
+   <div class="doc-total">Toplam <strong id="docTotal">₺0,00</strong></div>
+   <label>İş / Teklif Açıklaması<textarea id="docNotes" maxlength="1200" rows="4" placeholder="Ölçü, malzeme, ödeme ve teslim şartları"></textarea></label>
+   <p class="doc-guidance">Orijinal TO logosu aynen kullanılır. Android'de PDF önizlemesinde “PDF olarak kaydet” seç. WhatsApp'a göndermek için kaydettiğin PDF'yi paylaş.</p>
+   <p id="docError" role="alert" class="doc-error"></p>
+   <button type="submit" id="docPrint" class="btn">PDF Oluştur / Yazdır</button>
+  </form>
+ </div>
+</div>
+
 <div id="statusToast" class="status-toast is-hidden" role="status" aria-live="polite">
   <span id="statusToastText"></span>
   <button id="statusUndo" type="button" class="status-undo is-hidden">Geri Al</button>
@@ -498,6 +640,10 @@ body{background:#f1f2ef}#app{min-height:75vh}.admin-header{background:#1b2321;co
   <button type="button" id="mobileAccounts" class="mobile-bottom-item" aria-label="Müşteri Hesapları">
     <svg aria-hidden="true" viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="15" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6 17c.6-2 5.4-2 6 0M15 10h3M15 14h3"/></svg>
     <span>Hesaplar</span>
+  </button>
+  <button type="button" id="mobileStock" class="mobile-bottom-item" aria-label="Stok ve Malzeme">
+    <svg aria-hidden="true" viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 14h8M8 17h8"/></svg>
+    <span>Stok</span>
   </button>
   <button type="button" id="mobileFinance" class="mobile-bottom-item" aria-label="Mali Yönetim">
     <svg aria-hidden="true" viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h3"/></svg>
