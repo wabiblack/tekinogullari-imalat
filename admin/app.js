@@ -2,15 +2,10 @@ import {createClient} from "https://esm.sh/@supabase/supabase-js@2.49.4";
 const sb=createClient("https://xrlipgbetpohjewhlbml.supabase.co","sb_publishable_KR4wJm1CbhzSSJqwTbk57A_f8LThNpD",{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const statusLabels={new:"Yeni",reviewing:"Görüşülüyor",approved:"Onaylandı",in_production:"Üretimde",completed:"Tamamlandı",cancelled:"İptal"};
 const $=id=>document.getElementById(id);
-let requests=[],chosenId=null,ratings=new Map(),ratingsLoaded=false;
+let requests=[],chosenId=null;
 const customerRatings={1:"Kötü",2:"Orta",3:"İyi"};
-function phoneKey(phone){
- let d=String(phone||"").replace(/\D/g,"");
- if(d.length===12&&d.startsWith("90"))d="0"+d.slice(2);
- else if(d.length===10&&d.startsWith("5"))d="0"+d;
- return d.length>=10&&d.length<=15?d:null;
-}
-const getStars=q=>ratings.get(phoneKey(q.customer_phone))||0;
+// Ratings belong to the individual quote ID, never to a shared phone number.
+const getStars=q=>Number(q.customer_rating)||0;
 const getRatingLabel=stars=>stars?customerRatings[stars]:"Değerlendirilmedi";
 
 const loading=$("loading"),login=$("login"),dashboard=$("dashboard"),logout=$("logout");
@@ -28,14 +23,11 @@ async function validateUser(){
 async function loadQuotes(){
  const list=$("requestList");list.replaceChildren(el("p","Talepler yükleniyor…","empty"));
 
- const [quotesResponse,ratingsResponse]=await Promise.all([
-   sb.from("quote_requests").select("id,customer_name,customer_phone,service,details,attachment_path,status,admin_notes,created_at,updated_at").order("created_at",{ascending:false}).limit(300),
-   sb.from("customer_ratings").select("phone_key,stars")
- ]);
- if(quotesResponse.error){list.replaceChildren(el("p","Talepler yüklenemedi. Oturumunuzu kontrol edip yeniden deneyin.","error"));return}
- requests=quotesResponse.data||[];
- ratingsLoaded=!ratingsResponse.error;
- ratings=new Map((ratingsResponse.data||[]).map(x=>[x.phone_key,x.stars]));
+ const {data,error}=await sb.from("quote_requests")
+   .select("id,customer_name,customer_phone,service,details,attachment_path,status,admin_notes,customer_rating,created_at,updated_at")
+   .order("created_at",{ascending:false}).limit(300);
+ if(error){list.replaceChildren(el("p","Talepler yüklenemedi. Oturumunuzu kontrol edip yeniden deneyin.","error"));return}
+ requests=data||[];
  $("statAll").textContent=requests.length;
  $("statNew").textContent=requests.filter(x=>x.status==="new").length;
  $("statReview").textContent=requests.filter(x=>["reviewing","approved","in_production"].includes(x.status)).length;
@@ -61,21 +53,22 @@ function renderList(){
   list.append(button);
  }
 }
-async function saveCustomerRating(key,stars,feedback,buttons){
- if(!ratingsLoaded||!key)return;
+async function saveCustomerRating(quoteId,stars,feedback,buttons){
+ if(!quoteId)return;
  buttons.forEach(b=>b.disabled=true);
  feedback.className="rating-feedback";feedback.textContent="Kaydediliyor…";
  try{
-  let error;
-  if(stars===0){
-   ({error}=await sb.from("customer_ratings").delete().eq("phone_key",key));
-  }else{
-   ({error}=await sb.from("customer_ratings").upsert({phone_key:key,stars,updated_at:new Date().toISOString()},{onConflict:"phone_key"}));
-  }
-  if(error)throw error;
-  if(stars===0)ratings.delete(key);else ratings.set(key,stars);
+  const value=stars===0?null:stars;
+  const {data,error}=await sb.from("quote_requests")
+    .update({customer_rating:value,updated_at:new Date().toISOString()})
+    .eq("id",quoteId)
+    .select("id,customer_rating")
+    .single();
+  if(error||!data)throw error||new Error("Güncelleme kaydedilemedi.");
+  const record=requests.find(x=>x.id===quoteId);
+  if(record)record.customer_rating=data.customer_rating;
   renderList();
-  await renderDetail();
+  if(chosenId===quoteId)await renderDetail();
  }catch(_){
   feedback.className="rating-feedback error";feedback.textContent="Puan kaydedilemedi. Yeniden deneyin.";
   buttons.forEach(b=>b.disabled=false);
@@ -89,15 +82,15 @@ async function renderDetail(){
  const field=(title,value)=>{detail.append(el("p",title,"label"),el("p",value||"Belirtilmemiş","value"))};
 
  field("TELEFON",q.customer_phone);
- const ratingKey=phoneKey(q.customer_phone),currentScore=getStars(q);
+ const ratingKey=q.id,currentScore=getStars(q);
  const ratingBox=el("div",null,"rating-box");
  const ratingTitle=el("div","MÜŞTERİ DEĞERLENDİRMESİ","rating-title");
  const starsRow=el("div",null,"rating-stars");
  const ratingText=el("div",currentScore?getRatingLabel(currentScore)+" • "+currentScore+"/3 yıldız":"Henüz değerlendirilmedi","rating-current");
- const ratingHelp=el("p","1 yıldız: Kötü  ·  2 yıldız: Orta  ·  3 yıldız: İyi","rating-help");
+ const ratingHelp=el("p","1 yıldız: Kötü  ·  2 yıldız: Orta  ·  3 yıldız: İyi. Puan yalnızca bu kayda aittir.","rating-help");
  const ratingFeedback=el("p",null,"rating-feedback");ratingFeedback.setAttribute("role","status");ratingFeedback.setAttribute("aria-live","polite");
  const starsButtons=[];
- if(ratingsLoaded&&ratingKey){
+ if(ratingKey){
   for(let n=1;n<=3;n++){
    const star=el("button","★","rating-star"+(n<=currentScore?" selected":""));
    star.type="button";star.title=n+" yıldız: "+customerRatings[n];star.setAttribute("aria-label",n+" yıldız: "+customerRatings[n]);
@@ -106,7 +99,7 @@ async function renderDetail(){
    star.addEventListener("click",()=>void saveCustomerRating(ratingKey,n,ratingFeedback,starsButtons));
   }
   if(currentScore){const clear=el("button","Puanı Kaldır","rating-clear");clear.type="button";clear.addEventListener("click",()=>void saveCustomerRating(ratingKey,0,ratingFeedback,[...starsButtons,clear]));starsRow.append(clear)}
- }else{starsRow.append(el("span",ratingsLoaded?"Müşteri telefonu puanlamaya uygun değil.":"Değerlendirmeler yüklenemedi. Yenile butonuna basın.","smallprint"))}
+ }else{starsRow.append(el("span","Kayıt bulunamadı.","smallprint"))}
  ratingBox.append(ratingTitle,starsRow,ratingText,ratingHelp,ratingFeedback);
  detail.append(ratingBox);
  const contact=el("a","Telefonla Ara ↗","text-link");contact.href="tel:"+q.customer_phone.replace(/[^+\d]/g,"");detail.append(contact);
