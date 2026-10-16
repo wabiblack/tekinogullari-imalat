@@ -2,6 +2,45 @@ import {createClient} from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import {initFinance} from "./finance.js?v=1";
 const sb=createClient("https://xrlipgbetpohjewhlbml.supabase.co","sb_publishable_KR4wJm1CbhzSSJqwTbk57A_f8LThNpD",{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const statusLabels={new:"Yeni",reviewing:"Görüşülüyor",approved:"Onaylandı",in_production:"Üretimde",completed:"Tamamlandı",cancelled:"İptal"};
+
+let notificationStarted=false,notificationInterval=null,notificationLastId=null,notificationChecking=false;
+async function startQuoteNotifications(){
+ const native=window.TekinAndroid;
+ if(!native||typeof native.getDeviceToken!=="function")return;
+ try {
+  const token=native.getDeviceToken();
+  if(!/^[a-f0-9]{64}$/.test(token))throw new Error("Geçersiz cihaz anahtarı");
+  const {data,error}=await sb.rpc("tek_register_notification_device",{p_token:token});
+  if(error||!data)throw error||new Error("Cihaz yetkilendirilemedi");
+  notificationLastId=requests[0]?.id||null;
+  notificationStarted=true;
+  native.startBackgroundChecks();
+  $("notificationHint").textContent="Yeni teklif kontrolü etkin. Android bildirim iznine izin ver.";
+  $("notificationHint").classList.remove("is-hidden");
+  if(!notificationInterval)notificationInterval=setInterval(()=>void checkForegroundNewQuotes(),45000);
+ }catch(error){
+  $("notificationHint").textContent="Bildirim kurulamadı. Paneli yenileyip tekrar giriş yap.";
+  $("notificationHint").classList.remove("is-hidden");
+  console.warn("Notification setup failed:",error);
+ }
+}
+async function checkForegroundNewQuotes(){
+ if(!notificationStarted||notificationChecking||document.visibilityState!=="visible")return;
+ notificationChecking=true;
+ try {
+  const {data,error}=await sb.from("quote_requests").select("id")
+   .order("created_at",{ascending:false}).limit(1);
+  if(error)return;
+  const newest=data?.[0]?.id||null;
+  if(newest!==notificationLastId&&notificationLastId!==null&&newest){
+   if(window.TekinAndroid?.checkNow)window.TekinAndroid.checkNow();
+   await loadQuotes();
+   $("notificationHint").textContent="Yeni teklif geldi. Liste güncellendi!";
+  }
+  notificationLastId=newest;
+ }finally{notificationChecking=false}
+}
+
 const $=id=>document.getElementById(id);
 let requests=[],chosenId=null;
 const isMobile=()=>window.matchMedia("(max-width:800px)").matches;
@@ -114,7 +153,7 @@ async function validateUser(){
  if(!session)return showLogin();
  const {data:authorized,error}=await sb.rpc("is_tek_admin");
  if(error||!authorized){await sb.auth.signOut();return showLogin("Bu hesap için yönetici yetkisi tanımlı değil.")}
- showDashboard();await loadQuotes();
+ showDashboard();await loadQuotes();void startQuoteNotifications();
 }
 async function loadQuotes(){
  const list=$("requestList");list.replaceChildren(el("p","Talepler yükleniyor…","empty"));
@@ -248,7 +287,16 @@ $("loginForm").addEventListener("submit",async e=>{
  if(error)showLogin("Giriş başarısız. E-posta veya şifreyi kontrol edin.");else await validateUser();
  button.disabled=false;button.textContent="Giriş Yap ↗";
 });
-$("logout").addEventListener("click",async()=>{await sb.auth.signOut();chosenId=null;requests=[];showLogin()});
+$("logout").addEventListener("click",async()=>{
+ const native=window.TekinAndroid;
+ notificationStarted=false;
+ if(notificationInterval){clearInterval(notificationInterval);notificationInterval=null}
+ if(native?.getDeviceToken){
+  try{await sb.rpc("tek_unregister_notification_device",{p_token:native.getDeviceToken()})}catch(_){}
+  native.stopBackgroundChecks();
+ }
+ await sb.auth.signOut();chosenId=null;requests=[];showLogin();
+});
 $("refresh").addEventListener("click",()=>void loadQuotes());
 $("search").addEventListener("input",renderList);
 $("filter").addEventListener("change",renderList);
