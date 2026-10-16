@@ -179,7 +179,7 @@ async function renderDetail(){
  field("TELEFON",q.customer_phone);
  const actions=el("div",null,"customer-actions");
  const call=el("a","Ara","quick-action");
- call.href="tel:"+q.customer_phone.replace(/[^+\\d]/g,"");
+ call.href="tel:"+q.customer_phone.replace(/[^+\d]/g,"");
  actions.append(call);
  const waPhone=whatsappNumber(q.customer_phone);
  if(waPhone){
