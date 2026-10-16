@@ -104,13 +104,55 @@ public final class QuoteNotificationJob extends JobService {
                     text.append(new String(buffer, 0, count, StandardCharsets.UTF_8));
                 }
             }
-            int newCount = Math.max(0, new JSONObject(text.toString()).optInt("new_count", 0));
+            JSONObject response = new JSONObject(text.toString());
+            int newCount = Math.max(0, response.optInt("new_count", 0));
+            int approaching = Math.max(0, response.optInt("due_upcoming", 0));
+            int dueToday = Math.max(0, response.optInt("due_today", 0));
+            int overdue = Math.max(0, response.optInt("due_overdue", 0));
             if (newCount > 0) notifyNewQuotes(ctx, newCount);
+            if (approaching + dueToday + overdue > 0) notifyDelivery(ctx, approaching, dueToday, overdue);
         } catch (Exception e) {
             Log.w(TAG, "Background quote check will retry", e);
         } finally {
             if (connection != null) connection.disconnect();
         }
+    }
+
+
+    private static void notifyDelivery(Context ctx, int approaching, int dueToday, int overdue) {
+        if (Build.VERSION.SDK_INT >= 33 &&
+            ctx.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) return;
+        NotificationManager manager = (NotificationManager)ctx.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (manager == null || !manager.areNotificationsEnabled()) return;
+        String channelId = "tekin_delivery_alerts";
+        if (Build.VERSION.SDK_INT >= 26) {
+            NotificationChannel channel = new NotificationChannel(channelId,"İş Teslimatları",NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription("Yaklaşan ve geciken iş teslim tarihleri");
+            manager.createNotificationChannel(channel);
+        }
+        StringBuilder body = new StringBuilder();
+        if(overdue > 0) body.append(overdue).append(" geciken iş");
+        if(dueToday > 0) {
+            if(body.length()>0) body.append(", ");
+            body.append(dueToday).append(" bugün teslim");
+        }
+        if(approaching > 0) {
+            if(body.length()>0) body.append(", ");
+            body.append(approaching).append(" yaklaşan teslimat");
+        }
+        Intent intent = new Intent(ctx,MainActivity.class)
+            .setAction("com.tekinogullari.yonetim.OPEN_JOBS")
+            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pending = PendingIntent.getActivity(ctx,1,intent,PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        Notification.Builder builder=Build.VERSION.SDK_INT>=26?
+            new Notification.Builder(ctx,channelId):new Notification.Builder(ctx);
+        builder.setSmallIcon(android.R.drawable.ic_popup_reminder)
+            .setContentTitle("Tekinoğulları • Teslimat Hatırlatması")
+            .setContentText(body.toString())
+            .setStyle(new Notification.BigTextStyle().bigText(body.toString()))
+            .setContentIntent(pending)
+            .setAutoCancel(true);
+        manager.notify(62823,builder.build());
     }
 
     private static void notifyNewQuotes(Context ctx, int count) {
