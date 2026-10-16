@@ -6,6 +6,14 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Build;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.webkit.JavascriptInterface;
+import java.security.SecureRandom;
+
 import android.os.Message;
 import android.webkit.CookieManager;
 import android.webkit.ValueCallback;
@@ -21,6 +29,44 @@ public final class MainActivity extends Activity {
     private static final String ADMIN_HOST = "tekinogullari-imalat.vercel.app";
     private static final int FILE_REQUEST_CODE = 42;
 
+
+    private static final int NOTIFICATION_PERMISSION_REQUEST = 635;
+
+    public final class NotificationBridge {
+        @JavascriptInterface
+        public String getDeviceToken() {
+            SharedPreferences prefs = getSharedPreferences("tekin_device_notifications", Context.MODE_PRIVATE);
+            String existing = prefs.getString("device_token", null);
+            if (existing != null && existing.matches("^[0-9a-f]{64}$")) return existing;
+            byte[] bytes = new byte[32];
+            new SecureRandom().nextBytes(bytes);
+            StringBuilder result = new StringBuilder(64);
+            for (byte b : bytes) result.append(String.format(java.util.Locale.ROOT, "%02x", b & 0xff));
+            String token = result.toString();
+            prefs.edit().putString("device_token", token).apply();
+            return token;
+        }
+        @JavascriptInterface
+        public void startBackgroundChecks() {
+            runOnUiThread(() -> {
+                QuoteNotificationJob.schedule(MainActivity.this);
+                if (Build.VERSION.SDK_INT >= 33 &&
+                    checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                        NOTIFICATION_PERMISSION_REQUEST);
+                }
+            });
+        }
+        @JavascriptInterface
+        public void stopBackgroundChecks() {
+            QuoteNotificationJob.stop(getApplicationContext());
+        }
+        @JavascriptInterface
+        public void checkNow() {
+            QuoteNotificationJob.checkImmediately(getApplicationContext());
+        }
+    }
+
     private WebView webView;
     private ValueCallback<Uri[]> pendingFileChooser;
 
@@ -33,6 +79,7 @@ public final class MainActivity extends Activity {
 
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
+        webView.addJavascriptInterface(new NotificationBridge(), "TekinAndroid");
         settings.setDomStorageEnabled(true);
         settings.setDatabaseEnabled(true);
         settings.setJavaScriptCanOpenWindowsAutomatically(false);
