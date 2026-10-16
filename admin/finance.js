@@ -132,6 +132,11 @@ export function initFinance(sb){
   $("quoteView").classList.toggle("is-hidden",finance);
   $("financeView").classList.toggle("is-hidden",!finance);
   $("workView").classList.add("is-hidden");
+  $("homeView").classList.add("is-hidden");
+  $("homeTab").classList.remove("active");
+  $("homeTab").setAttribute("aria-selected","false");
+  $("mobileHome").classList.remove("active");
+  $("mobileHome").removeAttribute("aria-current");
   $("workTab").classList.remove("active");
   $("workTab").setAttribute("aria-selected","false");
   $("mobileWork").classList.remove("active");
