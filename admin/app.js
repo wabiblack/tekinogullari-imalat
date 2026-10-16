@@ -1,5 +1,6 @@
 import {createClient} from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import {initFinance} from "./finance.js?v=4";
+import {initFinance} from "./finance.js?v=5";
+import {initAccounts} from "./accounts.js?v=1";
 import {initWork} from "./work.js?v=3";
 import {initHome} from "./home.js?v=2";
 const sb=createClient("https://xrlipgbetpohjewhlbml.supabase.co","sb_publishable_KR4wJm1CbhzSSJqwTbk57A_f8LThNpD",{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
@@ -369,6 +370,7 @@ $("logout").addEventListener("click",async()=>{
 });
 $("refresh").addEventListener("click",()=>{
  if(!$("homeView").classList.contains("is-hidden"))void home.refresh();
+ else if(!$("accountView").classList.contains("is-hidden"))void accounts.refresh();
  else if(!$("workView").classList.contains("is-hidden"))$("workRefresh").click();
  else if(!$("financeView").classList.contains("is-hidden"))$("finRefresh").click();
  else void loadQuotes();
@@ -401,7 +403,8 @@ if(bootstrap&&/^[a-f0-9]{64}$/.test(bootstrap)){
 }else validateUser().catch(()=>showLogin("Bağlantı kurulamadı. Lütfen tekrar deneyin."));
 
 
-initFinance(sb);
+const finance=initFinance(sb);
+const accounts=initAccounts(sb,{finance});
 const work=initWork(sb);
 const home=initHome(sb,{openQuote:id=>{$("quoteTab").click();selectRequest(id)}});
 $("mobileHome").addEventListener("click",()=>{$("homeTab").click()});
@@ -410,15 +413,10 @@ $("mobileQuotes").addEventListener("click",()=>{
  if(isMobile()&&$("requestGrid").classList.contains("mobile-detail-active"))backToRequests();
  window.scrollTo({top:0,behavior:"auto"});
 });
+$("mobileAccounts").addEventListener("click",()=>{$("accountTab").click();window.scrollTo({top:0,behavior:"auto"})});
 $("mobileFinance").addEventListener("click",()=>{
  $("financeTab").click();
  window.scrollTo({top:0,behavior:"auto"});
-});
-$("mobileReload").addEventListener("click",()=>{
- if(!$("homeView").classList.contains("is-hidden"))void home.refresh();
- else if(!$("workView").classList.contains("is-hidden"))$("workRefresh").click();
- else if(!$("financeView").classList.contains("is-hidden"))$("finRefresh").click();
- else $("refresh").click();
 });
 $("mobileWork").addEventListener("click",()=>{ $("workTab").click();window.scrollTo({top:0,behavior:"auto"}) });
 
