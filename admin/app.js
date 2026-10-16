@@ -1,5 +1,6 @@
 import {createClient} from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import {initFinance} from "./finance.js?v=2";
+import {initFinance} from "./finance.js?v=3";
+import {initWork} from "./work.js?v=1";
 const sb=createClient("https://xrlipgbetpohjewhlbml.supabase.co","sb_publishable_KR4wJm1CbhzSSJqwTbk57A_f8LThNpD",{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const statusLabels={new:"Yeni",reviewing:"Görüşülüyor",approved:"Onaylandı",in_production:"Üretimde",completed:"Tamamlandı",cancelled:"İptal"};
 
@@ -288,6 +289,12 @@ async function renderDetail(){
   actions.append(quick);
  }
  detail.append(actions);
+ if(["approved","in_production","completed"].includes(q.status)){
+  const jobBtn=el("button","İş Kaydını Aç / Oluştur","quote-work-btn");
+  jobBtn.type="button";
+  jobBtn.addEventListener("click",()=>void work.startForQuote(q));
+  detail.append(jobBtn);
+ }
  const ratingKey=q.id,currentScore=getStars(q);
  const ratingBox=el("div",null,"rating-box");
  const ratingTitle=el("div","MÜŞTERİ DEĞERLENDİRMESİ","rating-title");
@@ -358,7 +365,11 @@ $("logout").addEventListener("click",async()=>{
  }
  await sb.auth.signOut();chosenId=null;requests=[];showLogin();
 });
-$("refresh").addEventListener("click",()=>void loadQuotes());
+$("refresh").addEventListener("click",()=>{
+ if(!$("workView").classList.contains("is-hidden"))$("workRefresh").click();
+ else if(!$("financeView").classList.contains("is-hidden"))$("finRefresh").click();
+ else void loadQuotes();
+});
 $("search").addEventListener("input",renderList);
 $("filter").addEventListener("change",renderList);
 $("ratingFilter").addEventListener("change",renderList);
@@ -388,6 +399,7 @@ if(bootstrap&&/^[a-f0-9]{64}$/.test(bootstrap)){
 
 
 initFinance(sb);
+const work=initWork(sb);
 $("mobileQuotes").addEventListener("click",()=>{
  $("quoteTab").click();
  if(isMobile()&&$("requestGrid").classList.contains("mobile-detail-active"))backToRequests();
@@ -398,8 +410,9 @@ $("mobileFinance").addEventListener("click",()=>{
  window.scrollTo({top:0,behavior:"auto"});
 });
 $("mobileReload").addEventListener("click",()=>{
- const isFinance=!$("financeView").classList.contains("is-hidden");
- if(isFinance)$("finRefresh").click();
+ if(!$("workView").classList.contains("is-hidden"))$("workRefresh").click();
+ else if(!$("financeView").classList.contains("is-hidden"))$("finRefresh").click();
  else $("refresh").click();
 });
+$("mobileWork").addEventListener("click",()=>{ $("workTab").click();window.scrollTo({top:0,behavior:"auto"}) });
 
