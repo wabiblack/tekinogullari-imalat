@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Exact TO path shapes and colors from /assets/to-icon.svg. Only centered and scaled for the launcher icon. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="600"
+    android:viewportHeight="600">
+    <path android:fillColor="#FAFAFA" android:pathData="M0,0h600v600H0z"/>
+    <group android:scaleX="0.74" android:scaleY="0.74" android:translateX="107" android:translateY="152">
+        <path android:fillColor="#222629" android:pathData="M40,70h280v72H183v208h-75V142H0z"/>
+        <path android:fillColor="#ff7200" android:fillType="evenOdd" android:pathData="M344,70a168,168 0,1 1,-99 31h95a100,100 0,1 0,4 -1z"/>
+        <path android:fillColor="#ff7200" android:pathData="M340,70h6v73h-6z"/>
+    </group>
+</vector>
