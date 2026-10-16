@@ -1,7 +1,7 @@
 import {createClient} from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import {initFinance} from "./finance.js?v=3";
-import {initWork} from "./work.js?v=2";
-import {initHome} from "./home.js?v=1";
+import {initFinance} from "./finance.js?v=4";
+import {initWork} from "./work.js?v=3";
+import {initHome} from "./home.js?v=2";
 const sb=createClient("https://xrlipgbetpohjewhlbml.supabase.co","sb_publishable_KR4wJm1CbhzSSJqwTbk57A_f8LThNpD",{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const statusLabels={new:"Yeni",reviewing:"Görüşülüyor",approved:"Onaylandı",in_production:"Üretimde",completed:"Tamamlandı",cancelled:"İptal"};
 
@@ -37,6 +37,7 @@ async function checkForegroundNewQuotes(){
   if(newest!==notificationLastId&&notificationLastId!==null&&newest){
    if(window.TekinAndroid?.checkNow)window.TekinAndroid.checkNow();
    await loadQuotes();
+   if(!$("homeView").classList.contains("is-hidden"))void home.refresh();
    $("notificationHint").textContent="Yeni teklif geldi. Liste güncellendi!";
   }
   notificationLastId=newest;
