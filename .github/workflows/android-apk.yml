@@ -32,9 +32,11 @@ jobs:
       - name: Install Android platform
         run: |
           echo "ANDROID_HOME=$ANDROID_HOME"
-          sdkmanager --version
-          sdkmanager --list_installed
-          sdkmanager "platforms;android-35" "build-tools;35.0.0"
+          SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -path "*/bin/sdkmanager" -type f | sort -V | tail -1)"
+          echo "Using $SDKMANAGER"
+          "$SDKMANAGER" --version
+          "$SDKMANAGER" --list_installed
+          "$SDKMANAGER" "platforms;android-35" "build-tools;35.0.0"
 
       - name: Build APK
         working-directory: android
