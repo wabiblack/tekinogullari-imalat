@@ -133,6 +133,7 @@ export function initFinance(sb){
   $("financeView").classList.toggle("is-hidden",!finance);
   $("workView").classList.add("is-hidden");
   $("homeView").classList.add("is-hidden");
+  $("refresh").classList.remove("is-hidden");
   $("homeTab").classList.remove("active");
   $("homeTab").setAttribute("aria-selected","false");
   $("mobileHome").classList.remove("active");
