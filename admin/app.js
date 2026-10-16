@@ -1,4 +1,5 @@
 import {createClient} from "https://esm.sh/@supabase/supabase-js@2.49.4";
+import {initFinance} from "./finance.js?v=1";
 const sb=createClient("https://xrlipgbetpohjewhlbml.supabase.co","sb_publishable_KR4wJm1CbhzSSJqwTbk57A_f8LThNpD",{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const statusLabels={new:"Yeni",reviewing:"Görüşülüyor",approved:"Onaylandı",in_production:"Üretimde",completed:"Tamamlandı",cancelled:"İptal"};
 const $=id=>document.getElementById(id);
@@ -159,3 +160,5 @@ if(bootstrap&&/^[a-f0-9]{64}$/.test(bootstrap)){
  loading.classList.add("is-hidden");login.classList.add("is-hidden");dashboard.classList.add("is-hidden");setup.classList.remove("is-hidden");
 }else validateUser().catch(()=>showLogin("Bağlantı kurulamadı. Lütfen tekrar deneyin."));
 
+
+initFinance(sb);
