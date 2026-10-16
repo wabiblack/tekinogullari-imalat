@@ -193,7 +193,7 @@ export function initWork(sb,{documents}){
    else $(id).removeAttribute("aria-current");
   }
   $("adminPageTitle").textContent="İş Takibi";
-  if(!loaded)await load();
+  await load();
   await loadQuoteOptions();
  }
  async function startForQuote(q){
