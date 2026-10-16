@@ -148,6 +148,7 @@ export function initWork(sb){
  }
  async function activate(){
   $("homeView").classList.add("is-hidden");
+  $("refresh").classList.remove("is-hidden");
   $("quoteView").classList.add("is-hidden");
   $("financeView").classList.add("is-hidden");
   $("workView").classList.remove("is-hidden");
