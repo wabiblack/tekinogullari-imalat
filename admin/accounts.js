@@ -19,7 +19,7 @@ const dateText=x=>x?x.split("-").reverse().join("."):"Belirlenmedi";
 
 export function initAccounts(sb,{finance}){
  const $=id=>document.getElementById(id);
- let entries=[],loaded=false,loadVersion=0,paymentVersion=0;
+ let entries=[],loadVersion=0;
  const message=(text,error=false)=>{
   const node=$("accountNotice");node.textContent=text;
   node.className="account-notice"+(error?" error":"")+(text?"":" is-hidden");
@@ -60,7 +60,6 @@ export function initAccounts(sb,{finance}){
   const list=el("div","Ödemeler yükleniyor…","account-payment-loading");
   section.append(head,list);
   detail.append(section);
-  const token=++paymentVersion;
   sb.from("finance_transactions")
    .select("id,entry_date,category,description,amount")
    .eq("quote_id",job.quote_id)
@@ -69,7 +68,7 @@ export function initAccounts(sb,{finance}){
    .order("created_at",{ascending:false})
    .limit(100)
    .then(({data,error})=>{
-    if(!section.isConnected||token>paymentVersion)return;
+    if(!section.isConnected)return;
     list.replaceChildren();
     if(error){list.append(el("p","Ödeme geçmişi yüklenemedi.","account-empty"));return}
     if(!data?.length){list.append(el("p","Bu işe bağlı tahsilat henüz kaydedilmemiş.","account-empty"));return}
@@ -173,7 +172,7 @@ export function initAccounts(sb,{finance}){
     if(chunk.length<1000)break;
    }
    if(current!==loadVersion)return;
-   entries=all;loaded=true;
+   entries=all;
    if(entries.length>=10000)message("İlk 10.000 iş hesabı gösteriliyor. Tam sonuç için yöneticiye başvur.",true);
    render();
    $("accountUpdated").textContent="Güncellendi: "+new Date().toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"});
