@@ -200,6 +200,17 @@ export function initFinance(sb){
   $("finForm").scrollIntoView({behavior:"smooth",block:"start"});
   $("finAmount").focus({preventScroll:true});
  }
+ async function startNewIncome(){
+  activate(true);
+  await Promise.all([loadQuoteOptions(),load()]);
+  resetForm();
+  $("finKind").value="income";
+  categories("İş Tahsilatı");
+  $("finDescription").value="";
+  message("Yeni tahsilat kaydı açıldı. Tutarı ve müşteriyi girerek kaydedebilirsin.");
+  $("finForm").scrollIntoView({behavior:"smooth",block:"start"});
+  $("finAmount").focus({preventScroll:true});
+ }
  resetForm();
- return {startForQuote};
+ return {startForQuote,startNewIncome};
 }
