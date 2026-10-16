@@ -131,6 +131,16 @@ export function initFinance(sb){
   $("financeTab").setAttribute("aria-selected",String(finance));
   $("quoteView").classList.toggle("is-hidden",finance);
   $("financeView").classList.toggle("is-hidden",!finance);
+  $("mobileQuotes").classList.toggle("active",!finance);
+  $("mobileFinance").classList.toggle("active",finance);
+  if(finance){
+   $("mobileFinance").setAttribute("aria-current","page");
+   $("mobileQuotes").removeAttribute("aria-current");
+  }else{
+   $("mobileQuotes").setAttribute("aria-current","page");
+   $("mobileFinance").removeAttribute("aria-current");
+  }
+  $("adminPageTitle").textContent=finance?"Mali Yönetim":"Teklif Talepleri";
  };
  $("quoteTab").addEventListener("click",()=>activate(false));
  let quotesFetched=false;
