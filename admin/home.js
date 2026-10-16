@@ -46,6 +46,7 @@ export function initHome(sb,{openQuote}){
   $("ratingFilter").value="";
   $("search").value="";
   openTab("quoteTab");
+  $("requestGrid").classList.remove("mobile-detail-active");
   $("filter").dispatchEvent(new Event("change"));
  }
  function goJobs(filter=""){
@@ -163,6 +164,10 @@ export function initHome(sb,{openQuote}){
   window.scrollTo({top:0,behavior:"auto"});
   await refresh();
  }
+ document.addEventListener("visibilitychange",()=>{
+  if(document.visibilityState==="visible"&&!$("homeView").classList.contains("is-hidden"))
+   void refresh();
+ });
  $("homeTab").addEventListener("click",()=>void activate());
  $("homeRefresh").addEventListener("click",()=>void refresh());
  $("homeNewCard").addEventListener("click",()=>goQuotes("new"));
