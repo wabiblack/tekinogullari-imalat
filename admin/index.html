@@ -506,7 +506,18 @@ body{background:#f1f2ef}#app{min-height:75vh}.admin-header{background:#1b2321;co
     <label>İş Notları<textarea id="workNotes" maxlength="2000" rows="5" placeholder="Ölçüler, kullanılacak malzeme, yapılacaklar..."></textarea></label>
     <p class="work-note">İş bedeli tahsilat değildir. Gelir ve kaporayı ayrıca Mali Yönetim'e kaydetmelisin.</p>
     <div class="work-form-actions"><button type="submit" id="workSave" class="btn">İşi Kaydet</button><button type="button" id="workCancel" class="btn outline">Vazgeç</button></div>
-    <p id="workFeedback" class="work-feedback" role="status" aria-live="polite"></p>
+    <div id="workProfitBox" class="work-profit-box is-hidden">
+  <div class="work-profit-head"><strong>Tahmini İş Kârı</strong><small>İş bedeli - malzeme tüketimi - diğer giderler</small></div>
+  <div class="work-profit-grid">
+    <div><small>İş Bedeli</small><b id="workProfitPrice">—</b></div>
+    <div><small>Stoktan Tüketim</small><b id="workProfitMaterial">—</b></div>
+    <div><small>Diğer İş Giderleri</small><b id="workProfitExpense">—</b></div>
+    <div><small>Tahmini Kâr / Marj</small><b id="workProfitNet">—</b><small id="workProfitMargin"></small></div>
+  </div>
+  <p class="work-profit-note">Hesap: anlaşılan bedel − bu işe bağlanan stok tüketimi − mali bölümde bu teklife bağlanan malzeme dışı giderler. Demir/profil/sac ve boya/kaynak sarfı satın alma giderleri bu formüle dahil edilmez; çifte maliyet yazılmasını önlemek içindir. Stokta tüketimi olmayan veya işe bağlanmayan maliyetler hesaba katılmaz. Kâr tahminidir, vergi ve tüm genel giderler dahil değildir.</p>
+</div>
+<div class="work-profit-actions"><button type="button" id="workPdf">PDF İş Formu Oluştur</button><button type="button" id="workProfitRefresh">Kârı Yenile</button></div>
+<p id="workFeedback" class="work-feedback" role="status" aria-live="polite"></p>
    </form>
   </section>
  </div>
