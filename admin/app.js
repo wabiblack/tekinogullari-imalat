@@ -1,9 +1,9 @@
 import {createClient} from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import {initFinance} from "./finance.js?v=6";
+import {initFinance} from "./finance.js?v=7";
 import {initAccounts} from "./accounts.js?v=3";
 import {initWork} from "./work.js?v=7";
 import {initStock} from "./stock.js?v=2";
-import {initDocuments} from "./documents.js?v=2";
+import {initDocuments} from "./documents.js?v=3";
 import {initHome} from "./home.js?v=4";
 const sb=createClient("https://xrlipgbetpohjewhlbml.supabase.co","sb_publishable_KR4wJm1CbhzSSJqwTbk57A_f8LThNpD",{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const statusLabels={new:"Yeni",reviewing:"Görüşülüyor",approved:"Onaylandı",in_production:"Üretimde",completed:"Tamamlandı",cancelled:"İptal"};
@@ -159,11 +159,11 @@ async function validateUser(){
  if(!session)return showLogin();
  const {data:authorized,error}=await sb.rpc("is_tek_admin");
  if(error||!authorized){await sb.auth.signOut();return showLogin("Bu hesap için yönetici yetkisi tanımlı değil.")}
- showDashboard();await loadQuotes();
+ showDashboard();$("moreView").classList.add("is-hidden");await loadQuotes();
  const fromNotification=new URLSearchParams(location.search).get("view");
  if(fromNotification==="jobs")$("workTab").click();
  else if(fromNotification==="quotes")$("quoteTab").click();
- else void home.activate();
+ else $("homeTab").click();
  void startQuoteNotifications();
 }
 async function loadQuotes(){
@@ -433,3 +433,55 @@ $("mobileFinance").addEventListener("click",()=>{
 });
 $("mobileWork").addEventListener("click",()=>{ $("workTab").click();window.scrollTo({top:0,behavior:"auto"}) });
 
+/* Simplified 4-tab mobile navigation: preserve existing module-specific section buttons. */
+const primaryMobileSections=[
+ ["mobileHome","homeView"],
+ ["mobileQuotes","quoteView"],
+ ["mobileWork","workView"]
+];
+const legacyMoreSections=["accountView","stockView","financeView"];
+function paintCompactNav(){
+ const moreOpen=!$("moreView").classList.contains("is-hidden");
+ for(const [button,view] of primaryMobileSections){
+  const selected=!moreOpen&&!$(view).classList.contains("is-hidden");
+  $(button).classList.toggle("active",selected);
+  if(selected)$(button).setAttribute("aria-current","page");
+  else $(button).removeAttribute("aria-current");
+ }
+ const extraOpen=moreOpen||legacyMoreSections.some(id=>!$(id).classList.contains("is-hidden"));
+ $("mobileMore").classList.toggle("active",extraOpen);
+ if(extraOpen)$("mobileMore").setAttribute("aria-current","page");
+ else $("mobileMore").removeAttribute("aria-current");
+ $("mobileMore").setAttribute("aria-expanded",String(moreOpen));
+}
+function openCompactMore(){
+ for(const id of ["homeView","quoteView","workView","accountView","stockView","financeView"])
+  $(id).classList.add("is-hidden");
+ for(const id of ["homeTab","quoteTab","workTab","accountTab","stockTab","financeTab"]){
+  $(id).classList.remove("active");
+  $(id).setAttribute("aria-selected","false");
+ }
+ $("moreView").classList.remove("is-hidden");
+ $("refresh").classList.add("is-hidden");
+ $("adminPageTitle").textContent="Diğer İşlemler";
+ paintCompactNav();
+ window.scrollTo({top:0,behavior:"auto"});
+}
+$("mobileMore").addEventListener("click",openCompactMore);
+for(const id of ["homeTab","quoteTab","workTab","accountTab","stockTab","financeTab"]){
+ $(id).addEventListener("click",()=>{
+  $("moreView").classList.add("is-hidden");
+  paintCompactNav();
+ });
+}
+$("moreAccounts").addEventListener("click",()=>$("accountTab").click());
+$("moreFinance").addEventListener("click",()=>$("financeTab").click());
+$("moreStock").addEventListener("click",()=>$("stockTab").click());
+$("moreDocuments").addEventListener("click",()=>documents.openBlank());
+$("moreRefresh").addEventListener("click",()=>$("homeTab").click());
+$("homeQuickPdf").addEventListener("click",()=>documents.openBlank());
+$("homeQuickPayment").addEventListener("click",()=>{
+ $("moreView").classList.add("is-hidden");
+ void finance.startNewIncome();
+ paintCompactNav();
+});
