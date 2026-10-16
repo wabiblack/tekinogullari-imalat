@@ -1,6 +1,7 @@
 import {createClient} from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import {initFinance} from "./finance.js?v=3";
-import {initWork} from "./work.js?v=1";
+import {initWork} from "./work.js?v=2";
+import {initHome} from "./home.js?v=1";
 const sb=createClient("https://xrlipgbetpohjewhlbml.supabase.co","sb_publishable_KR4wJm1CbhzSSJqwTbk57A_f8LThNpD",{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const statusLabels={new:"Yeni",reviewing:"Görüşülüyor",approved:"Onaylandı",in_production:"Üretimde",completed:"Tamamlandı",cancelled:"İptal"};
 
@@ -154,7 +155,7 @@ async function validateUser(){
  if(!session)return showLogin();
  const {data:authorized,error}=await sb.rpc("is_tek_admin");
  if(error||!authorized){await sb.auth.signOut();return showLogin("Bu hesap için yönetici yetkisi tanımlı değil.")}
- showDashboard();await loadQuotes();void startQuoteNotifications();
+ showDashboard();await loadQuotes();void home.activate();void startQuoteNotifications();
 }
 async function loadQuotes(){
  const list=$("requestList");list.replaceChildren(el("p","Talepler yükleniyor…","empty"));
@@ -227,7 +228,7 @@ async function updateQuickStatus(id,expected,target,button=null,allowUndo=true){
 function renderList(){
  const list=$("requestList");list.replaceChildren();
  const term=$("search").value.trim().toLocaleLowerCase("tr-TR"),filter=$("filter").value,ratingFilter=$("ratingFilter").value;
- const subset=requests.filter(x=>(!filter||x.status===filter)&&(!ratingFilter||(ratingFilter==="unrated"?getStars(x)===0:getStars(x)===Number(ratingFilter)))&&(!term||[x.customer_name,x.customer_phone,x.service,x.details].some(v=>String(v||"").toLocaleLowerCase("tr-TR").includes(term))));
+ const subset=requests.filter(x=>(!filter||(filter==="pending"?["new","reviewing"].includes(x.status):x.status===filter))&&(!ratingFilter||(ratingFilter==="unrated"?getStars(x)===0:getStars(x)===Number(ratingFilter)))&&(!term||[x.customer_name,x.customer_phone,x.service,x.details].some(v=>String(v||"").toLocaleLowerCase("tr-TR").includes(term))));
  if(!subset.length){list.append(el("p","Bu koşullara uygun talep bulunamadı.","empty"));return}
  for(const q of subset){
   const card=el("div",null,"request-card"+(q.id===chosenId?" selected":""));
@@ -366,7 +367,8 @@ $("logout").addEventListener("click",async()=>{
  await sb.auth.signOut();chosenId=null;requests=[];showLogin();
 });
 $("refresh").addEventListener("click",()=>{
- if(!$("workView").classList.contains("is-hidden"))$("workRefresh").click();
+ if(!$("homeView").classList.contains("is-hidden"))void home.refresh();
+ else if(!$("workView").classList.contains("is-hidden"))$("workRefresh").click();
  else if(!$("financeView").classList.contains("is-hidden"))$("finRefresh").click();
  else void loadQuotes();
 });
@@ -400,6 +402,8 @@ if(bootstrap&&/^[a-f0-9]{64}$/.test(bootstrap)){
 
 initFinance(sb);
 const work=initWork(sb);
+const home=initHome(sb,{openQuote:id=>{$("quoteTab").click();selectRequest(id)}});
+$("mobileHome").addEventListener("click",()=>{$("homeTab").click()});
 $("mobileQuotes").addEventListener("click",()=>{
  $("quoteTab").click();
  if(isMobile()&&$("requestGrid").classList.contains("mobile-detail-active"))backToRequests();
@@ -410,7 +414,8 @@ $("mobileFinance").addEventListener("click",()=>{
  window.scrollTo({top:0,behavior:"auto"});
 });
 $("mobileReload").addEventListener("click",()=>{
- if(!$("workView").classList.contains("is-hidden"))$("workRefresh").click();
+ if(!$("homeView").classList.contains("is-hidden"))void home.refresh();
+ else if(!$("workView").classList.contains("is-hidden"))$("workRefresh").click();
  else if(!$("financeView").classList.contains("is-hidden"))$("finRefresh").click();
  else $("refresh").click();
 });
