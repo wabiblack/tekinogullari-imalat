@@ -1,10 +1,10 @@
 import {createClient} from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import {initFinance} from "./finance.js?v=5";
-import {initAccounts} from "./accounts.js?v=2";
-import {initWork} from "./work.js?v=5";
-import {initStock} from "./stock.js?v=1";
-import {initDocuments} from "./documents.js?v=1";
-import {initHome} from "./home.js?v=3";
+import {initFinance} from "./finance.js?v=6";
+import {initAccounts} from "./accounts.js?v=3";
+import {initWork} from "./work.js?v=6";
+import {initStock} from "./stock.js?v=2";
+import {initDocuments} from "./documents.js?v=2";
+import {initHome} from "./home.js?v=4";
 const sb=createClient("https://xrlipgbetpohjewhlbml.supabase.co","sb_publishable_KR4wJm1CbhzSSJqwTbk57A_f8LThNpD",{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const statusLabels={new:"Yeni",reviewing:"Görüşülüyor",approved:"Onaylandı",in_production:"Üretimde",completed:"Tamamlandı",cancelled:"İptal"};
 
