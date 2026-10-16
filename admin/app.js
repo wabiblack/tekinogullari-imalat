@@ -163,29 +163,90 @@ async function loadQuotes(){
    .order("created_at",{ascending:false}).limit(300);
  if(error){list.replaceChildren(el("p","Talepler yüklenemedi. Oturumunuzu kontrol edip yeniden deneyin.","error"));return}
  requests=data||[];
+ refreshQuoteStats();
+ renderList();await renderDetail();
+}
+const nextStatus={
+ new:{status:"reviewing",label:"Görüşmeye Al"},
+ reviewing:{status:"approved",label:"Onayla"},
+ approved:{status:"in_production",label:"Üretime Al"},
+ in_production:{status:"completed",label:"Tamamla"}
+};
+let statusToastTimer=null,statusToastVersion=0;
+function showStatusToast(message,undo){
+ const toast=$("statusToast"),text=$("statusToastText"),button=$("statusUndo");
+ if(statusToastTimer){clearTimeout(statusToastTimer);statusToastTimer=null}
+ const version=++statusToastVersion;
+ text.textContent=message;
+ button.classList.toggle("is-hidden",!undo);
+ button.onclick=undo?()=>{if(statusToastVersion===version){hideStatusToast();void undo()}}:null;
+ toast.classList.remove("is-hidden");
+ statusToastTimer=setTimeout(()=>{if(statusToastVersion===version)hideStatusToast()},7500);
+}
+function hideStatusToast(){
+ ++statusToastVersion;
+ if(statusToastTimer)clearTimeout(statusToastTimer);
+ statusToastTimer=null;
+ $("statusToast").classList.add("is-hidden");
+ $("statusUndo").onclick=null;
+}
+function refreshQuoteStats(){
  $("statAll").textContent=requests.length;
  $("statNew").textContent=requests.filter(x=>x.status==="new").length;
  $("statReview").textContent=requests.filter(x=>["reviewing","approved","in_production"].includes(x.status)).length;
  $("statDone").textContent=requests.filter(x=>x.status==="completed").length;
- renderList();await renderDetail();
+}
+async function updateQuickStatus(id,expected,target,button=null,allowUndo=true){
+ const quote=requests.find(q=>q.id===id);
+ if(!quote||quote.status!==expected){
+  showStatusToast("Teklifin durumu değişmiş. Listeyi yenile.");
+  await loadQuotes();
+  return;
+ }
+ if(button){button.disabled=true;button.textContent="Kaydediliyor…"}
+ try{
+  const {data,error}=await sb.from("quote_requests")
+   .update({status:target,updated_at:new Date().toISOString()})
+   .eq("id",id).eq("status",expected)
+   .select("id,status").maybeSingle();
+  if(error||!data)throw error||new Error("Teklif durumu başka bir yerden değişti.");
+  quote.status=target;
+  refreshQuoteStats();
+  renderList();
+  if(chosenId===id)await renderDetail();
+  const message=allowUndo
+   ?"Durum: "+statusLabels[target]+". Yanlışlıkla değiştirdiysen geri alabilirsin."
+   :"Durum eski hâline getirildi.";
+  showStatusToast(message,allowUndo?()=>updateQuickStatus(id,target,expected,null,false):null);
+ }catch(error){
+  showStatusToast("Durum kaydedilemedi. Yeniden deneyin.");
+  await loadQuotes();
+ }finally{if(button&&button.isConnected){button.disabled=false;button.textContent=nextStatus[expected]?.label||"Kaydet"}}
 }
 function renderList(){
  const list=$("requestList");list.replaceChildren();
-
  const term=$("search").value.trim().toLocaleLowerCase("tr-TR"),filter=$("filter").value,ratingFilter=$("ratingFilter").value;
  const subset=requests.filter(x=>(!filter||x.status===filter)&&(!ratingFilter||(ratingFilter==="unrated"?getStars(x)===0:getStars(x)===Number(ratingFilter)))&&(!term||[x.customer_name,x.customer_phone,x.service,x.details].some(v=>String(v||"").toLocaleLowerCase("tr-TR").includes(term))));
  if(!subset.length){list.append(el("p","Bu koşullara uygun talep bulunamadı.","empty"));return}
  for(const q of subset){
-  const button=el("button",null,"request"+(q.id===chosenId?" selected":""));
-  button.type="button";
+  const card=el("div",null,"request-card"+(q.id===chosenId?" selected":""));
+  const button=el("button",null,"request");
+  button.type="button";button.setAttribute("aria-label",q.customer_name+" teklif detayını aç");
   const top=el("span",null,"head"),name=el("span",q.customer_name),tag=el("span",statusLabels[q.status]||q.status,"tag "+q.status);top.append(name,tag);
-
   button.append(top,el("span",q.service+" • "+date(q.created_at),"meta"));
   const score=getStars(q);
-  const starTag=el("span",score?"★".repeat(score)+"☆".repeat(3-score)+"  "+getRatingLabel(score):"☆☆☆  Değerlendirilmedi","customer-rating-tag"+(score?" scored":""));
-  button.append(starTag);
+  button.append(el("span",score?"★".repeat(score)+"☆".repeat(3-score)+"  "+getRatingLabel(score):"☆☆☆  Değerlendirilmedi","customer-rating-tag"+(score?" scored":"")));
   button.addEventListener("click",()=>selectRequest(q.id));
-  list.append(button);
+  card.append(button);
+  const next=nextStatus[q.status];
+  if(next){
+   const actions=el("div",null,"request-quick-actions");
+   const step=el("button",next.label+" →","request-next");
+   step.type="button";step.setAttribute("aria-label",q.customer_name+" için "+next.label);
+   step.addEventListener("click",()=>void updateQuickStatus(q.id,q.status,next.status,step));
+   actions.append(step);card.append(actions);
+  }
+  list.append(card);
  }
 }
 async function saveCustomerRating(quoteId,stars,feedback,buttons){
@@ -275,7 +336,7 @@ async function renderDetail(){
   e.preventDefault();save.disabled=true;save.textContent="Kaydediliyor…";feedback.textContent="";
   const {error}=await sb.from("quote_requests").update({status:select.value,admin_notes:note.value.slice(0,3000),updated_at:new Date().toISOString()}).eq("id",q.id);
   if(error){feedback.className="error";feedback.textContent="Kaydedilemedi. Yeniden deneyin."}
-  else{feedback.className="success";feedback.textContent="Değişiklikler kaydedildi.";q.status=select.value;q.admin_notes=note.value;renderList();$("statNew").textContent=requests.filter(x=>x.status==="new").length;$("statReview").textContent=requests.filter(x=>["reviewing","approved","in_production"].includes(x.status)).length;$("statDone").textContent=requests.filter(x=>x.status==="completed").length}
+  else{feedback.className="success";feedback.textContent="Değişiklikler kaydedildi.";q.status=select.value;q.admin_notes=note.value;renderList();refreshQuoteStats()}
   save.disabled=false;save.textContent="Değişiklikleri Kaydet";
  });
  detail.append(renderWhatsApp(q));
@@ -327,3 +388,18 @@ if(bootstrap&&/^[a-f0-9]{64}$/.test(bootstrap)){
 
 
 initFinance(sb);
+$("mobileQuotes").addEventListener("click",()=>{
+ $("quoteTab").click();
+ if(isMobile()&&$("requestGrid").classList.contains("mobile-detail-active"))backToRequests();
+ window.scrollTo({top:0,behavior:"auto"});
+});
+$("mobileFinance").addEventListener("click",()=>{
+ $("financeTab").click();
+ window.scrollTo({top:0,behavior:"auto"});
+});
+$("mobileReload").addEventListener("click",()=>{
+ const isFinance=!$("financeView").classList.contains("is-hidden");
+ if(isFinance)$("finRefresh").click();
+ else $("refresh").click();
+});
+
