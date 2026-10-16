@@ -103,12 +103,84 @@ body{background:#f1f2ef}#app{min-height:75vh}.admin-header{background:#1b2321;co
  .request-quick-actions{padding:0 12px 13px}
  .request-next{min-height:44px;min-width:130px}
  .status-toast{bottom:calc(83px + env(safe-area-inset-bottom,0px));max-width:calc(100vw - 24px);width:calc(100vw - 24px);padding:10px 12px}
- .mobile-bottom-nav{position:fixed;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));bottom:0;left:0;right:0;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));gap:5px;z-index:120;background:#fff;border-top:1px solid #d9e0d9;box-shadow:0 -7px 20px #14221612}
+ .mobile-bottom-nav{position:fixed;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));bottom:0;left:0;right:0;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));gap:5px;z-index:120;background:#fff;border-top:1px solid #d9e0d9;box-shadow:0 -7px 20px #14221612}
  .mobile-bottom-item{border:0;border-radius:10px;background:transparent;color:#69766c;min-height:53px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;font-weight:800}
  .mobile-bottom-item svg{flex-shrink:0}
  .mobile-bottom-item.active{background:#fff1e7;color:#9a481d}
  .mobile-bottom-item:focus-visible{outline:2px solid #df874b;outline-offset:1px}
  .footer{padding-bottom:calc(85px + env(safe-area-inset-bottom,0px))!important}
+}
+
+
+/* Mobil ağırlıklı iş takibi. TO logo dosyalarına dokunulmaz. */
+.work-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0 0 18px}
+.work-head h2{font-size:clamp(23px,3vw,30px);margin:0 0 5px}
+.work-head p{font-size:13px;color:#6b776d;margin:0}
+.work-head-buttons{display:flex;gap:8px;flex-wrap:wrap}
+.work-head-buttons .btn{min-height:44px;white-space:nowrap}
+.work-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.work-stat{border:1px solid #dce2dd;background:white;border-radius:12px;padding:18px;min-width:0}
+.work-stat strong{display:block;font-size:29px;line-height:1.1;color:#242e25}
+.work-stat small{font-size:12px;color:#727d73}
+.work-late-stat strong{color:#b43e2e}
+.work-grid{display:grid;grid-template-columns:1.1fr .9fr;align-items:start;gap:16px}
+.work-card{background:#fff;border:1px solid #dce2dd;border-radius:12px;overflow:hidden;min-width:0}
+.work-card-head{padding:17px 19px;border-bottom:1px solid #edf0ec}
+.work-card-head h3{font-size:17px;margin:0}
+.work-card-head p{margin:3px 0 0;color:#738074;font-size:12px}
+.work-count{background:#fff2e9;color:#a85320;border-radius:99px;font-size:12px;padding:3px 9px;margin-left:5px}
+.work-filters{display:grid;grid-template-columns:1.1fr .9fr;gap:9px;padding:13px 15px;border-bottom:1px solid #edf0ec}
+.work-filters input,.work-filters select{width:100%;min-width:0;min-height:45px;border:1px solid #cbd5cd;border-radius:8px;padding:9px 10px;background:#fff;font-size:14px}
+.work-list{max-height:700px;overflow-y:auto}
+.work-item{width:100%;background:#fff;border:0;border-bottom:1px solid #edf0ec;padding:16px;text-align:left;display:block;min-height:96px}
+.work-item:last-child{border-bottom:0}
+.work-item.selected,.work-item:hover{background:#fff8f3}
+.work-item-top{display:flex;justify-content:space-between;align-items:start;gap:9px}
+.work-item-top strong{font-size:15px;line-height:1.4;overflow-wrap:anywhere}
+.work-status{font-size:11px;font-weight:850;white-space:nowrap;background:#eff0ed;color:#526052;padding:5px 8px;border-radius:999px}
+.work-status.in_progress{background:#e5edfa;color:#36528d}
+.work-status.ready{background:#fff1dc;color:#925118}
+.work-status.delivered{background:#e1f3e8;color:#1d7548}
+.work-status.cancelled{background:#ececec;color:#687067}
+.work-item-meta{font-size:12px;color:#768076;margin:5px 0 8px;overflow-wrap:anywhere}
+.work-item-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:7px;font-size:12px}
+.work-date{color:#607267}
+.work-date.late{color:#ad3627;font-weight:800}
+.work-date.soon{color:#a4601f;font-weight:800}
+.work-price{font-size:13px;color:#293c2f}
+.work-form{display:grid;gap:14px;padding:18px 19px}
+.work-form label{display:flex;flex-direction:column;gap:6px;font-weight:750;font-size:13px;color:#344638}
+.work-form input,.work-form select,.work-form textarea{width:100%;min-width:0;min-height:44px;border:1px solid #cbd5cd;padding:10px 12px;border-radius:8px;background:white;color:#1b2321;font-size:15px;font-family:inherit}
+.work-form select:disabled{background:#f2f4f1;color:#626c63}
+.work-form textarea{resize:vertical;line-height:1.5;min-height:110px}
+.work-duo{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.work-note,.work-footnote{margin:0;color:#68786d;font-size:12px;line-height:1.55}
+.work-footnote{margin:13px 0}
+.work-form-actions{display:flex;gap:9px;flex-wrap:wrap}
+.work-form-actions .btn{min-height:44px}
+.work-feedback{font-size:13px;margin:0;line-height:1.45}
+.work-feedback.success{color:#247245}
+.work-feedback.error{color:#ab382d}
+@media(max-width:930px){.work-grid{grid-template-columns:1fr}.work-list{max-height:none}.work-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:800px){
+ .work-head{align-items:stretch;flex-direction:column;margin-bottom:12px}
+ .work-head h2{font-size:23px}
+ .work-head-buttons{display:flex}
+ .work-head-buttons .btn{flex:1;justify-content:center}
+ .work-stats{gap:8px;margin-bottom:13px}
+ .work-stat{padding:12px;border-radius:10px}
+ .work-stat strong{font-size:25px}
+ .work-stat small{font-size:11px}
+ .work-card{border-radius:10px}
+ .work-form-shell:not(.work-form-open){display:none}
+ .work-filters{padding:11px;gap:8px}
+ .work-item{padding:14px;min-height:90px}
+ .work-form{padding:15px}
+ .work-form input,.work-form select,.work-form textarea{font-size:16px}
+ .work-duo{grid-template-columns:1fr}
+ .work-head-buttons .btn{padding:10px}
+ .mobile-bottom-item{min-width:0;font-size:11px}
+ .mobile-bottom-nav{gap:2px;padding-left:5px;padding-right:5px}
 }
 
 </style><script type="module" src="/admin/app.js?v=10"></script></head>
@@ -126,10 +198,42 @@ body{background:#f1f2ef}#app{min-height:75vh}.admin-header{background:#1b2321;co
 <section id="login" class="login-card is-hidden"><p class="eyebrow">Yetkili Girişi</p><h1>Yönetici Paneli</h1><p>Gelen teklifleri görüntülemek için yetkili hesabınızla giriş yapın.</p><form id="loginForm"><label class="field">E-posta<input type="email" id="email" value="ercan@tekin.com" required autocomplete="username" placeholder="ornek@firma.com"></label><label class="field">Şifre<input type="password" id="password" required autocomplete="current-password" placeholder="Şifreniz"></label><button class="btn" type="submit">Giriş Yap ↗</button><p id="loginError" class="error" role="alert"></p></form></section>
 <section id="dashboard" class="is-hidden"><div class="dashboard-head"><div><p class="eyebrow">TEKİNOĞULLARI İMALAT / Yönetim</p><h1 id="adminPageTitle">Teklif Talepleri</h1></div><button class="btn outline" id="refresh">Yenile ↻</button></div>
 <p id="notificationHint" class="notification-hint is-hidden" role="status" aria-live="polite"></p>
-<div class="admin-tabs" role="tablist" aria-label="Yönetim bölümleri"><button type="button" id="quoteTab" class="admin-tab active" role="tab" aria-selected="true" aria-controls="quoteView">Teklif Talepleri</button><button type="button" id="financeTab" class="admin-tab" role="tab" aria-selected="false" aria-controls="financeView">Mali Yönetim</button></div><section id="quoteView" role="tabpanel" aria-labelledby="quoteTab"><div class="stats"><div class="stat"><b id="statAll">0</b><small>Görüntülenen</small></div><div class="stat"><b id="statNew">0</b><small>Yeni</small></div><div class="stat"><b id="statReview">0</b><small>İşlemde</small></div><div class="stat"><b id="statDone">0</b><small>Tamamlandı</small></div></div>
+<div class="admin-tabs" role="tablist" aria-label="Yönetim bölümleri"><button type="button" id="quoteTab" class="admin-tab active" role="tab" aria-selected="true" aria-controls="quoteView">Teklif Talepleri</button><button type="button" id="workTab" class="admin-tab" role="tab" aria-selected="false" aria-controls="workView">İş Takibi</button><button type="button" id="financeTab" class="admin-tab" role="tab" aria-selected="false" aria-controls="financeView">Mali Yönetim</button></div><section id="quoteView" role="tabpanel" aria-labelledby="quoteTab"><div class="stats"><div class="stat"><b id="statAll">0</b><small>Görüntülenen</small></div><div class="stat"><b id="statNew">0</b><small>Yeni</small></div><div class="stat"><b id="statReview">0</b><small>İşlemde</small></div><div class="stat"><b id="statDone">0</b><small>Tamamlandı</small></div></div>
 <div class="grid-admin" id="requestGrid"><div class="admin-panel" id="requestListPanel"><h2>Gelen Talepler <small style="font-size:11px;color:#737c76;font-weight:500"> (son 300 kayıt)</small></h2><div class="filters"><input id="search" placeholder="İsim, telefon veya hizmet ara" aria-label="Taleplerde ara"><select id="filter" aria-label="Durum filtrele"><option value="">Tüm Durumlar</option><option value="new">Yeni</option><option value="reviewing">Görüşülüyor</option><option value="approved">Onaylandı</option><option value="in_production">Üretimde</option><option value="completed">Tamamlandı</option><option value="cancelled">İptal</option></select><select id="ratingFilter" aria-label="Müşteri değerlendirmesi filtrele"><option value="">Tüm Puanlar</option><option value="3">★★★ İyi</option><option value="2">★★ Orta</option><option value="1">★ Kötü</option><option value="unrated">Değerlendirilmedi</option></select></div><div id="requestList" class="request-list"><p class="empty">Yükleniyor…</p></div></div>
 <div class="admin-panel" id="requestDetailPanel"><div class="detail-title"><h2>Talep Detayı</h2><button type="button" id="backToRequests" class="back-list">← Taleplere Dön</button></div><div id="detail" class="detail-pad"><p class="empty">Detayları görmek için soldan talep seçin.</p></div></div></div>
 </section>
+
+<section id="workView" class="is-hidden" role="tabpanel" aria-labelledby="workTab">
+ <div class="work-head"><div><h2>İş Takip Sistemi</h2><p>Onaylanan teklifleri işe dönüştür, üretimi ve teslim tarihlerini takip et.</p></div><div class="work-head-buttons"><button id="workNew" type="button" class="btn">+ Yeni İş</button><button id="workRefresh" type="button" class="btn outline">Yenile ↻</button></div></div>
+ <div class="work-stats" aria-label="İş durumu özeti">
+  <div class="work-stat"><strong id="workActive">0</strong><small>Aktif İş</small></div>
+  <div class="work-stat work-late-stat"><strong id="workLate">0</strong><small>Geciken</small></div>
+  <div class="work-stat"><strong id="workSoon">0</strong><small>7 Gün İçinde</small></div>
+  <div class="work-stat"><strong id="workDelivered">0</strong><small>Teslim Edilen</small></div>
+ </div>
+ <div class="work-grid">
+  <section class="work-card">
+   <div class="work-card-head"><h3>İş Listesi <span id="workTotal" class="work-count">0</span></h3><p id="workVisibleCount">En yeni 500 iş gösterilir</p></div>
+   <div class="work-filters"><input id="workSearch" type="search" placeholder="Müşteri veya iş ara" aria-label="İşlerde ara"><select id="workFilter" aria-label="İş durumunu filtrele"><option value="">Tüm İşler</option><option value="planned">Planlandı</option><option value="in_progress">Üretimde</option><option value="ready">Teslime Hazır</option><option value="overdue">Geciken</option><option value="soon">7 Gün İçinde</option><option value="delivered">Teslim Edildi</option><option value="cancelled">İptal</option></select></div>
+   <div id="workList" class="work-list"><p class="empty">İş Takibi açıldığında işler yüklenir.</p></div>
+  </section>
+  <section class="work-card work-form-shell" id="workEditor">
+   <div class="work-card-head"><h3 id="workFormTitle">Yeni İş Kaydı</h3><p>İşin fiyatı, aşaması ve teslim tarihi</p></div>
+   <form id="workForm" class="work-form">
+    <label>İlgili Onaylı Teklif<select id="workQuote" required><option value="">Onaylanmış teklif seç</option></select></label>
+    <label>İş Adı<input type="text" id="workTitle" minlength="2" maxlength="150" required placeholder="Örn. Ferforje kapı imalatı"></label>
+    <div class="work-duo"><label>İş Bedeli (TL)<input id="workPrice" type="number" inputmode="decimal" min="0" max="999999999999.99" step="0.01" placeholder="Belirlenmediyse boş bırak"></label><label>İş Durumu<select id="workStatus"><option value="planned">Planlandı</option><option value="in_progress">Üretimde</option><option value="ready">Teslime Hazır</option><option value="delivered">Teslim Edildi</option><option value="cancelled">İptal</option></select></label></div>
+    <div class="work-duo"><label>Başlangıç<input type="date" id="workStart" required></label><label>Hedef Teslim Tarihi<input type="date" id="workDue"></label></div>
+    <label>İş Notları<textarea id="workNotes" maxlength="2000" rows="5" placeholder="Ölçüler, kullanılacak malzeme, yapılacaklar..."></textarea></label>
+    <p class="work-note">İş bedeli tahsilat değildir. Gelir ve kaporayı ayrıca Mali Yönetim'e kaydetmelisin.</p>
+    <div class="work-form-actions"><button type="submit" id="workSave" class="btn">İşi Kaydet</button><button type="button" id="workCancel" class="btn outline">Vazgeç</button></div>
+    <p id="workFeedback" class="work-feedback" role="status" aria-live="polite"></p>
+   </form>
+  </section>
+ </div>
+ <p class="work-footnote">Aktif iş ve teslim sayıları, listelenen en son 500 iş kaydına göre gösterilir.</p>
+</section>
+
 <section id="financeView" class="is-hidden" role="tabpanel" aria-labelledby="financeTab">
   <div class="fin-heading"><div><p class="eyebrow">MALİ YÖNETİM</p><h2>Gelir, Gider ve Nakit Takibi</h2><p>Tahsilatları ve yapılan ödemeleri takip et. Teklifler otomatik gelir olarak sayılmaz.</p></div><button id="finRefresh" type="button" class="btn outline">Yenile ↻</button></div>
   <div class="fin-period"><label>Dönem <select id="finPeriod"><option value="month">Bu Ay</option><option value="lastmonth">Geçen Ay</option><option value="year">Bu Yıl</option><option value="all">Tüm Zamanlar</option><option value="custom">Tarih Aralığı</option></select></label><div id="finDates" class="is-hidden"><label>Başlangıç <input type="date" id="finStart"></label><label>Bitiş <input type="date" id="finEnd"></label><button type="button" id="finApply" class="btn outline">Uygula</button></div></div>
@@ -154,6 +258,10 @@ body{background:#f1f2ef}#app{min-height:75vh}.admin-header{background:#1b2321;co
   <button type="button" id="mobileQuotes" class="mobile-bottom-item active" aria-current="page" aria-label="Teklifler">
     <svg aria-hidden="true" viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4.5V3h6v1.5M9 10h6M9 14h6"/></svg>
     <span>Teklifler</span>
+  </button>
+  <button type="button" id="mobileWork" class="mobile-bottom-item" aria-label="İş Takibi">
+    <svg aria-hidden="true" viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/></svg>
+    <span>İşler</span>
   </button>
   <button type="button" id="mobileFinance" class="mobile-bottom-item" aria-label="Mali Yönetim">
     <svg aria-hidden="true" viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h3"/></svg>
