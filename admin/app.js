@@ -4,7 +4,7 @@ const statusLabels={new:"Yeni",reviewing:"Görüşülüyor",approved:"Onaylandı
 const $=id=>document.getElementById(id);
 let requests=[],chosenId=null;
 const customerRatings={1:"Kötü",2:"Orta",3:"İyi"};
-// Ratings belong to the individual quote ID, never to a shared phone number.
+// Ratings are stored on quotes and synchronized only for matching name + phone identities.
 const getStars=q=>Number(q.customer_rating)||0;
 const getRatingLabel=stars=>stars?customerRatings[stars]:"Değerlendirilmedi";
 
@@ -65,10 +65,9 @@ async function saveCustomerRating(quoteId,stars,feedback,buttons){
     .select("id,customer_rating")
     .single();
   if(error||!data)throw error||new Error("Güncelleme kaydedilemedi.");
-  const record=requests.find(x=>x.id===quoteId);
-  if(record)record.customer_rating=data.customer_rating;
-  renderList();
-  if(chosenId===quoteId)await renderDetail();
+  // A customer rating propagates to all matching requests on the server.
+  // Reload to reflect those records immediately without sharing it with other customers.
+  await loadQuotes();
  }catch(_){
   feedback.className="rating-feedback error";feedback.textContent="Puan kaydedilemedi. Yeniden deneyin.";
   buttons.forEach(b=>b.disabled=false);
@@ -87,7 +86,7 @@ async function renderDetail(){
  const ratingTitle=el("div","MÜŞTERİ DEĞERLENDİRMESİ","rating-title");
  const starsRow=el("div",null,"rating-stars");
  const ratingText=el("div",currentScore?getRatingLabel(currentScore)+" • "+currentScore+"/3 yıldız":"Henüz değerlendirilmedi","rating-current");
- const ratingHelp=el("p","1 yıldız: Kötü  ·  2 yıldız: Orta  ·  3 yıldız: İyi. Puan yalnızca bu kayda aittir.","rating-help");
+ const ratingHelp=el("p","1 yıldız: Kötü  ·  2 yıldız: Orta  ·  3 yıldız: İyi. Aynı ad ve telefonla gelen tekliflerde bu puan korunur.","rating-help");
  const ratingFeedback=el("p",null,"rating-feedback");ratingFeedback.setAttribute("role","status");ratingFeedback.setAttribute("aria-live","polite");
  const starsButtons=[];
  if(ratingKey){
