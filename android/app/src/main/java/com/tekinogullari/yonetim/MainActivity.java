@@ -68,10 +68,6 @@ public final class MainActivity extends Activity {
             if (documentHtml == null || documentHtml.length() > 160000 ||
                 !documentHtml.startsWith("<!DOCTYPE html><html lang=\"tr\">")) return;
             runOnUiThread(() -> {
-                if (printView != null) {
-                    Toast.makeText(MainActivity.this, "Önce açık PDF işlemini bitir.", Toast.LENGTH_LONG).show();
-                    return;
-                }
                 final WebView printable = new WebView(MainActivity.this);
                 printView = printable;
                 printable.getSettings().setJavaScriptEnabled(false);
