@@ -1,7 +1,7 @@
 import {createClient} from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import {initFinance} from "./finance.js?v=6";
 import {initAccounts} from "./accounts.js?v=3";
-import {initWork} from "./work.js?v=6";
+import {initWork} from "./work.js?v=7";
 import {initStock} from "./stock.js?v=2";
 import {initDocuments} from "./documents.js?v=2";
 import {initHome} from "./home.js?v=4";
@@ -159,7 +159,12 @@ async function validateUser(){
  if(!session)return showLogin();
  const {data:authorized,error}=await sb.rpc("is_tek_admin");
  if(error||!authorized){await sb.auth.signOut();return showLogin("Bu hesap için yönetici yetkisi tanımlı değil.")}
- showDashboard();await loadQuotes();void home.activate();void startQuoteNotifications();
+ showDashboard();await loadQuotes();
+ const fromNotification=new URLSearchParams(location.search).get("view");
+ if(fromNotification==="jobs")$("workTab").click();
+ else if(fromNotification==="quotes")$("quoteTab").click();
+ else void home.activate();
+ void startQuoteNotifications();
 }
 async function loadQuotes(){
  const list=$("requestList");list.replaceChildren(el("p","Talepler yükleniyor…","empty"));
