@@ -424,6 +424,114 @@ body{background:#f1f2ef}#app{min-height:75vh}.admin-header{background:#1b2321;co
 @media(max-width:850px){.stock-panels{grid-template-columns:1fr}.stock-fields{grid-template-columns:1fr}.stock-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stock-stats>div:last-child{grid-column:1/-1}}
 @media(max-width:800px){.mobile-bottom-item{font-size:9px}.mobile-bottom-nav{gap:0;padding-left:2px;padding-right:2px}.stock-intro h2{font-size:21px}.stock-filters{grid-template-columns:1fr}.stock-action{flex:1}.doc-overlay{padding:0}.doc-sheet{min-height:100vh;border-radius:0;padding:15px 12px 95px}.doc-fields{grid-template-columns:1fr}.doc-line{grid-template-columns:1fr 60px 90px 33px}.doc-line input{padding:8px 6px;font-size:13px}.doc-fields label{grid-column:1/-1}.doc-items-heading{align-items:center}.doc-items-heading .btn{padding:9px}.doc-total strong{font-size:18px}}
 
+
+/* Tekinoğulları compact management UI. Exact original TO palette: #222629 + #ff7200. */
+:root{--tek-charcoal:#222629;--tek-orange:#ff7200;--tek-orange-ink:#9c4300;--tek-cream:#fff5ec;--tek-line:#e2e4e0;--tek-muted:#67706b}
+body{background:#f5f5f3;color:var(--tek-charcoal)}
+.admin-header{background:#222629;border-bottom:3px solid #ff7200;padding:11px 0}
+.admin-header .container{max-width:1160px}
+.admin-brand{display:flex;align-items:center;gap:11px;min-width:0}
+.admin-brand-mark{display:grid;place-items:center;background:#fff;border-radius:11px;width:48px;height:45px;flex-shrink:0;border:1px solid #dedfdb}
+.admin-brand-mark img{width:40px;height:34px;object-fit:contain;display:block}
+.admin-brand-copy{display:flex;flex-direction:column;gap:2px;min-width:0}
+.admin-header .admin-brand-copy strong{font-size:14px;line-height:1.15;letter-spacing:.025em}
+.admin-brand-copy span{font-size:11px;color:#c5c9c5}
+.dashboard-head .eyebrow,.home-eyebrow,.more-kicker{color:var(--tek-orange-ink);font-weight:900}
+.dashboard-head h1,.home-top h2,.more-intro h2{color:var(--tek-charcoal)}
+#dashboard .admin-tabs{gap:3px}
+#dashboard .admin-tab.active{color:var(--tek-orange-ink);border-color:#f6ac73;background:var(--tek-cream)}
+#dashboard .admin-tab:focus-visible,#dashboard button:focus-visible{outline:2px solid #b25100;outline-offset:2px}
+#dashboard .home-metrics{gap:10px}
+#dashboard .home-metric{border-color:var(--tek-line);box-shadow:0 2px 10px #22262906;transition:border-color .15s ease,transform .15s ease}
+#dashboard .home-metric:hover{border-color:#ffb77e}
+#dashboard .home-metric-new{border-top:3px solid var(--tek-orange);padding-top:15px}
+#dashboard .home-metric-new strong{color:var(--tek-orange-ink)}
+#dashboard .home-metric-late strong{color:#ac392c}
+#dashboard .home-metric-wide{border-left:3px solid var(--tek-orange)}
+#dashboard .home-financials,#dashboard .home-feed-grid{gap:12px}
+#dashboard .home-finance-tile,#dashboard .home-feed{border-color:var(--tek-line)}
+#dashboard .home-text-link{color:var(--tek-orange-ink)}
+#dashboard .home-account-link{background:var(--tek-cream);border-color:#f7c9aa;color:var(--tek-orange-ink)}
+.home-quick{margin:0 0 22px}
+.home-quick-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:11px}
+.home-quick-head h3{margin:0;font-size:17px}
+.home-quick-head>span{font-size:12px;color:var(--tek-muted)}
+.home-quick-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.home-quick-action{display:flex;align-items:center;gap:12px;text-align:left;background:#fff;border:1px solid var(--tek-line);color:var(--tek-charcoal);border-radius:12px;min-height:75px;padding:13px 15px}
+.home-quick-action>span:nth-child(2){display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}
+.home-quick-action strong{font-size:14px;line-height:1.3}
+.home-quick-action small{font-size:11px;color:var(--tek-muted)}
+.home-quick-action>span:last-child{font-size:24px;line-height:1;color:var(--tek-orange)}
+.home-quick-action svg{flex-shrink:0;color:var(--tek-orange-ink)}
+.home-quick-primary{background:var(--tek-charcoal);border-color:var(--tek-charcoal);color:#fff}
+.home-quick-primary small{color:#ced1cd}
+.home-quick-primary svg,.home-quick-primary>span:last-child{color:#ff9449}
+.home-quick-action:active{transform:translateY(1px)}
+.more-view{max-width:760px;margin:auto}
+.more-intro{margin:0 0 19px}
+.more-intro h2{font-size:27px;margin:3px 0 5px}
+.more-intro p:last-child{color:var(--tek-muted);font-size:13px;margin:0}
+.more-kicker{font-size:11px;letter-spacing:.13em;margin:0}
+.more-menu{overflow:hidden;border:1px solid var(--tek-line);background:#fff;border-radius:14px}
+.more-menu-item{display:flex;align-items:center;text-align:left;gap:13px;border:0;border-bottom:1px solid #edeFEB;width:100%;padding:17px 16px;min-height:80px;background:#fff;color:var(--tek-charcoal)}
+.more-menu-item:last-child{border-bottom:0}
+.more-menu-item:hover,.more-menu-item:focus-visible{background:#fff8f2}
+.more-menu-icon{display:grid;place-items:center;flex-shrink:0;width:44px;height:44px;background:var(--tek-cream);color:var(--tek-orange-ink);border-radius:10px}
+.more-menu-text{display:flex;flex:1;min-width:0;flex-direction:column;gap:4px}
+.more-menu-text strong{font-size:15px}
+.more-menu-text small{font-size:12px;color:var(--tek-muted)}
+.more-menu-chevron{font-size:25px;color:var(--tek-orange-ink);line-height:1}
+.more-note{border:1px solid var(--tek-line);border-radius:12px;background:#fff;margin:17px 0;padding:17px;color:var(--tek-charcoal)}
+.more-note strong{font-size:14px}
+.more-note p{font-size:12px;line-height:1.55;color:var(--tek-muted);margin:7px 0 14px}
+.more-refresh{min-height:45px;padding:10px 16px;color:var(--tek-orange-ink);border:1px solid #f4c5a4;border-radius:9px;background:var(--tek-cream);font-weight:850}
+#dashboard .mobile-bottom-nav #mobileAccounts,
+#dashboard .mobile-bottom-nav #mobileStock,
+#dashboard .mobile-bottom-nav #mobileFinance{display:none!important}
+@media(max-width:800px){
+ .admin-header{padding:10px 0}
+ .admin-header .container{gap:8px}
+ .admin-brand-mark{height:40px;width:43px;border-radius:9px}
+ .admin-brand-mark img{height:30px;width:35px}
+ .admin-header .admin-brand-copy strong{font-size:12px}
+ .admin-brand-copy span{font-size:10px}
+ .admin-wrap{margin-top:20px;padding-left:13px;padding-right:13px}
+ .dashboard-head{margin-bottom:13px}
+ .dashboard-head h1{font-size:24px}
+ #dashboard .home-top{margin-bottom:13px}
+ #dashboard .home-top h2{font-size:21px}
+ #dashboard .home-metrics{gap:9px;margin-bottom:19px}
+ #dashboard .home-metric{border-radius:11px;min-height:102px;padding:13px}
+ #dashboard .home-metric-new{padding-top:11px}
+ #dashboard .home-metric strong{font-size:29px}
+ #dashboard .home-metric-wide{min-height:77px}
+ .home-quick{margin-bottom:20px}
+ .home-quick-grid{gap:9px}
+ .home-quick-action{min-height:77px;padding:11px 9px;gap:8px}
+ .home-quick-action strong{font-size:12px}
+ .home-quick-action small{font-size:10px}
+ .home-quick-action svg{height:22px;width:22px}
+ .home-quick-action>span:last-child{font-size:19px}
+ #dashboard .mobile-bottom-nav{
+  grid-template-columns:repeat(4,minmax(0,1fr));display:grid;gap:5px;
+  left:0;right:0;bottom:0;padding:7px 12px calc(7px + env(safe-area-inset-bottom,0px));
+  background:#fff;border-top:1px solid var(--tek-line);box-shadow:0 -5px 18px #22262912;
+  z-index:120
+ }
+ #dashboard .mobile-bottom-item{font-size:11px;font-weight:850;min-height:55px;color:#647067;gap:4px;border-radius:11px}
+ #dashboard .mobile-bottom-item svg{height:22px;width:22px}
+ #dashboard .mobile-bottom-item.active{background:var(--tek-cream);color:var(--tek-orange-ink)}
+ #dashboard .mobile-bottom-item.active svg{color:var(--tek-orange)}
+ #dashboard{padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))}
+ .status-toast{bottom:calc(88px + env(safe-area-inset-bottom,0px))}
+ .more-intro h2{font-size:24px}
+ .more-menu-item{padding:13px 12px;min-height:73px}
+ .more-menu-icon{height:42px;width:42px}
+}
+@media(min-width:801px){
+ .more-view{margin-top:20px}
+}
+
 </style><script type="module" src="/admin/app.js?v=18"></script></head>
 <body><header class="admin-header"><div class="container"><div class="admin-brand"><span class="admin-brand-mark"><img src="/assets/to-icon.svg" alt="Orijinal TO logosu" width="40" height="34"></span><div class="admin-brand-copy"><strong>TEKİNOĞULLARI İMALAT</strong><span>Yönetici Paneli</span></div></div><button class="button" id="logout">Çıkış Yap</button></div></header>
 <main id="app" class="admin-wrap"><p id="loading" role="status">Yönetim paneli açılıyor…</p>
