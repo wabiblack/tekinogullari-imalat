@@ -103,7 +103,7 @@ body{background:#f1f2ef}#app{min-height:75vh}.admin-header{background:#1b2321;co
  .request-quick-actions{padding:0 12px 13px}
  .request-next{min-height:44px;min-width:130px}
  .status-toast{bottom:calc(83px + env(safe-area-inset-bottom,0px));max-width:calc(100vw - 24px);width:calc(100vw - 24px);padding:10px 12px}
- .mobile-bottom-nav{position:fixed;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));bottom:0;left:0;right:0;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));gap:5px;z-index:120;background:#fff;border-top:1px solid #d9e0d9;box-shadow:0 -7px 20px #14221612}
+ .mobile-bottom-nav{position:fixed;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));bottom:0;left:0;right:0;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));gap:5px;z-index:120;background:#fff;border-top:1px solid #d9e0d9;box-shadow:0 -7px 20px #14221612}
  .mobile-bottom-item{border:0;border-radius:10px;background:transparent;color:#69766c;min-height:53px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;font-weight:800}
  .mobile-bottom-item svg{flex-shrink:0}
  .mobile-bottom-item.active{background:#fff1e7;color:#9a481d}
@@ -188,7 +188,75 @@ body{background:#f1f2ef}#app{min-height:75vh}.admin-header{background:#1b2321;co
 .quote-work-btn:hover{background:#ffe6d5}
 .work-notice{font-size:13px;line-height:1.4;padding:11px 14px;border:1px solid #b7dfc8;background:#eaf7ef;color:#27613e;border-radius:9px;margin:0 0 13px}
 
-</style><script type="module" src="/admin/app.js?v=11"></script></head>
+
+/* İşletme Ana Ekranı: mobile-first, no changes to the original brand mark. */
+.home-top{display:flex;gap:14px;justify-content:space-between;align-items:center;margin-bottom:19px}
+.home-top h2{font-size:clamp(22px,3vw,30px);margin:1px 0 3px;letter-spacing:-.03em;color:#1b2820}
+.home-eyebrow{color:#b05a20;font-size:11px;font-weight:850;letter-spacing:.12em;margin:0 0 5px}
+.home-subhead{color:#68746c;font-size:13px;margin:0}
+.home-top .btn{min-height:43px;white-space:nowrap}
+.home-error{margin:0 0 14px;background:#fff1e9;border:1px solid #f0c6ab;color:#a13b20;border-radius:10px;padding:11px 14px;font-size:13px}
+.home-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin-bottom:24px}
+.home-metric{min-width:0;display:flex;flex-direction:column;align-items:stretch;gap:5px;padding:17px;border-radius:13px;border:1px solid #dce3dc;background:#fff;text-align:left;min-height:125px;color:#1b2820;cursor:pointer}
+.home-metric small{font-size:12px;color:#66746a;font-weight:750}
+.home-metric strong{font-size:clamp(25px,3vw,35px);line-height:1.2;font-variant-numeric:tabular-nums}
+.home-metric span{font-size:11px;color:#87938a}
+.home-metric:hover,.home-metric:focus-visible{border-color:#d5894e;background:#fffaf6}
+.home-metric-new strong{color:#bf641e}
+.home-metric-late strong{color:#b4372c}
+.home-metric-wide{grid-column:1/-1;min-height:85px;flex-direction:row;justify-content:space-between;align-items:center;flex-wrap:wrap}
+.home-metric-wide strong{order:2}
+.home-metric-wide span{width:100%}
+.home-finance-header,.home-feed-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.home-finance-header{margin-bottom:11px}
+.home-finance-header h3,.home-feed-head h3{margin:0;font-size:17px}
+.home-text-link{border:0;background:transparent;color:#995228;font-size:12px;font-weight:850;min-height:42px;padding:7px;cursor:pointer;white-space:nowrap}
+.home-financials{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;margin-bottom:25px}
+.home-finance-tile{min-width:0;border:1px solid #dce3dc;background:#fff;padding:17px;border-radius:13px}
+.home-finance-tile small{display:block;font-size:12px;color:#66746a;margin-bottom:8px}
+.home-finance-tile strong{font-size:clamp(15px,2vw,23px);font-weight:850;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+#homeIncome,.home-finance-net strong.positive{color:#247047}
+#homeExpense,.home-finance-net strong.negative{color:#b53e34}
+.home-feed-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:15px}
+.home-feed{border:1px solid #dce3dc;background:#fff;border-radius:13px;overflow:hidden;min-width:0}
+.home-feed-head{padding:12px 14px;border-bottom:1px solid #eef0ed}
+.home-feed-head h3{font-size:16px}
+.home-feed-list .home-list-item{background:#fff;border:0;border-bottom:1px solid #edf0eb;width:100%;min-height:69px;padding:12px 14px;display:flex;gap:9px;justify-content:space-between;align-items:center;text-align:left}
+.home-feed-list .home-list-item:last-child{border-bottom:0}
+.home-feed-list .home-list-item:hover{background:#fff7f1}
+.home-list-text{display:flex;flex-direction:column;min-width:0;gap:4px}
+.home-list-text strong{font-size:13px;overflow-wrap:anywhere}
+.home-list-subtitle{font-size:12px;color:#728075;overflow-wrap:anywhere}
+.home-list-chevron{font-size:25px;font-weight:600;color:#b26737}
+.home-due-badge{flex-shrink:0;background:#fff0df;color:#995b1e;border-radius:999px;padding:5px 8px;font-size:11px;font-weight:850}
+.home-due-badge.is-late{background:#fbe7e3;color:#b13728}
+.home-empty{padding:19px 14px;font-size:13px;color:#758177;margin:0}
+.home-footnotes{margin:12px 0 28px;font-size:12px;color:#788179;line-height:1.5}
+.home-footnotes p{margin:5px 0}
+@media(max-width:900px){.home-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.home-feed-grid{grid-template-columns:1fr}}
+@media(max-width:800px){
+ .home-top{margin:0 0 13px;align-items:center}
+ .home-top h2{font-size:22px}
+ .home-top .btn{padding:9px 11px}
+ .home-metrics{gap:8px;margin-bottom:18px}
+ .home-metric{padding:14px 12px;min-height:107px;border-radius:11px}
+ .home-metric small{font-size:11px}
+ .home-metric strong{font-size:30px}
+ .home-metric-wide{min-height:84px;padding:13px}
+ .home-finance-header{margin-bottom:7px}
+ .home-financials{gap:8px;margin-bottom:19px;grid-template-columns:repeat(2,minmax(0,1fr))}
+ .home-finance-tile{padding:12px;border-radius:10px}
+ .home-finance-tile strong{font-size:17px}
+ .home-finance-net{grid-column:1/-1}
+ .home-feed-grid{gap:12px}
+ .home-feed-head{padding:8px 11px}
+ .home-feed-head h3{font-size:15px}
+ .home-bottom-nav,.mobile-bottom-item{min-width:0}
+ .mobile-bottom-item{font-size:10px;gap:3px;padding:3px 0}
+ .mobile-bottom-nav{gap:1px;padding-left:3px;padding-right:3px}
+}
+
+</style><script type="module" src="/admin/app.js?v=12"></script></head>
 <body><header class="admin-header"><div class="container"><div><strong>TEKİNOĞULLARI İMALAT</strong> <span style="opacity:.65">/ Yönetici Paneli</span></div><button class="button" id="logout">Çıkış Yap</button></div></header>
 <main id="app" class="admin-wrap"><p id="loading" role="status">Yönetim paneli açılıyor…</p>
 <section id="setup" class="login-card is-hidden">
@@ -201,10 +269,47 @@ body{background:#f1f2ef}#app{min-height:75vh}.admin-header{background:#1b2321;co
 <p id="setupError" class="error" role="alert"></p>
 </form></section>
 <section id="login" class="login-card is-hidden"><p class="eyebrow">Yetkili Girişi</p><h1>Yönetici Paneli</h1><p>Gelen teklifleri görüntülemek için yetkili hesabınızla giriş yapın.</p><form id="loginForm"><label class="field">E-posta<input type="email" id="email" value="ercan@tekin.com" required autocomplete="username" placeholder="ornek@firma.com"></label><label class="field">Şifre<input type="password" id="password" required autocomplete="current-password" placeholder="Şifreniz"></label><button class="btn" type="submit">Giriş Yap ↗</button><p id="loginError" class="error" role="alert"></p></form></section>
-<section id="dashboard" class="is-hidden"><div class="dashboard-head"><div><p class="eyebrow">TEKİNOĞULLARI İMALAT / Yönetim</p><h1 id="adminPageTitle">Teklif Talepleri</h1></div><button class="btn outline" id="refresh">Yenile ↻</button></div>
+<section id="dashboard" class="is-hidden"><div class="dashboard-head"><div><p class="eyebrow">TEKİNOĞULLARI İMALAT / Yönetim</p><h1 id="adminPageTitle">İşletme Özeti</h1></div><button class="btn outline" id="refresh">Yenile ↻</button></div>
 <p id="notificationHint" class="notification-hint is-hidden" role="status" aria-live="polite"></p>
-<div class="admin-tabs" role="tablist" aria-label="Yönetim bölümleri"><button type="button" id="quoteTab" class="admin-tab active" role="tab" aria-selected="true" aria-controls="quoteView">Teklif Talepleri</button><button type="button" id="workTab" class="admin-tab" role="tab" aria-selected="false" aria-controls="workView">İş Takibi</button><button type="button" id="financeTab" class="admin-tab" role="tab" aria-selected="false" aria-controls="financeView">Mali Yönetim</button></div><section id="quoteView" role="tabpanel" aria-labelledby="quoteTab"><div class="stats"><div class="stat"><b id="statAll">0</b><small>Görüntülenen</small></div><div class="stat"><b id="statNew">0</b><small>Yeni</small></div><div class="stat"><b id="statReview">0</b><small>İşlemde</small></div><div class="stat"><b id="statDone">0</b><small>Tamamlandı</small></div></div>
-<div class="grid-admin" id="requestGrid"><div class="admin-panel" id="requestListPanel"><h2>Gelen Talepler <small style="font-size:11px;color:#737c76;font-weight:500"> (son 300 kayıt)</small></h2><div class="filters"><input id="search" placeholder="İsim, telefon veya hizmet ara" aria-label="Taleplerde ara"><select id="filter" aria-label="Durum filtrele"><option value="">Tüm Durumlar</option><option value="new">Yeni</option><option value="reviewing">Görüşülüyor</option><option value="approved">Onaylandı</option><option value="in_production">Üretimde</option><option value="completed">Tamamlandı</option><option value="cancelled">İptal</option></select><select id="ratingFilter" aria-label="Müşteri değerlendirmesi filtrele"><option value="">Tüm Puanlar</option><option value="3">★★★ İyi</option><option value="2">★★ Orta</option><option value="1">★ Kötü</option><option value="unrated">Değerlendirilmedi</option></select></div><div id="requestList" class="request-list"><p class="empty">Yükleniyor…</p></div></div>
+<div class="admin-tabs" role="tablist" aria-label="Yönetim bölümleri"><button type="button" id="homeTab" class="admin-tab active" role="tab" aria-selected="true" aria-controls="homeView">Ana Ekran</button><button type="button" id="quoteTab" class="admin-tab" role="tab" aria-selected="false" aria-controls="quoteView">Teklif Talepleri</button><button type="button" id="workTab" class="admin-tab" role="tab" aria-selected="false" aria-controls="workView">İş Takibi</button><button type="button" id="financeTab" class="admin-tab" role="tab" aria-selected="false" aria-controls="financeView">Mali Yönetim</button></div>
+<section id="homeView" role="tabpanel" aria-labelledby="homeTab" class="home-view">
+ <div class="home-top">
+  <div>
+   <p class="home-eyebrow">GÜNLÜK İŞLETME PANOSU</p>
+   <h2>İşletmenin Durumu</h2>
+   <p class="home-subhead">Teklifleri, üretimi ve nakit akışını tek ekranda takip et.</p>
+  </div>
+  <button type="button" id="homeRefresh" class="btn outline">Yenile ↻</button>
+ </div>
+ <p id="homeError" class="home-error is-hidden" role="alert"></p>
+ <div class="home-metrics" aria-label="İşletme istatistikleri">
+  <button type="button" id="homeNewCard" class="home-metric home-metric-new"><small>Yeni Teklif</small><strong id="homeNew">—</strong><span>Gelen başvurular <span aria-hidden="true">›</span></span></button>
+  <button type="button" id="homePendingCard" class="home-metric"><small>Bekleyen Teklif</small><strong id="homePending">—</strong><span>Yeni + görüşülüyor <span aria-hidden="true">›</span></span></button>
+  <button type="button" id="homeActiveCard" class="home-metric"><small>Aktif İş</small><strong id="homeActive">—</strong><span>Devam eden işler <span aria-hidden="true">›</span></span></button>
+  <button type="button" id="homeLateCard" class="home-metric home-metric-late"><small>Geciken Teslim</small><strong id="homeLate">—</strong><span>Öncelikli işler <span aria-hidden="true">›</span></span></button>
+  <button type="button" id="homeSoonCard" class="home-metric home-metric-wide"><small>7 Gün İçinde Teslim</small><strong id="homeSoon">—</strong><span>Bugün dahil, yaklaşan işler <span aria-hidden="true">›</span></span></button>
+ </div>
+ <div class="home-finance-header"><h3>Bu Ayın Nakit Durumu</h3><button type="button" id="homeFinanceGo" class="home-text-link">Mali Yönetim ›</button></div>
+ <div class="home-financials">
+  <div class="home-finance-tile"><small>Gelir / Tahsilat</small><strong id="homeIncome">—</strong></div>
+  <div class="home-finance-tile"><small>Gider / Ödeme</small><strong id="homeExpense">—</strong></div>
+  <div class="home-finance-tile home-finance-net"><small>Net Nakit Farkı</small><strong id="homeNet">—</strong></div>
+ </div>
+ <div class="home-feed-grid">
+  <section class="home-feed">
+   <div class="home-feed-head"><h3>Yeni Müşteri Teklifleri</h3><button type="button" id="homeAllQuotes" class="home-text-link">Tümünü Gör ›</button></div>
+   <div id="homeRecentQuotes" class="home-feed-list"><p class="home-empty">Yükleniyor…</p></div>
+  </section>
+  <section class="home-feed">
+   <div class="home-feed-head"><h3>Teslimat Öncelikleri</h3><button type="button" id="homeAllJobs" class="home-text-link">İşlere Git ›</button></div>
+   <div id="homeUpcomingJobs" class="home-feed-list"><p class="home-empty">Yükleniyor…</p></div>
+  </section>
+ </div>
+ <div class="home-footnotes"><p id="homeUpdated" role="status">Veriler hazırlanıyor…</p><p>Tutarlar yalnızca Mali Yönetim'e kaydedilmiş gerçek gelir ve giderlerdir. İş bedeli tahsilat sayılmaz. Net nakit farkı, muhasebe kârı değildir.</p></div>
+</section>
+
+<section id="quoteView" class="is-hidden" role="tabpanel" aria-labelledby="quoteTab"><div class="stats"><div class="stat"><b id="statAll">0</b><small>Görüntülenen</small></div><div class="stat"><b id="statNew">0</b><small>Yeni</small></div><div class="stat"><b id="statReview">0</b><small>İşlemde</small></div><div class="stat"><b id="statDone">0</b><small>Tamamlandı</small></div></div>
+<div class="grid-admin" id="requestGrid"><div class="admin-panel" id="requestListPanel"><h2>Gelen Talepler <small style="font-size:11px;color:#737c76;font-weight:500"> (son 300 kayıt)</small></h2><div class="filters"><input id="search" placeholder="İsim, telefon veya hizmet ara" aria-label="Taleplerde ara"><select id="filter" aria-label="Durum filtrele"><option value="">Tüm Durumlar</option><option value="pending">Yeni + Görüşülüyor</option><option value="new">Yeni</option><option value="reviewing">Görüşülüyor</option><option value="approved">Onaylandı</option><option value="in_production">Üretimde</option><option value="completed">Tamamlandı</option><option value="cancelled">İptal</option></select><select id="ratingFilter" aria-label="Müşteri değerlendirmesi filtrele"><option value="">Tüm Puanlar</option><option value="3">★★★ İyi</option><option value="2">★★ Orta</option><option value="1">★ Kötü</option><option value="unrated">Değerlendirilmedi</option></select></div><div id="requestList" class="request-list"><p class="empty">Yükleniyor…</p></div></div>
 <div class="admin-panel" id="requestDetailPanel"><div class="detail-title"><h2>Talep Detayı</h2><button type="button" id="backToRequests" class="back-list">← Taleplere Dön</button></div><div id="detail" class="detail-pad"><p class="empty">Detayları görmek için soldan talep seçin.</p></div></div></div>
 </section>
 
@@ -261,7 +366,12 @@ body{background:#f1f2ef}#app{min-height:75vh}.admin-header{background:#1b2321;co
   <button id="statusUndo" type="button" class="status-undo is-hidden">Geri Al</button>
 </div>
 <nav id="mobileBottomNav" class="mobile-bottom-nav" aria-label="Mobil yönetim menüsü">
-  <button type="button" id="mobileQuotes" class="mobile-bottom-item active" aria-current="page" aria-label="Teklifler">
+  <button type="button" id="mobileHome" class="mobile-bottom-item active" aria-current="page" aria-label="Ana Ekran">
+    <svg aria-hidden="true" viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="9" width="17" height="12" rx="2"/><path d="M2.5 10 12 2.5 21.5 10 M9.5 21v-7h5v7"/></svg>
+    <span>Özet</span>
+  </button>
+
+  <button type="button" id="mobileQuotes" class="mobile-bottom-item" aria-label="Teklifler">
     <svg aria-hidden="true" viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4.5V3h6v1.5M9 10h6M9 14h6"/></svg>
     <span>Teklifler</span>
   </button>
