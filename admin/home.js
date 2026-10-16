@@ -103,7 +103,8 @@ export function initHome(sb,{openQuote}){
   clearError();
   const month=todayISO().slice(0,7);
   const start=month+"-01";
-  const end=afterDaysISO(0);
+  const date=new Date(),lastDay=new Date(date.getFullYear(),date.getMonth()+1,0);
+  const end=[lastDay.getFullYear(),String(lastDay.getMonth()+1).padStart(2,"0"),String(lastDay.getDate()).padStart(2,"0")].join("-");
   const today=todayISO(),weekEnd=afterDaysISO(7);
   const active=["planned","in_progress","ready"];
   const queries=[
@@ -163,7 +164,7 @@ export function initHome(sb,{openQuote}){
  $("homeTab").addEventListener("click",()=>void activate());
  $("homeRefresh").addEventListener("click",()=>void refresh());
  $("homeNewCard").addEventListener("click",()=>goQuotes("new"));
- $("homePendingCard").addEventListener("click",()=>goQuotes("reviewing"));
+ $("homePendingCard").addEventListener("click",()=>goQuotes("pending"));
  $("homeActiveCard").addEventListener("click",()=>goJobs());
  $("homeLateCard").addEventListener("click",()=>goJobs("overdue"));
  $("homeSoonCard").addEventListener("click",()=>goJobs("soon"));
