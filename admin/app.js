@@ -2,7 +2,17 @@ import {createClient} from "https://esm.sh/@supabase/supabase-js@2.49.4";
 const sb=createClient("https://xrlipgbetpohjewhlbml.supabase.co","sb_publishable_KR4wJm1CbhzSSJqwTbk57A_f8LThNpD",{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const statusLabels={new:"Yeni",reviewing:"Görüşülüyor",approved:"Onaylandı",in_production:"Üretimde",completed:"Tamamlandı",cancelled:"İptal"};
 const $=id=>document.getElementById(id);
-let requests=[],chosenId=null;
+let requests=[],chosenId=null,ratings=new Map(),ratingsLoaded=false;
+const customerRatings={1:"Kötü",2:"Orta",3:"İyi"};
+function phoneKey(phone){
+ let d=String(phone||"").replace(/\D/g,"");
+ if(d.length===12&&d.startsWith("90"))d="0"+d.slice(2);
+ else if(d.length===10&&d.startsWith("5"))d="0"+d;
+ return d.length>=10&&d.length<=15?d:null;
+}
+const getStars=q=>ratings.get(phoneKey(q.customer_phone))||0;
+const getRatingLabel=stars=>stars?customerRatings[stars]:"Değerlendirilmedi";
+
 const loading=$("loading"),login=$("login"),dashboard=$("dashboard"),logout=$("logout");
 const el=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined&&text!==null)e.textContent=String(text);if(cls)e.className=cls;return e};
 const date=iso=>new Date(iso).toLocaleString("tr-TR",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"});
@@ -17,9 +27,15 @@ async function validateUser(){
 }
 async function loadQuotes(){
  const list=$("requestList");list.replaceChildren(el("p","Talepler yükleniyor…","empty"));
- const {data,error}=await sb.from("quote_requests").select("id,customer_name,customer_phone,service,details,attachment_path,status,admin_notes,created_at,updated_at").order("created_at",{ascending:false}).limit(300);
- if(error){list.replaceChildren(el("p","Talepler yüklenemedi. Oturumunuzu kontrol edip yeniden deneyin.","error"));return}
- requests=data||[];
+
+ const [quotesResponse,ratingsResponse]=await Promise.all([
+   sb.from("quote_requests").select("id,customer_name,customer_phone,service,details,attachment_path,status,admin_notes,created_at,updated_at").order("created_at",{ascending:false}).limit(300),
+   sb.from("customer_ratings").select("phone_key,stars")
+ ]);
+ if(quotesResponse.error){list.replaceChildren(el("p","Talepler yüklenemedi. Oturumunuzu kontrol edip yeniden deneyin.","error"));return}
+ requests=quotesResponse.data||[];
+ ratingsLoaded=!ratingsResponse.error;
+ ratings=new Map((ratingsResponse.data||[]).map(x=>[x.phone_key,x.stars]));
  $("statAll").textContent=requests.length;
  $("statNew").textContent=requests.filter(x=>x.status==="new").length;
  $("statReview").textContent=requests.filter(x=>["reviewing","approved","in_production"].includes(x.status)).length;
@@ -28,16 +44,41 @@ async function loadQuotes(){
 }
 function renderList(){
  const list=$("requestList");list.replaceChildren();
- const term=$("search").value.trim().toLocaleLowerCase("tr-TR"),filter=$("filter").value;
- const subset=requests.filter(x=>(!filter||x.status===filter)&&(!term||[x.customer_name,x.customer_phone,x.service,x.details].some(v=>String(v||"").toLocaleLowerCase("tr-TR").includes(term))));
+
+ const term=$("search").value.trim().toLocaleLowerCase("tr-TR"),filter=$("filter").value,ratingFilter=$("ratingFilter").value;
+ const subset=requests.filter(x=>(!filter||x.status===filter)&&(!ratingFilter||(ratingFilter==="unrated"?getStars(x)===0:getStars(x)===Number(ratingFilter)))&&(!term||[x.customer_name,x.customer_phone,x.service,x.details].some(v=>String(v||"").toLocaleLowerCase("tr-TR").includes(term))));
  if(!subset.length){list.append(el("p","Bu koşullara uygun talep bulunamadı.","empty"));return}
  for(const q of subset){
   const button=el("button",null,"request"+(q.id===chosenId?" selected":""));
   button.type="button";
   const top=el("span",null,"head"),name=el("span",q.customer_name),tag=el("span",statusLabels[q.status]||q.status,"tag "+q.status);top.append(name,tag);
+
   button.append(top,el("span",q.service+" • "+date(q.created_at),"meta"));
+  const score=getStars(q);
+  const starTag=el("span",score?"★".repeat(score)+"☆".repeat(3-score)+"  "+getRatingLabel(score):"☆☆☆  Değerlendirilmedi","customer-rating-tag"+(score?" scored":""));
+  button.append(starTag);
   button.addEventListener("click",()=>{chosenId=q.id;renderList();void renderDetail()});
   list.append(button);
+ }
+}
+async function saveCustomerRating(key,stars,feedback,buttons){
+ if(!ratingsLoaded||!key)return;
+ buttons.forEach(b=>b.disabled=true);
+ feedback.className="rating-feedback";feedback.textContent="Kaydediliyor…";
+ try{
+  let error;
+  if(stars===0){
+   ({error}=await sb.from("customer_ratings").delete().eq("phone_key",key));
+  }else{
+   ({error}=await sb.from("customer_ratings").upsert({phone_key:key,stars,updated_at:new Date().toISOString()},{onConflict:"phone_key"}));
+  }
+  if(error)throw error;
+  if(stars===0)ratings.delete(key);else ratings.set(key,stars);
+  renderList();
+  await renderDetail();
+ }catch(_){
+  feedback.className="rating-feedback error";feedback.textContent="Puan kaydedilemedi. Yeniden deneyin.";
+  buttons.forEach(b=>b.disabled=false);
  }
 }
 async function renderDetail(){
@@ -46,7 +87,28 @@ async function renderDetail(){
  detail.append(el("h3",q.customer_name));
  detail.append(el("p",q.service+" • "+date(q.created_at),"smallprint"));
  const field=(title,value)=>{detail.append(el("p",title,"label"),el("p",value||"Belirtilmemiş","value"))};
+
  field("TELEFON",q.customer_phone);
+ const ratingKey=phoneKey(q.customer_phone),currentScore=getStars(q);
+ const ratingBox=el("div",null,"rating-box");
+ const ratingTitle=el("div","MÜŞTERİ DEĞERLENDİRMESİ","rating-title");
+ const starsRow=el("div",null,"rating-stars");
+ const ratingText=el("div",currentScore?getRatingLabel(currentScore)+" • "+currentScore+"/3 yıldız":"Henüz değerlendirilmedi","rating-current");
+ const ratingHelp=el("p","1 yıldız: Kötü  ·  2 yıldız: Orta  ·  3 yıldız: İyi","rating-help");
+ const ratingFeedback=el("p",null,"rating-feedback");ratingFeedback.setAttribute("role","status");ratingFeedback.setAttribute("aria-live","polite");
+ const starsButtons=[];
+ if(ratingsLoaded&&ratingKey){
+  for(let n=1;n<=3;n++){
+   const star=el("button","★","rating-star"+(n<=currentScore?" selected":""));
+   star.type="button";star.title=n+" yıldız: "+customerRatings[n];star.setAttribute("aria-label",n+" yıldız: "+customerRatings[n]);
+   star.setAttribute("aria-pressed",String(n===currentScore));
+   starsButtons.push(star);starsRow.append(star);
+   star.addEventListener("click",()=>void saveCustomerRating(ratingKey,n,ratingFeedback,starsButtons));
+  }
+  if(currentScore){const clear=el("button","Puanı Kaldır","rating-clear");clear.type="button";clear.addEventListener("click",()=>void saveCustomerRating(ratingKey,0,ratingFeedback,[...starsButtons,clear]));starsRow.append(clear)}
+ }else{starsRow.append(el("span",ratingsLoaded?"Müşteri telefonu puanlamaya uygun değil.":"Değerlendirmeler yüklenemedi. Yenile butonuna basın.","smallprint"))}
+ ratingBox.append(ratingTitle,starsRow,ratingText,ratingHelp,ratingFeedback);
+ detail.append(ratingBox);
  const contact=el("a","Telefonla Ara ↗","text-link");contact.href="tel:"+q.customer_phone.replace(/[^+\d]/g,"");detail.append(contact);
  field("HİZMET",q.service);field("İŞİN DETAYLARI",q.details);
  if(q.attachment_path){
@@ -80,6 +142,7 @@ $("logout").addEventListener("click",async()=>{await sb.auth.signOut();chosenId=
 $("refresh").addEventListener("click",()=>void loadQuotes());
 $("search").addEventListener("input",renderList);
 $("filter").addEventListener("change",renderList);
+$("ratingFilter").addEventListener("change",renderList);
 const bootstrap=new URLSearchParams(location.hash.slice(1)).get("kurulum");
 const setup=$("setup");
 const setupApi="https://xrlipgbetpohjewhlbml.supabase.co/functions/v1/setup-tek-admin";
