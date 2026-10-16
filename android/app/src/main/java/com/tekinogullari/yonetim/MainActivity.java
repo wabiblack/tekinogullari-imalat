@@ -1,6 +1,8 @@
 package com.tekinogullari.yonetim;
 
 import android.app.Activity;
+import android.print.PrintManager;
+import android.print.PrintDocumentAdapter;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -62,12 +64,39 @@ public final class MainActivity extends Activity {
             QuoteNotificationJob.stop(getApplicationContext());
         }
         @JavascriptInterface
+        public void printPdf(String documentHtml) {
+            if (documentHtml == null || documentHtml.length() > 160000 ||
+                !documentHtml.startsWith("<!DOCTYPE html><html lang=\"tr\">")) return;
+            runOnUiThread(() -> {
+                if (printView != null) {
+                    Toast.makeText(MainActivity.this, "Önce açık PDF işlemini bitir.", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                final WebView printable = new WebView(MainActivity.this);
+                printView = printable;
+                printable.getSettings().setJavaScriptEnabled(false);
+                printable.setWebViewClient(new WebViewClient() {
+                    @Override
+                    public void onPageFinished(WebView view, String url) {
+                        PrintManager manager = (PrintManager)getSystemService(Context.PRINT_SERVICE);
+                        if (manager != null) {
+                            PrintDocumentAdapter adapter = printable.createPrintDocumentAdapter("Tekinogullari-Belge");
+                            manager.print("Tekinoğulları Belge",adapter,null);
+                        }
+                    }
+                });
+                printable.loadDataWithBaseURL("https://tekinogullari-imalat.vercel.app/",
+                    documentHtml, "text/html","UTF-8",null);
+            });
+        }
+        @JavascriptInterface
         public void checkNow() {
             QuoteNotificationJob.checkImmediately(getApplicationContext());
         }
     }
 
     private WebView webView;
+    private WebView printView;
     private ValueCallback<Uri[]> pendingFileChooser;
 
     @Override
@@ -195,6 +224,7 @@ public final class MainActivity extends Activity {
 
     @Override
     protected void onDestroy() {
+        if (printView != null) { printView.destroy(); printView = null; }
         if (webView != null) {
             webView.destroy();
             webView = null;
