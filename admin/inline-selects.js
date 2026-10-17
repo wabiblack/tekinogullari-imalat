@@ -13,7 +13,7 @@ export function initInlineSelects(){
   for(const picker of wrappers)if(picker!==except)picker.close();
  }
  function enhance(select){
-  if(!select||select.dataset.tekPicker||!allowed.has(select.id))return;
+  if(!select||select.dataset.tekPicker||!(allowed.has(select.id)||select.matches("#detail .select-status")))return;
   select.dataset.tekPicker="true";
   const container=document.createElement("div");
   container.className="tek-inline-select";
@@ -91,6 +91,13 @@ export function initInlineSelects(){
   sync();
  }
  for(const select of document.querySelectorAll("select"))enhance(select);
+ const quoteDetail=document.getElementById("detail");
+ if(quoteDetail){
+  new MutationObserver(()=>{
+   for(const control of quoteDetail.querySelectorAll("select.select-status"))enhance(control);
+  }).observe(quoteDetail,{childList:true,subtree:true});
+ }
+
  document.addEventListener("pointerdown",event=>{
   if(!event.target.closest(".tek-inline-select"))closeAll();
  },{passive:true});
