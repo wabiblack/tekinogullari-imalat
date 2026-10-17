@@ -68,17 +68,17 @@ export function initFinance(sb){
    actions.append(edit,del);row.append(top,actions);list.append(row);
   }
  }
- async function load(){
+ async function load({silent=false}={}){
   const seq=++loadSerial,{start,end}=bounds();
   if(start&&end&&start>end){message("Başlangıç tarihi bitişten sonra olamaz.",true);return}
-  $("finList").replaceChildren(make("p","Kayıtlar yükleniyor…","empty"));
+  if(!silent)$("finList").replaceChildren(make("p","Kayıtlar yükleniyor…","empty"));
   let query=sb.from("finance_transactions").select("id,entry_date,kind,category,description,amount,quote_id,created_at").order("entry_date",{ascending:false}).order("created_at",{ascending:false}).limit(300);
   if(start)query=query.gte("entry_date",start);
   if(end)query=query.lte("entry_date",end);
   const [summary,result]=await Promise.all([sb.rpc("tek_finance_summary",{from_date:start,to_date:end}),query]);
   if(seq!==loadSerial)return;
   if(summary.error||result.error){
-   $("finList").replaceChildren(make("p","Mali kayıtlar yüklenemedi. Oturumunuzu kontrol edip Yenile'ye basın.","error"));
+   if(!silent)$("finList").replaceChildren(make("p","Mali kayıtlar yüklenemedi. Oturumunuzu kontrol edip tekrar giriş yapın.","error"));
    return;
   }
   const totals=Array.isArray(summary.data)?summary.data[0]:summary.data;
