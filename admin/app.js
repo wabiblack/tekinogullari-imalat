@@ -1,5 +1,5 @@
 import {createClient} from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import {initFinance} from "./finance.js?v=7";
+import {initFinance} from "./finance.js?v=8";
 import {initAccounts} from "./accounts.js?v=3";
 import {initWork} from "./work.js?v=7";
 import {initStock} from "./stock.js?v=2";
