@@ -803,6 +803,60 @@ body.tek-app-mode #moreView:not(.is-hidden) .more-menu-item:nth-child(4){animati
 }
 @keyframes tek-splash-reduced{0%,99%{opacity:1;visibility:visible}100%{opacity:0;visibility:hidden;pointer-events:none}}
 
+
+/* iPhone Safari: 16px prevents automatic focus zoom, including all editor sheets.
+   Native selects keep their values for existing JS/forms, but choices render in-page. */
+@media(max-width:800px){
+ input,select,textarea,
+ #dashboard input,#dashboard select,#dashboard textarea,
+ #login input,#setup input,
+ #docOverlay input,#docOverlay select,#docOverlay textarea,
+ .filters input,.fin-form input,.fin-form select,
+ .stock-fields input,.stock-fields select,
+ .work-form input,.work-form select,.work-form textarea,
+ .account-controls input,.account-controls select{
+  font-size:16px!important;
+ }
+}
+/* Consistent with original #222629 / #ff7200 palette. */
+select.tek-native-select{
+ position:absolute!important;width:1px!important;min-width:1px!important;
+ height:1px!important;min-height:1px!important;margin:0!important;padding:0!important;
+ opacity:0!important;overflow:hidden!important;pointer-events:none!important;
+ clip-path:inset(50%);border:0!important
+}
+.tek-inline-select{position:relative;min-width:0;width:100%;display:flex;flex-direction:column;gap:5px}
+.tek-inline-trigger{width:100%;min-height:43px;display:flex;align-items:center;justify-content:space-between;text-align:left;gap:8px;
+ padding:9px 11px;background:#fff;border:1px solid #cbd5cd;border-radius:9px;color:#222629;font:inherit;font-weight:600;cursor:pointer}
+.tek-inline-label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tek-inline-chevron{flex:none;font-size:18px;line-height:1;color:#8b430d;transition:transform .16s ease}
+.tek-inline-select.is-open .tek-inline-chevron{transform:rotate(180deg)}
+.tek-inline-select.is-open .tek-inline-trigger{border-color:#ff7200;background:#fff9f4}
+.tek-inline-trigger:disabled{opacity:.6;background:#eff0ed}
+.tek-inline-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;
+ max-height:min(28dvh,240px);overflow-y:auto;overscroll-behavior:contain;
+ padding:7px;border:1px solid #ecd5c4;border-radius:10px;background:#fffaf6}
+.tek-inline-choices[hidden]{display:none!important}
+.tek-inline-option{min-width:0;min-height:38px;border-radius:7px;border:1px solid #e2e5de;background:#fff;
+ color:#28352c;font-size:12px;font-weight:650;padding:8px 7px;line-height:1.25;white-space:normal;text-align:center}
+.tek-inline-option[aria-selected="true"]{border-color:#ff7200;background:#fff0e4;color:#98460e;font-weight:850}
+.tek-inline-option:disabled{opacity:.45}
+.tek-inline-trigger:focus-visible,.tek-inline-option:focus-visible{outline:2px solid #ff7200;outline-offset:2px}
+@media(max-width:800px){
+ .tek-inline-trigger{font-size:16px!important;min-height:43px;padding:8px 10px}
+ .tek-inline-option{font-size:13px;min-height:40px}
+ body.tek-app-mode #requestListPanel .filters .tek-inline-trigger,
+ body.tek-app-mode #workView .work-filters .tek-inline-trigger,
+ body.tek-app-mode #stockView .stock-filters .tek-inline-trigger,
+ body.tek-app-mode #accountView .account-controls .tek-inline-trigger{
+  min-height:38px;font-size:13px!important;padding:6px 7px
+ }
+ .tek-inline-choices{max-height:min(26dvh,200px)}
+}
+/* All views update themselves automatically: remove redundant refresh controls. */
+#refresh,#homeRefresh,#workRefresh,#accountRefresh,#stockRefresh,#finRefresh,
+#workProfitRefresh,#moreRefresh,#mobileReload{display:none!important}
+
 </style><script type="module" src="/admin/app.js?v=21"></script></head>
 <body>
 <div id="tekSplash" class="tek-splash" role="status" aria-label="TEKİNOĞULLARI İMALAT yönetim paneli açılıyor">
