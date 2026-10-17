@@ -228,5 +228,5 @@ export function initFinance(sb){
   $("finAmount").focus({preventScroll:true});
  }
  resetForm();
- return {startForQuote,startNewIncome};
+ return {startForQuote,startNewIncome,refresh:load};
 }
