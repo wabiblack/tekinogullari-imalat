@@ -6,7 +6,7 @@ import {initStock} from "./stock.js?v=2";
 import {initDocuments} from "./documents.js?v=3";
 import {initHome} from "./home.js?v=4";
 import {initCompactPaging} from "./paging.js?v=1";
-import {initInlineSelects} from "./inline-selects.js?v=1";
+import {initInlineSelects} from "./inline-selects.js?v=2";
 const sb=createClient("https://xrlipgbetpohjewhlbml.supabase.co","sb_publishable_KR4wJm1CbhzSSJqwTbk57A_f8LThNpD",{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const statusLabels={new:"Yeni",reviewing:"Görüşülüyor",approved:"Onaylandı",in_production:"Üretimde",completed:"Tamamlandı",cancelled:"İptal"};
 
