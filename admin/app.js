@@ -1,5 +1,5 @@
 import {createClient} from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import {initFinance} from "./finance.js?v=8";
+import {initFinance} from "./finance.js?v=9";
 import {initAccounts} from "./accounts.js?v=3";
 import {initWork} from "./work.js?v=7";
 import {initStock} from "./stock.js?v=2";
@@ -505,9 +505,6 @@ const editingActive=()=>{
  if(focused?.matches?.("input,textarea,select,[contenteditable='true']"))return true;
  if(document.querySelector(".tek-inline-select.is-open"))return true;
  if(!$("docOverlay").classList.contains("is-hidden"))return true;
- if(!$("workEditor").classList.contains("work-form-open")&&
-    !$("workEditor").classList.contains("is-hidden")&&
-    !$("workView").classList.contains("is-hidden"))return true;
  if($("workEditor").classList.contains("work-form-open")&&
     !$("workView").classList.contains("is-hidden"))return true;
  if(document.querySelector("#financeView .tek-form-open:not(.is-hidden)"))return true;
