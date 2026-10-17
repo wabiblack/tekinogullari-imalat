@@ -943,7 +943,18 @@ select.tek-native-select{
  body.tek-app-mode #workView .work-footnote,body.tek-app-mode #accountView .account-hint{display:none}
 }
 
-</style><script type="module" src="/admin/app.js?v=23"></script></head>
+
+/* Keep secondary section titles out of compact phone navigation. */
+@media(max-width:800px){
+ body.tek-app-mode #quoteView #requestListPanel>h2{display:none!important}
+ body.tek-app-mode #workView .work-grid>.work-card:first-child>.work-card-head{display:none!important}
+ body.tek-app-mode #accountView .account-section-head{display:none!important}
+ body.tek-app-mode #requestListPanel .filters{border-radius:10px 10px 0 0}
+ body.tek-app-mode #workView .work-filters{border-radius:10px 10px 0 0}
+ body.tek-app-mode #accountView .account-controls{border-radius:10px 10px 0 0}
+}
+
+</style><script type="module" src="/admin/app.js?v=24"></script></head>
 <body>
 <div id="tekSplash" class="tek-splash" role="status" aria-label="TEKİNOĞULLARI İMALAT yönetim paneli açılıyor">
  <div class="tek-splash-halo" aria-hidden="true"></div>
