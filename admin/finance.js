@@ -15,6 +15,14 @@ export function initFinance(sb){
  const $=id=>document.getElementById(id),date=finLocalDate;
  let entries=[],editing=null,quotes=new Map(),loadSerial=0;
  const make=(tag,value,cls)=>{const n=document.createElement(tag);if(value!=null)n.textContent=String(value);if(cls)n.className=cls;return n};
+ const formCard=()=>$("finForm").closest(".fin-card");
+ function showMobileForm(){
+  formCard().classList.add("tek-form-open");
+  $("finCancel").classList.remove("is-hidden");
+ }
+ function hideMobileForm(){
+  formCard().classList.remove("tek-form-open");
+ }
  const message=(text,isError=false)=>{const e=$("finFeedback");e.textContent=text;e.className="fin-feedback "+(text?(isError?"error":"success"):"")};
  function categories(selected){
   const target=$("finCategory");target.replaceChildren();
@@ -91,6 +99,7 @@ export function initFinance(sb){
   $("finDate").value=item.entry_date;$("finAmount").value=item.amount;
   $("finDescription").value=item.description;$("finQuote").value=item.quote_id||"";
   $("finFormTitle").textContent="Mali Kaydı Düzenle";$("finSave").textContent="Değişiklikleri Kaydet";
+  showMobileForm();
   $("finCancel").classList.remove("is-hidden");
   $("finForm").scrollIntoView({behavior:"smooth",block:"start"});
  }
@@ -99,11 +108,15 @@ export function initFinance(sb){
   message("");
   const {data,error}=await sb.from("finance_transactions").delete().eq("id",item.id).select("id").single();
   if(error||!data){message("Kayıt silinemedi. Tekrar deneyin.",true);return}
-  if(editing===item.id)resetForm();
+  if(editing===item.id){resetForm();hideMobileForm()}
   message("Kayıt silindi.");await load();
  }
  $("finKind").addEventListener("change",()=>categories());
- $("finCancel").addEventListener("click",()=>{resetForm();message("")});
+ $("finCancel").addEventListener("click",()=>{hideMobileForm();resetForm();message("")});
+ $("finNew").addEventListener("click",()=>{
+  resetForm();showMobileForm();
+  $("finAmount").focus({preventScroll:true});
+ });
  $("finForm").addEventListener("submit",async event=>{
   event.preventDefault();
   const form=$("finForm");if(!form.reportValidity())return;
@@ -120,11 +133,12 @@ export function initFinance(sb){
     await sb.from("finance_transactions").update(payload).eq("id",editing).select("id").single():
     await sb.from("finance_transactions").insert(payload).select("id").single();
    if(response.error||!response.data)throw response.error||new Error("İşlem kaydedilemedi.");
-   resetForm();message("Mali kayıt başarıyla kaydedildi.");await load();
+   resetForm();hideMobileForm();message("Mali kayıt başarıyla kaydedildi.");await load();
   }catch(e){message("Kayıt kaydedilemedi: "+(e?.message||"Lütfen yeniden deneyin."),true)}
   finally{btn.disabled=false;btn.textContent=editing?"Değişiklikleri Kaydet":"Kaydı Ekle"}
  });
  const activate=finance=>{
+  hideMobileForm();
   $("quoteTab").classList.toggle("active",!finance);
   $("financeTab").classList.toggle("active",finance);
   $("quoteTab").setAttribute("aria-selected",String(!finance));
@@ -196,8 +210,9 @@ export function initFinance(sb){
    option.value=quoteId;$("finQuote").append(option);
   }
   $("finQuote").value=quoteId;
-  message("Bu ödeme müşterinin hesabına işlenecek. Tutarı girip Kaydı Ekle'ye bas.");
+  message("Bu ödeme müşterinin hesabına işlenecek. Tutarı girip Kaydı Ekle\'ye bas.");
   $("finForm").scrollIntoView({behavior:"smooth",block:"start"});
+  showMobileForm();
   $("finAmount").focus({preventScroll:true});
  }
  async function startNewIncome(){
@@ -208,6 +223,7 @@ export function initFinance(sb){
   categories("İş Tahsilatı");
   $("finDescription").value="";
   message("Yeni tahsilat kaydı açıldı. Tutarı ve müşteriyi girerek kaydedebilirsin.");
+  showMobileForm();
   $("finForm").scrollIntoView({behavior:"smooth",block:"start"});
   $("finAmount").focus({preventScroll:true});
  }
