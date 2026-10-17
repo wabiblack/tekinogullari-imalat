@@ -155,10 +155,9 @@ export function initAccounts(sb,{finance}){
    card.append(detail);list.append(card);
   }
  }
- async function refresh(){
+ async function refresh({silent=false}={}){
   const current=++loadVersion;
-  $("accountList").replaceChildren(el("p","Hesaplar yükleniyor…","account-empty"));
-  message("");
+  if(!silent){$("accountList").replaceChildren(el("p","Hesaplar yükleniyor…","account-empty"));message("")}
   $("accountRefresh").disabled=true;
   const all=[];
   try{
@@ -178,10 +177,12 @@ export function initAccounts(sb,{finance}){
    $("accountUpdated").textContent="Güncellendi: "+new Date().toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"});
   }catch(error){
    if(current!==loadVersion)return;
-   $("accountList").replaceChildren(el("p","Hesaplar alınamadı. Bağlantıyı ve yetkili girişi kontrol edip yeniden dene.","account-empty"));
-   for(const id of ["accountTotal","accountReceived","accountOutstanding"])$(id).textContent="—";
-   $("accountUnpriced").textContent="—";
-   message("Veriler yüklenemedi. Ödeme tutarları tahmin edilmedi.",true);
+   if(!silent){
+    $("accountList").replaceChildren(el("p","Hesaplar alınamadı. Bağlantıyı ve yetkili girişi kontrol edip yeniden dene.","account-empty"));
+    for(const id of ["accountTotal","accountReceived","accountOutstanding"])$(id).textContent="—";
+    $("accountUnpriced").textContent="—";
+    message("Veriler yüklenemedi. Ödeme tutarları tahmin edilmedi.",true);
+   }
   }finally{if(current===loadVersion)$("accountRefresh").disabled=false}
  }
  async function activate(){
