@@ -124,9 +124,9 @@ export function initWork(sb,{documents}){
    list.append(card);
   }
  }
- async function load(){
+ async function load({silent=false}={}){
   const seq=++requestSerial;
-  $("workList").replaceChildren(el("p","İşler yükleniyor…","empty"));
+  if(!silent)$("workList").replaceChildren(el("p","İşler yükleniyor…","empty"));
   const [jobResult,profitResult]=await Promise.all([
    sb.from("tek_work_orders")
     .select("id,quote_id,title,agreed_price,start_date,due_date,status,notes,created_at,updated_at,quote:quote_requests(customer_name,customer_phone,service)")
@@ -134,7 +134,7 @@ export function initWork(sb,{documents}){
    sb.rpc("tek_work_profit_summary").limit(500)
   ]);
   if(seq!==requestSerial)return;
-  if(jobResult.error){$("workList").replaceChildren(el("p","İş kayıtları açılamadı. Girişini kontrol edip Yenile'ye bas.","error"));return}
+  if(jobResult.error){if(!silent)$("workList").replaceChildren(el("p","İş kayıtları açılamadı. Girişini kontrol edip tekrar dene.","error"));return}
   jobs=jobResult.data||[];loaded=true;
   profitMap=profitResult.error?new Map():new Map((profitResult.data||[]).map(p=>[p.work_id,p]));
   render();fillQuoteOptions();
