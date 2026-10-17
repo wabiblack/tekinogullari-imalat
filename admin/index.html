@@ -755,8 +755,75 @@ body{background:#f5f5f3;color:var(--tek-charcoal)}
  body.tek-app-mode #moreView .more-menu-item{min-height:62px;padding:8px 11px}
 }
 
-</style><script type="module" src="/admin/app.js?v=20"></script></head>
-<body><header class="admin-header"><div class="container"><div class="admin-brand"><span class="admin-brand-mark"><img src="/assets/to-icon.svg" alt="Orijinal TO logosu" width="40" height="34"></span><div class="admin-brand-copy"><strong>TEKİNOĞULLARI İMALAT</strong><span>Yönetici Paneli</span></div></div><button class="button" id="logout">Çıkış Yap</button></div></header>
+
+/* TEKİNOĞULLARI: Three-second launch mark, using the UNMODIFIED original TO file. */
+.tek-splash{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;overflow:hidden;background:#222629;color:#fff;isolation:isolate;animation:tek-splash-out 3000ms linear both}
+.tek-splash::before{content:"";position:absolute;inset:-35%;background:radial-gradient(circle at 50% 48%,#ff720017 0%,transparent 40%);pointer-events:none}
+.tek-splash-halo{position:absolute;width:min(75vmin,430px);aspect-ratio:1;border:1px solid #ffffff10;border-radius:50%;box-shadow:0 0 0 40px #ffffff04,0 0 0 84px #ff720006;animation:tek-halo 2200ms ease-out both}
+.tek-splash-center{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:22px;max-width:100%;text-align:center}
+.tek-splash-logo{width:150px;height:150px;display:grid;place-items:center;border:1px solid #ffffff3b;background:#fff;border-radius:29px;box-shadow:0 26px 72px #0005,0 0 0 1px #ff720024;animation:tek-logo-reveal 1450ms cubic-bezier(.2,.75,.17,1) both}
+.tek-splash-logo img{width:125px;height:97px;object-fit:contain;display:block}
+.tek-splash-brand{margin-top:19px;font-size:clamp(19px,5.5vw,29px);font-weight:900;letter-spacing:.075em;line-height:1.1;white-space:nowrap;animation:tek-title-reveal 1200ms 470ms ease both}
+.tek-splash-sector{font-size:14px;font-weight:900;color:#ff8c39;letter-spacing:.44em;margin-left:.44em;animation:tek-title-reveal 1150ms 680ms ease both}
+.tek-splash-rule{width:160px;height:2px;overflow:hidden;background:#ffffff20;border-radius:99px;margin:18px 0 11px}
+.tek-splash-rule span{display:block;height:100%;width:100%;background:#ff7200;transform-origin:center;animation:tek-rule-grow 1450ms 620ms ease-out both}
+.tek-splash-label{font-size:10px;font-weight:800;letter-spacing:.18em;color:#afb8b2;animation:tek-title-reveal 1100ms 760ms ease both}
+@keyframes tek-splash-out{0%,85%{opacity:1;visibility:visible}100%{opacity:0;visibility:hidden;pointer-events:none}}
+@keyframes tek-logo-reveal{0%{opacity:0;transform:translateY(30px) scale(.78) rotate(-7deg);filter:blur(7px)}58%{opacity:1;filter:blur(0)}82%{transform:translateY(-3px) scale(1.035) rotate(1deg)}100%{opacity:1;transform:translateY(0) scale(1) rotate(0);filter:blur(0)}}
+@keyframes tek-halo{0%{opacity:0;transform:scale(.6)}62%{opacity:.9}100%{opacity:.45;transform:scale(1.05)}}
+@keyframes tek-title-reveal{from{opacity:0;transform:translateY(13px);filter:blur(3px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}
+@keyframes tek-rule-grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+/* Quiet, short interaction cues. No layout shifts or page scroll. */
+@keyframes tek-scene-in{from{opacity:.55}to{opacity:1}}
+@keyframes tek-item-pop{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+body.tek-app-mode #dashboard>section:not(.is-hidden){animation:tek-scene-in .26s ease-out}
+body.tek-app-mode .home-metric{animation:tek-item-pop .36s cubic-bezier(.18,.75,.25,1) backwards}
+body.tek-app-mode .home-metric:nth-child(2){animation-delay:45ms}
+body.tek-app-mode .home-metric:nth-child(3){animation-delay:90ms}
+body.tek-app-mode .home-metric:nth-child(4){animation-delay:135ms}
+body.tek-app-mode .home-metric:nth-child(5){animation-delay:180ms}
+body.tek-app-mode #moreView:not(.is-hidden) .more-menu-item{animation:tek-item-pop .3s ease-out backwards}
+body.tek-app-mode #moreView:not(.is-hidden) .more-menu-item:nth-child(2){animation-delay:45ms}
+body.tek-app-mode #moreView:not(.is-hidden) .more-menu-item:nth-child(3){animation-delay:90ms}
+body.tek-app-mode #moreView:not(.is-hidden) .more-menu-item:nth-child(4){animation-delay:135ms}
+#dashboard .mobile-bottom-item,#dashboard .home-quick-action,#dashboard .more-menu-item,#dashboard .home-metric,#dashboard .stock-action,#dashboard .work-item{transition:background-color .18s ease,border-color .18s ease,color .18s ease,box-shadow .18s ease,transform .18s ease}
+@media(hover:hover) and (pointer:fine){
+ #dashboard .home-quick-action:hover,#dashboard .home-metric:hover{transform:translateY(-2px);box-shadow:0 8px 22px #22262912}
+ #dashboard .more-menu-item:hover{transform:translateX(2px)}
+}
+#dashboard .mobile-bottom-item:active,#dashboard .home-quick-action:active,#dashboard .more-menu-item:active,#dashboard .home-metric:active,#dashboard .stock-action:active,#dashboard .work-item:active{transform:scale(.975)}
+#dashboard .mobile-bottom-item.active svg{animation:tek-nav-pop .22s ease-out}
+@keyframes tek-nav-pop{0%{transform:scale(.88)}70%{transform:scale(1.07)}100%{transform:scale(1)}}
+@media(max-width:480px){.tek-splash-logo{width:125px;height:125px;border-radius:24px}.tek-splash-logo img{width:105px;height:83px}.tek-splash-brand{letter-spacing:.05em}.tek-splash-sector{font-size:12px}}
+@media(prefers-reduced-motion:reduce){
+ .tek-splash,.tek-splash-logo,.tek-splash-halo,.tek-splash-brand,.tek-splash-sector,.tek-splash-rule span,.tek-splash-label{animation:none!important}
+ .tek-splash{animation:tek-splash-reduced 3000ms steps(1,end) both!important}
+ body.tek-app-mode #dashboard>section:not(.is-hidden),body.tek-app-mode .home-metric,body.tek-app-mode #moreView:not(.is-hidden) .more-menu-item,#dashboard .mobile-bottom-item.active svg{animation:none!important}
+ #dashboard .mobile-bottom-item,#dashboard .home-quick-action,#dashboard .more-menu-item,#dashboard .home-metric,#dashboard .stock-action,#dashboard .work-item{transition:none!important}
+}
+@keyframes tek-splash-reduced{0%,99%{opacity:1;visibility:visible}100%{opacity:0;visibility:hidden;pointer-events:none}}
+
+</style><script type="module" src="/admin/app.js?v=21"></script></head>
+<body>
+<div id="tekSplash" class="tek-splash" role="status" aria-label="TEKİNOĞULLARI İMALAT yönetim paneli açılıyor">
+ <div class="tek-splash-halo" aria-hidden="true"></div>
+ <div class="tek-splash-center">
+  <div class="tek-splash-logo"><img src="/assets/to-icon.svg" width="125" height="97" alt="Orijinal TEKİNOĞULLARI TO logosu" fetchpriority="high"></div>
+  <div class="tek-splash-brand">TEKİNOĞULLARI</div>
+  <div class="tek-splash-sector">İ M A L A T</div>
+  <div class="tek-splash-rule" aria-hidden="true"><span></span></div>
+  <div class="tek-splash-label">YÖNETİM PANELİ</div>
+ </div>
+</div>
+<script>
+/* Splash is exactly 3000ms. Runs before deferred admin modules, even on slow connections. */
+(function(){
+ var splash=document.getElementById("tekSplash");
+ if(!splash)return;
+ window.setTimeout(function(){splash.remove()},3000);
+})();
+</script>
+<header class="admin-header"><div class="container"><div class="admin-brand"><span class="admin-brand-mark"><img src="/assets/to-icon.svg" alt="Orijinal TO logosu" width="40" height="34"></span><div class="admin-brand-copy"><strong>TEKİNOĞULLARI İMALAT</strong><span>Yönetici Paneli</span></div></div><button class="button" id="logout">Çıkış Yap</button></div></header>
 <main id="app" class="admin-wrap"><p id="loading" role="status">Yönetim paneli açılıyor…</p>
 <section id="setup" class="login-card is-hidden">
 <p class="eyebrow">İlk Kurulum</p><h1>Yönetici Hesabını Aç</h1>
