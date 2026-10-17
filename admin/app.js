@@ -534,3 +534,88 @@ document.addEventListener("visibilitychange",()=>{
 });
 window.addEventListener("online",()=>void autoRefreshVisible({force:true}));
 
+/* Mobile in-app return path: no browser chrome required.
+   Detail -> list; editing -> section; nested tools -> parent; root tabs -> home. */
+let tekNestedParent="more";
+const tekInnerViews=["homeView","quoteView","workView","accountView","stockView","financeView","moreView"];
+const tekIsVisible=id=>!$(id).classList.contains("is-hidden");
+function tekCurrentView(){
+ if($("dashboard").classList.contains("is-hidden"))return null;
+ return tekInnerViews.find(tekIsVisible)||null;
+}
+function tekAccountOpen(){
+ return [...$("accountList").querySelectorAll("details.account-card")].find(x=>x.open)||null;
+}
+function tekUpdateBack(){
+ const page=tekCurrentView();
+ const btn=$("tekBack");
+ btn.hidden=!isMobile()||!page||page==="homeView";
+ const title={
+  homeView:"Günün Özeti",
+  quoteView:tekIsVisible("quoteView")&&$("requestGrid").classList.contains("mobile-detail-active")?"Teklif Detayı":"Teklifler",
+  workView:"İşler",
+  accountView:"Müşteri Hesapları",
+  stockView:"Stok",
+  financeView:"Mali Yönetim",
+  moreView:"Diğer"
+ }[page];
+ if(title&&$("adminPageTitle").textContent!==title)$("adminPageTitle").textContent=title;
+ const step=page==="quoteView"&&$("requestGrid").classList.contains("mobile-detail-active")?"Teklif listesine dön":
+  page==="workView"&&$("workEditor").classList.contains("work-form-open")?"İş listesine dön":
+  page==="financeView"&&$("finForm").closest(".fin-card")?.classList.contains("tek-form-open")?"Mali listeye dön":
+  page==="stockView"&&(!$("stockEditor").classList.contains("is-hidden")||!$("stockMovementForm").classList.contains("is-hidden"))?"Stok listesine dön":
+  page==="accountView"&&tekAccountOpen()?"Hesap listesine dön":
+  ["accountView","stockView","financeView"].includes(page)&&tekNestedParent==="more"?"Diğer menüsüne dön":"Ana sayfaya dön";
+ btn.setAttribute("aria-label",step);
+}
+function tekBackOneLevel(){
+ const page=tekCurrentView();
+ if(!page||page==="homeView")return;
+ if(!tekIsVisible("docOverlay")){$("docClose").click();tekUpdateBack();return}
+ if(page==="quoteView"&&$("requestGrid").classList.contains("mobile-detail-active")){
+  backToRequests();tekUpdateBack();return;
+ }
+ if(page==="workView"&&$("workEditor").classList.contains("work-form-open")){
+  $("workCancel").click();tekUpdateBack();return;
+ }
+ if(page==="financeView"&&$("finForm").closest(".fin-card")?.classList.contains("tek-form-open")){
+  $("finCancel").click();tekUpdateBack();return;
+ }
+ if(page==="stockView"){
+  if(!$("stockEditor").classList.contains("is-hidden")){$("stockEditorCancel").click();tekUpdateBack();return}
+  if(!$("stockMovementForm").classList.contains("is-hidden")){$("stockMoveCancel").click();tekUpdateBack();return}
+ }
+ if(page==="accountView"){
+  const item=tekAccountOpen();
+  if(item){item.open=false;tekUpdateBack();return}
+ }
+ if(["accountView","stockView","financeView"].includes(page)){
+  if(tekNestedParent==="home")$("homeTab").click();
+  else if(tekNestedParent==="accounts")$("accountTab").click();
+  else openCompactMore();
+ }else if(page==="moreView"||page==="quoteView"||page==="workView"){
+  $("homeTab").click();
+ }
+ tekUpdateBack();
+}
+$("tekBack").addEventListener("click",tekBackOneLevel);
+// Capture origin before the existing navigation handlers change the current view.
+$("homeReceivableCard").addEventListener("click",()=>{tekNestedParent="home"},true);
+$("homeQuickPayment").addEventListener("click",()=>{tekNestedParent="home"},true);
+for(const id of ["moreAccounts","moreFinance","moreStock"]){
+ $(id).addEventListener("click",()=>{tekNestedParent="more"},true);
+}
+$("accountView").addEventListener("click",event=>{
+ if(event.target.closest(".account-action.primary"))tekNestedParent="accounts";
+},true);
+// Keep back visible if another module selects a screen programmatically.
+for(const id of ["homeView","quoteView","workView","accountView","stockView","financeView","moreView","workEditor","requestGrid","stockEditor","stockMovementForm"]){
+ new MutationObserver(tekUpdateBack).observe($(id),{attributes:true,attributeFilter:["class"]});
+}
+new MutationObserver(tekUpdateBack).observe($("finForm").closest(".fin-card"),{attributes:true,attributeFilter:["class"]});
+new MutationObserver(tekUpdateBack).observe($("dashboard"),{attributes:true,attributeFilter:["class"]});
+$("accountList").addEventListener("toggle",tekUpdateBack,true);
+window.addEventListener("popstate",tekUpdateBack);
+document.addEventListener("click",()=>queueMicrotask(tekUpdateBack));
+tekUpdateBack();
+
