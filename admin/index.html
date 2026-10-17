@@ -910,6 +910,39 @@ select.tek-native-select{
  body.tek-app-mode #homeView .home-financials{margin-bottom:6px}
 }
 
+
+/* Single mobile header and reliable native-looking in-app back button. */
+.tek-title-row{display:flex;align-items:center;gap:9px;min-width:0}
+.tek-title-row>div{min-width:0}
+.tek-back{display:inline-flex;align-items:center;gap:2px;justify-content:center;flex:none;min-height:37px;padding:7px 9px 7px 5px;border:1px solid #efc8aa;border-radius:10px;background:#fff7f0;color:#91430c;font-size:13px;font-weight:850;cursor:pointer}
+.tek-back[hidden]{display:none!important}
+.tek-back svg{flex-shrink:0}
+.tek-back:hover,.tek-back:focus-visible{background:#ffe9d8}
+@media(min-width:801px){.tek-back{display:none!important}}
+@media(max-width:800px){
+ body.tek-app-mode #dashboard>.dashboard-head{min-height:42px;margin:0 0 8px}
+ body.tek-app-mode #dashboard>.dashboard-head .tek-title-row{gap:8px}
+ body.tek-app-mode #dashboard>.dashboard-head h1{font-size:20px;line-height:1.16}
+ body.tek-app-mode #dashboard>.dashboard-head .tek-back{min-height:39px;padding:6px 9px 6px 4px;font-size:13px}
+ body.tek-app-mode #workView .work-head>div:first-child{display:none!important}
+ body.tek-app-mode #workView .work-head{justify-content:flex-end;min-height:38px;margin-bottom:8px}
+ body.tek-app-mode #accountView .account-header{display:none!important}
+ body.tek-app-mode #stockView .stock-intro{display:none!important}
+ body.tek-app-mode #financeView .fin-heading>div:first-child{display:none!important}
+ body.tek-app-mode #financeView .fin-heading{justify-content:flex-end;min-height:38px;margin-bottom:7px}
+ body.tek-app-mode #quoteView #requestListPanel>h2{font-size:13px;padding:9px 11px}
+ body.tek-app-mode #quoteView #requestDetailPanel .detail-title>h2{display:none}
+ body.tek-app-mode #quoteView #requestDetailPanel .detail-title{min-height:0;padding:0;border:0}
+ body.tek-app-mode #quoteView #requestDetailPanel #backToRequests{display:none!important}
+ body.tek-app-mode #workView .work-grid>.work-card:first-child{flex:0 1 auto;max-height:100%}
+ body.tek-app-mode #workView .work-grid .work-list{flex:0 1 auto;max-height:100%}
+ body.tek-app-mode #accountView .account-section{flex:0 1 auto;max-height:100%}
+ body.tek-app-mode #accountView #accountList{flex:0 1 auto;max-height:100%}
+ body.tek-app-mode #accountView .account-section-head{padding:8px 10px}
+ body.tek-app-mode #accountView .account-section-head p{display:none}
+ body.tek-app-mode #workView .work-footnote,body.tek-app-mode #accountView .account-hint{display:none}
+}
+
 </style><script type="module" src="/admin/app.js?v=23"></script></head>
 <body>
 <div id="tekSplash" class="tek-splash" role="status" aria-label="TEKİNOĞULLARI İMALAT yönetim paneli açılıyor">
@@ -942,7 +975,7 @@ select.tek-native-select{
 <p id="setupError" class="error" role="alert"></p>
 </form></section>
 <section id="login" class="login-card is-hidden"><p class="eyebrow">Yetkili Girişi</p><h1>Yönetici Paneli</h1><p>Gelen teklifleri görüntülemek için yetkili hesabınızla giriş yapın.</p><form id="loginForm"><label class="field">E-posta<input type="email" id="email" value="ercan@tekin.com" required autocomplete="username" placeholder="ornek@firma.com"></label><label class="field">Şifre<input type="password" id="password" required autocomplete="current-password" placeholder="Şifreniz"></label><button class="btn" type="submit">Giriş Yap ↗</button><p id="loginError" class="error" role="alert"></p></form></section>
-<section id="dashboard" class="is-hidden"><div class="dashboard-head"><div><p class="eyebrow">TEKİNOĞULLARI İMALAT / Yönetim</p><h1 id="adminPageTitle">İşletme Özeti</h1></div><button class="btn outline" id="refresh">Yenile ↻</button></div>
+<section id="dashboard" class="is-hidden"><div class="dashboard-head"><div class="tek-title-row"><button type="button" id="tekBack" class="tek-back" hidden aria-label="Önceki ekrana dön"><svg aria-hidden="true" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg><span>Geri</span></button><div><p class="eyebrow">TEKİNOĞULLARI İMALAT / Yönetim</p><h1 id="adminPageTitle">Günün Özeti</h1></div></div><button class="btn outline" id="refresh">Yenile ↻</button></div>
 <p id="notificationHint" class="notification-hint is-hidden" role="status" aria-live="polite"></p>
 <div class="admin-tabs" role="tablist" aria-label="Yönetim bölümleri"><button type="button" id="homeTab" class="admin-tab active" role="tab" aria-selected="true" aria-controls="homeView">Ana Ekran</button><button type="button" id="quoteTab" class="admin-tab" role="tab" aria-selected="false" aria-controls="quoteView">Teklif Talepleri</button><button type="button" id="workTab" class="admin-tab" role="tab" aria-selected="false" aria-controls="workView">İş Takibi</button><button type="button" id="accountTab" class="admin-tab" role="tab" aria-selected="false" aria-controls="accountView">Müşteri Hesapları</button><button type="button" id="stockTab" class="admin-tab" role="tab" aria-selected="false" aria-controls="stockView">Stok ve Malzeme</button><button type="button" id="financeTab" class="admin-tab" role="tab" aria-selected="false" aria-controls="financeView">Mali Yönetim</button></div>
 <section id="homeView" role="tabpanel" aria-labelledby="homeTab" class="home-view">
@@ -996,7 +1029,7 @@ select.tek-native-select{
 </div>
 </section>
 <section id="quoteView" class="is-hidden" role="tabpanel" aria-labelledby="quoteTab"><div class="stats"><div class="stat"><b id="statAll">0</b><small>Görüntülenen</small></div><div class="stat"><b id="statNew">0</b><small>Yeni</small></div><div class="stat"><b id="statReview">0</b><small>İşlemde</small></div><div class="stat"><b id="statDone">0</b><small>Tamamlandı</small></div></div>
-<div class="grid-admin" id="requestGrid"><div class="admin-panel" id="requestListPanel"><h2>Gelen Talepler <small style="font-size:11px;color:#737c76;font-weight:500"> (son 300 kayıt)</small></h2><div class="filters"><input id="search" placeholder="İsim, telefon veya hizmet ara" aria-label="Taleplerde ara"><select id="filter" aria-label="Durum filtrele"><option value="">Tüm Durumlar</option><option value="pending">Yeni + Görüşülüyor</option><option value="new">Yeni</option><option value="reviewing">Görüşülüyor</option><option value="approved">Onaylandı</option><option value="in_production">Üretimde</option><option value="completed">Tamamlandı</option><option value="cancelled">İptal</option></select><select id="ratingFilter" aria-label="Müşteri değerlendirmesi filtrele"><option value="">Tüm Puanlar</option><option value="3">★★★ İyi</option><option value="2">★★ Orta</option><option value="1">★ Kötü</option><option value="unrated">Değerlendirilmedi</option></select></div><div id="requestList" class="request-list"><p class="empty">Yükleniyor…</p></div></div>
+<div class="grid-admin" id="requestGrid"><div class="admin-panel" id="requestListPanel"><h2>Gelen Talepler</h2><div class="filters"><input id="search" placeholder="İsim, telefon veya hizmet ara" aria-label="Taleplerde ara"><select id="filter" aria-label="Durum filtrele"><option value="">Tüm Durumlar</option><option value="pending">Yeni + Görüşülüyor</option><option value="new">Yeni</option><option value="reviewing">Görüşülüyor</option><option value="approved">Onaylandı</option><option value="in_production">Üretimde</option><option value="completed">Tamamlandı</option><option value="cancelled">İptal</option></select><select id="ratingFilter" aria-label="Müşteri değerlendirmesi filtrele"><option value="">Tüm Puanlar</option><option value="3">★★★ İyi</option><option value="2">★★ Orta</option><option value="1">★ Kötü</option><option value="unrated">Değerlendirilmedi</option></select></div><div id="requestList" class="request-list"><p class="empty">Yükleniyor…</p></div></div>
 <div class="admin-panel" id="requestDetailPanel"><div class="detail-title"><h2>Talep Detayı</h2><button type="button" id="backToRequests" class="back-list">← Taleplere Dön</button></div><div id="detail" class="detail-pad"><p class="empty">Detayları görmek için soldan talep seçin.</p></div></div></div>
 </section>
 
