@@ -1,7 +1,7 @@
 import {createClient} from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import {initFinance} from "./finance.js?v=9";
-import {initAccounts} from "./accounts.js?v=3";
-import {initWork} from "./work.js?v=7";
+import {initFinance} from "./finance.js?v=10";
+import {initAccounts} from "./accounts.js?v=4";
+import {initWork} from "./work.js?v=8";
 import {initStock} from "./stock.js?v=2";
 import {initDocuments} from "./documents.js?v=3";
 import {initHome} from "./home.js?v=4";
@@ -522,10 +522,10 @@ async function autoRefreshVisible({force=false}={}){
  try{
   if(!$("homeView").classList.contains("is-hidden"))await home.refresh();
   else if(!$("quoteView").classList.contains("is-hidden"))await loadQuotes({silent:true});
-  else if(!$("workView").classList.contains("is-hidden"))await work.refresh();
-  else if(!$("accountView").classList.contains("is-hidden"))await accounts.refresh();
+  else if(!$("workView").classList.contains("is-hidden"))await work.refresh({silent:true});
+  else if(!$("accountView").classList.contains("is-hidden"))await accounts.refresh({silent:true});
   else if(!$("stockView").classList.contains("is-hidden"))await stock.refresh();
-  else if(!$("financeView").classList.contains("is-hidden"))await finance.refresh();
+  else if(!$("financeView").classList.contains("is-hidden"))await finance.refresh({silent:true});
   lastAutoRefreshAt=Date.now();
  }catch(error){
   console.warn("Otomatik güncelleme geçici olarak yapılamadı",error);
