@@ -6,6 +6,7 @@ import {initStock} from "./stock.js?v=2";
 import {initDocuments} from "./documents.js?v=3";
 import {initHome} from "./home.js?v=4";
 import {initCompactPaging} from "./paging.js?v=1";
+import {initInlineSelects} from "./inline-selects.js?v=1";
 const sb=createClient("https://xrlipgbetpohjewhlbml.supabase.co","sb_publishable_KR4wJm1CbhzSSJqwTbk57A_f8LThNpD",{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const statusLabels={new:"Yeni",reviewing:"Görüşülüyor",approved:"Onaylandı",in_production:"Üretimde",completed:"Tamamlandı",cancelled:"İptal"};
 
@@ -167,16 +168,22 @@ async function validateUser(){
  else $("homeTab").click();
  void startQuoteNotifications();
 }
-async function loadQuotes(){
- const list=$("requestList");list.replaceChildren(el("p","Talepler yükleniyor…","empty"));
+async function loadQuotes({silent=false}={}){
+ const list=$("requestList");
+ if(!silent)list.replaceChildren(el("p","Talepler yükleniyor…","empty"));
 
  const {data,error}=await sb.from("quote_requests")
    .select("id,customer_name,customer_phone,service,details,attachment_path,status,admin_notes,customer_rating,created_at,updated_at")
    .order("created_at",{ascending:false}).limit(300);
- if(error){list.replaceChildren(el("p","Talepler yüklenemedi. Oturumunuzu kontrol edip yeniden deneyin.","error"));return}
- requests=data||[];
+ if(error){if(!silent)list.replaceChildren(el("p","Talepler yüklenemedi. Oturumunuzu kontrol edip yeniden deneyin.","error"));return}
+ const incoming=data||[];
+ if(silent&&incoming.length===requests.length&&incoming.every((q,i)=>{
+  const prev=requests[i];
+  return prev&&q.id===prev.id&&q.updated_at===prev.updated_at&&q.customer_rating===prev.customer_rating;
+ }))return;
+ requests=incoming;
  refreshQuoteStats();
- renderList();await renderDetail();
+ renderList();if(!silent||chosenId)await renderDetail();
 }
 const nextStatus={
  new:{status:"reviewing",label:"Görüşmeye Al"},
@@ -421,6 +428,7 @@ const stock=initStock(sb);
 const work=initWork(sb,{documents});
 const home=initHome(sb,{openQuote:id=>{$("quoteTab").click();selectRequest(id)}});
 initCompactPaging();
+initInlineSelects();
 $("mobileHome").addEventListener("click",()=>{$("homeTab").click()});
 $("mobileQuotes").addEventListener("click",()=>{
  $("quoteTab").click();
@@ -487,3 +495,48 @@ $("homeQuickPayment").addEventListener("click",()=>{
  void finance.startNewIncome();
  paintCompactNav();
 });
+
+/* Background updates only the visible section, without interrupting an active edit.
+   Also sync on app resume; each section's own save handlers already reload data. */
+let autoRefreshBusy=false;
+let lastAutoRefreshAt=0;
+const editingActive=()=>{
+ const focused=document.activeElement;
+ if(focused?.matches?.("input,textarea,select,[contenteditable='true']"))return true;
+ if(document.querySelector(".tek-inline-select.is-open"))return true;
+ if(!$("docOverlay").classList.contains("is-hidden"))return true;
+ if(!$("workEditor").classList.contains("work-form-open")&&
+    !$("workEditor").classList.contains("is-hidden")&&
+    !$("workView").classList.contains("is-hidden"))return true;
+ if($("workEditor").classList.contains("work-form-open")&&
+    !$("workView").classList.contains("is-hidden"))return true;
+ if(document.querySelector("#financeView .tek-form-open:not(.is-hidden)"))return true;
+ if(document.querySelector("#stockView .stock-form-card:not(.is-hidden)"))return true;
+ if(document.querySelector("#accountView .account-card[open]"))return true;
+ if($("requestGrid").classList.contains("mobile-detail-active")&&
+    !$("quoteView").classList.contains("is-hidden"))return true;
+ return false;
+};
+async function autoRefreshVisible({force=false}={}){
+ if(autoRefreshBusy||document.visibilityState!=="visible"||
+    $("dashboard").classList.contains("is-hidden")||editingActive())return;
+ if(!force&&Date.now()-lastAutoRefreshAt<25000)return;
+ autoRefreshBusy=true;
+ try{
+  if(!$("homeView").classList.contains("is-hidden"))await home.refresh();
+  else if(!$("quoteView").classList.contains("is-hidden"))await loadQuotes({silent:true});
+  else if(!$("workView").classList.contains("is-hidden"))await work.refresh();
+  else if(!$("accountView").classList.contains("is-hidden"))await accounts.refresh();
+  else if(!$("stockView").classList.contains("is-hidden"))await stock.refresh();
+  else if(!$("financeView").classList.contains("is-hidden"))await finance.refresh();
+  lastAutoRefreshAt=Date.now();
+ }catch(error){
+  console.warn("Otomatik güncelleme geçici olarak yapılamadı",error);
+ }finally{autoRefreshBusy=false}
+}
+window.setInterval(()=>void autoRefreshVisible(),30000);
+document.addEventListener("visibilitychange",()=>{
+ if(document.visibilityState==="visible")void autoRefreshVisible({force:true});
+});
+window.addEventListener("online",()=>void autoRefreshVisible({force:true}));
+
