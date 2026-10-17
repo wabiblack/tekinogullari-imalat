@@ -5,6 +5,7 @@ import {initWork} from "./work.js?v=7";
 import {initStock} from "./stock.js?v=2";
 import {initDocuments} from "./documents.js?v=3";
 import {initHome} from "./home.js?v=4";
+import {initCompactPaging} from "./paging.js?v=1";
 const sb=createClient("https://xrlipgbetpohjewhlbml.supabase.co","sb_publishable_KR4wJm1CbhzSSJqwTbk57A_f8LThNpD",{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const statusLabels={new:"Yeni",reviewing:"Görüşülüyor",approved:"Onaylandı",in_production:"Üretimde",completed:"Tamamlandı",cancelled:"İptal"};
 
@@ -152,8 +153,8 @@ function renderWhatsApp(q){
  return block;
 }
 
-const showLogin=msg=>{loading.classList.add("is-hidden");login.classList.remove("is-hidden");dashboard.classList.add("is-hidden");logout.style.display="none";$("loginError").textContent=msg||""};
-const showDashboard=()=>{loading.classList.add("is-hidden");login.classList.add("is-hidden");dashboard.classList.remove("is-hidden");logout.style.display="block"};
+const showLogin=msg=>{document.body.classList.remove("tek-app-mode");loading.classList.add("is-hidden");login.classList.remove("is-hidden");dashboard.classList.add("is-hidden");logout.style.display="none";$("loginError").textContent=msg||""};
+const showDashboard=()=>{document.body.classList.add("tek-app-mode");loading.classList.add("is-hidden");login.classList.add("is-hidden");dashboard.classList.remove("is-hidden");logout.style.display="block"};
 async function validateUser(){
  const {data:{session}}=await sb.auth.getSession();
  if(!session)return showLogin();
@@ -419,6 +420,7 @@ const documents=initDocuments();
 const stock=initStock(sb);
 const work=initWork(sb,{documents});
 const home=initHome(sb,{openQuote:id=>{$("quoteTab").click();selectRequest(id)}});
+initCompactPaging();
 $("mobileHome").addEventListener("click",()=>{$("homeTab").click()});
 $("mobileQuotes").addEventListener("click",()=>{
  $("quoteTab").click();
