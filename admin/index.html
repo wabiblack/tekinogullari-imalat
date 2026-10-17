@@ -857,6 +857,59 @@ select.tek-native-select{
 #refresh,#homeRefresh,#workRefresh,#accountRefresh,#stockRefresh,#finRefresh,
 #workProfitRefresh,#moreRefresh,#mobileReload{display:none!important}
 
+
+/* Genuine one-screen business overview. Original TO charcoal/orange palette. */
+.home-overview-intro{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 12px;color:#8e480f}
+.home-overview-intro>span{font-size:11px;letter-spacing:.08em;font-weight:850}
+.home-overview-intro>small{font-size:11px;color:#788078;white-space:nowrap}
+.home-dashboard-four{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px}
+.home-dashboard-four .home-metric{grid-column:auto!important;display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
+.home-dashboard-four .home-metric-icon{display:grid;place-items:center;color:#ff7200;margin:0 0 4px}
+.home-dashboard-four .home-metric strong{color:#222629;font-variant-numeric:tabular-nums;letter-spacing:-.025em}
+.home-dashboard-four .home-metric-new strong{color:#b25311}
+.home-dashboard-four .home-metric-receivable strong{font-size:clamp(15px,2.15vw,26px);overflow-wrap:anywhere}
+.home-dashboard-four .home-metric-desc{color:#778078;font-weight:500}
+.home-dashboard-four .home-metric-delivery{border-left:3px solid #ff7200}
+.home-finance-header .home-month-label{font-size:11px;color:#7a8079}
+.home-quick-simple{display:flex;align-items:center;gap:13px;margin:0}
+.home-quick-simple .home-quick-caption{font-size:13px;font-weight:750;color:#222629}
+.home-quick-simple .home-quick-action{min-height:50px;width:auto;flex:1;max-width:260px}
+.home-finance-disclaimer{font-size:11px;color:#828a82;line-height:1.35;margin:10px 0}
+@media(max-width:800px){
+ body.tek-app-mode #homeView{gap:0;min-height:0}
+ body.tek-app-mode #homeView .home-overview-intro{flex:none;margin:0 0 8px}
+ body.tek-app-mode #homeView .home-overview-intro>span{font-size:10px}
+ body.tek-app-mode #homeView .home-overview-intro>small{font-size:10px}
+ body.tek-app-mode #homeView .home-dashboard-four{flex:1 1 auto;min-height:0;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:8px;margin:0 0 11px}
+ body.tek-app-mode #homeView .home-dashboard-four .home-metric{min-height:0;flex-direction:column;align-items:flex-start;border-radius:10px;padding:9px 12px;gap:1px}
+ body.tek-app-mode #homeView .home-dashboard-four .home-metric strong{font-size:clamp(22px,5.5vw,29px);line-height:1.1}
+ body.tek-app-mode #homeView .home-dashboard-four .home-metric-receivable strong{font-size:clamp(15px,4.05vw,21px);line-height:1.15}
+ body.tek-app-mode #homeView .home-dashboard-four .home-metric small{font-size:11px}
+ body.tek-app-mode #homeView .home-dashboard-four .home-metric-icon{margin-bottom:3px}
+ body.tek-app-mode #homeView .home-dashboard-four .home-metric-icon svg{height:20px;width:20px}
+ body.tek-app-mode #homeView .home-dashboard-four .home-metric-desc{display:block;font-size:10px;white-space:normal}
+ body.tek-app-mode #homeView .home-finance-header{flex:none;display:flex;align-items:center;margin:0 0 7px}
+ body.tek-app-mode #homeView .home-finance-header h3{font-size:13px}
+ body.tek-app-mode #homeView .home-financials{flex:none;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:0 0 11px}
+ body.tek-app-mode #homeView .home-financials .home-finance-tile{grid-column:auto!important;min-width:0;padding:9px 7px;min-height:58px}
+ body.tek-app-mode #homeView .home-financials .home-finance-tile small{font-size:10px;margin:0 0 6px}
+ body.tek-app-mode #homeView .home-financials .home-finance-tile strong{font-size:clamp(11px,3.05vw,15px)}
+ body.tek-app-mode #homeView .home-quick-simple{flex:none;margin:0 0 3px;gap:10px}
+ body.tek-app-mode #homeView .home-quick-simple .home-quick-caption{font-size:12px}
+ body.tek-app-mode #homeView .home-quick-simple .home-quick-action{min-height:44px;padding:8px 12px;max-width:none}
+ body.tek-app-mode #homeView .home-quick-simple .home-quick-action strong{font-size:12px}
+ body.tek-app-mode #homeView .home-quick-simple .home-quick-action small{display:none}
+ body.tek-app-mode #homeView .home-finance-disclaimer{flex:none;font-size:9px;margin:5px 0 0}
+}
+@media(max-width:800px) and (max-height:690px){
+ body.tek-app-mode #homeView .home-finance-disclaimer,
+ body.tek-app-mode #homeView .home-overview-intro>small{display:none}
+ body.tek-app-mode #homeView .home-dashboard-four .home-metric-icon{display:none}
+ body.tek-app-mode #homeView .home-overview-intro{margin-bottom:6px}
+ body.tek-app-mode #homeView .home-dashboard-four{margin-bottom:7px}
+ body.tek-app-mode #homeView .home-financials{margin-bottom:6px}
+}
+
 </style><script type="module" src="/admin/app.js?v=22"></script></head>
 <body>
 <div id="tekSplash" class="tek-splash" role="status" aria-label="TEKİNOĞULLARI İMALAT yönetim paneli açılıyor">
@@ -893,51 +946,55 @@ select.tek-native-select{
 <p id="notificationHint" class="notification-hint is-hidden" role="status" aria-live="polite"></p>
 <div class="admin-tabs" role="tablist" aria-label="Yönetim bölümleri"><button type="button" id="homeTab" class="admin-tab active" role="tab" aria-selected="true" aria-controls="homeView">Ana Ekran</button><button type="button" id="quoteTab" class="admin-tab" role="tab" aria-selected="false" aria-controls="quoteView">Teklif Talepleri</button><button type="button" id="workTab" class="admin-tab" role="tab" aria-selected="false" aria-controls="workView">İş Takibi</button><button type="button" id="accountTab" class="admin-tab" role="tab" aria-selected="false" aria-controls="accountView">Müşteri Hesapları</button><button type="button" id="stockTab" class="admin-tab" role="tab" aria-selected="false" aria-controls="stockView">Stok ve Malzeme</button><button type="button" id="financeTab" class="admin-tab" role="tab" aria-selected="false" aria-controls="financeView">Mali Yönetim</button></div>
 <section id="homeView" role="tabpanel" aria-labelledby="homeTab" class="home-view">
- <div class="home-top">
-  <div>
-   <p class="home-eyebrow">GÜNLÜK İŞLETME PANOSU</p>
-   <h2>Günün Öncelikleri</h2>
-   <p class="home-subhead">İlgilenmen gereken her şey burada.</p>
-  </div>
-  <button type="button" id="homeRefresh" class="btn outline">Yenile ↻</button>
+ <div class="home-overview-intro">
+  <span>BUGÜN İLGİLENMEN GEREKENLER</span>
+  <small id="homeUpdated" role="status">Bilgiler hazırlanıyor…</small>
  </div>
+ <button id="homeRefresh" class="is-hidden" type="button" tabindex="-1">Yenile</button>
  <p id="homeError" class="home-error is-hidden" role="alert"></p>
- <div class="home-metrics" aria-label="İşletme istatistikleri">
-  <button type="button" id="homeNewCard" class="home-metric home-metric-new"><small>Yeni Teklif</small><strong id="homeNew">—</strong><span>Gelen başvurular <span aria-hidden="true">›</span></span></button>
-  <button type="button" id="homePendingCard" class="home-metric"><small>Bekleyen Teklif</small><strong id="homePending">—</strong><span>Yeni + görüşülüyor <span aria-hidden="true">›</span></span></button>
-  <button type="button" id="homeActiveCard" class="home-metric"><small>Aktif İş</small><strong id="homeActive">—</strong><span>Devam eden işler <span aria-hidden="true">›</span></span></button>
-  <button type="button" id="homeLateCard" class="home-metric home-metric-late"><small>Geciken Teslim</small><strong id="homeLate">—</strong><span>Öncelikli işler <span aria-hidden="true">›</span></span></button>
-  <button type="button" id="homeSoonCard" class="home-metric home-metric-wide"><small>7 Gün İçinde Teslim</small><strong id="homeSoon">—</strong><span>Bugün dahil, yaklaşan işler <span aria-hidden="true">›</span></span></button>
+ <div class="home-metrics home-dashboard-four" aria-label="İşletme özeti">
+  <button type="button" id="homeNewCard" class="home-metric home-metric-new">
+   <span class="home-metric-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 3.5h6M9 9h6M9 13h6"/></svg></span>
+   <small>Yeni Teklifler</small><strong id="homeNew">—</strong><span class="home-metric-desc">Gelen başvurular ›</span>
+  </button>
+  <button type="button" id="homeActiveCard" class="home-metric">
+   <span class="home-metric-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span>
+   <small>Aktif İşler</small><strong id="homeActive">—</strong><span class="home-metric-desc">Devam eden üretim ›</span>
+  </button>
+  <button type="button" id="homeDeliveryCard" class="home-metric home-metric-delivery">
+   <span class="home-metric-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18M12 13v4l2 1"/></svg></span>
+   <small>Teslimatlar</small><strong id="homeDeliveryCount">—</strong><span id="homeDeliveryHint" class="home-metric-desc">Yaklaşan ve geciken ›</span>
+  </button>
+  <button type="button" id="homeReceivableCard" class="home-metric home-metric-receivable">
+   <span class="home-metric-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 11h18M7 16h4"/></svg></span>
+   <small>Kalan Alacak</small><strong id="homeReceivables">—</strong><span class="home-metric-desc">Beklenen tahsilatlar ›</span>
+  </button>
  </div>
- <section class="home-quick" aria-label="Hızlı işlemler"><div class="home-quick-head"><h3>Hızlı İşlemler</h3><span>Tek dokunuşla</span></div><div class="home-quick-grid">
-<button type="button" id="homeQuickPayment" class="home-quick-action home-quick-primary"><svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18M8 15h4"/></svg><span><strong>Tahsilat Gir</strong><small>Yeni ödeme</small></span><span aria-hidden="true">›</span></button>
-<button type="button" id="homeQuickPdf" class="home-quick-action"><svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 3h7l5 5v13H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2"/><path d="M14 3v6h5M9 14h6M9 17h6"/></svg><span><strong>PDF Teklif</strong><small>TO logolu belge</small></span><span aria-hidden="true">›</span></button>
-</div></section><div class="home-finance-header"><h3>Bu Ayın Nakit Durumu</h3><button type="button" id="homeFinanceGo" class="home-text-link">Mali Yönetim ›</button></div><button id="homeAccountsGo" type="button" class="home-account-link">Müşteri alacaklarını görüntüle <span aria-hidden="true">›</span></button>
+ <div class="home-finance-header">
+  <h3>Bu Ayın Mali Durumu</h3>
+  <span id="homeMonth" class="home-month-label"></span>
+ </div>
  <div class="home-financials">
-  <div class="home-finance-tile"><small>Gelir / Tahsilat</small><strong id="homeIncome">—</strong></div>
-  <div class="home-finance-tile"><small>Gider / Ödeme</small><strong id="homeExpense">—</strong></div>
-  <div class="home-finance-tile home-finance-net"><small>Net Nakit Farkı</small><strong id="homeNet">—</strong></div>
+  <div class="home-finance-tile"><small>Gelir</small><strong id="homeIncome">—</strong></div>
+  <div class="home-finance-tile"><small>Gider</small><strong id="homeExpense">—</strong></div>
+  <div class="home-finance-tile home-finance-net"><small>Net Fark</small><strong id="homeNet">—</strong></div>
  </div>
- <div class="home-feed-grid">
-  <section class="home-feed">
-   <div class="home-feed-head"><h3>Yeni Müşteri Teklifleri</h3><button type="button" id="homeAllQuotes" class="home-text-link">Tümünü Gör ›</button></div>
-   <div id="homeRecentQuotes" class="home-feed-list"><p class="home-empty">Yükleniyor…</p></div>
-  </section>
-  <section class="home-feed">
-   <div class="home-feed-head"><h3>Teslimat Öncelikleri</h3><button type="button" id="homeAllJobs" class="home-text-link">İşlere Git ›</button></div>
-   <div id="homeUpcomingJobs" class="home-feed-list"><p class="home-empty">Yükleniyor…</p></div>
-  </section>
+ <div class="home-quick home-quick-simple" aria-label="Hızlı işlem">
+  <span class="home-quick-caption">Hızlı İşlem</span>
+  <button type="button" id="homeQuickPayment" class="home-quick-action home-quick-primary">
+   <svg aria-hidden="true" viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18M8 15h4"/></svg>
+   <span><strong>Tahsilat Gir</strong><small>Yeni ödeme kaydı</small></span><span aria-hidden="true">›</span>
+  </button>
  </div>
- <div class="home-footnotes"><p id="homeUpdated" role="status">Veriler hazırlanıyor…</p><p>Tutarlar yalnızca Mali Yönetim'e kaydedilmiş gerçek gelir ve giderlerdir. İş bedeli tahsilat sayılmaz. Net nakit farkı, muhasebe kârı değildir.</p></div>
+ <p class="home-finance-disclaimer">Alacaklar müşteriye bağlı işlerden; gelir ve giderler mali kayıtlardan hesaplanır.</p>
 </section>
-
 <section id="moreView" class="is-hidden more-view" aria-label="Diğer yönetim bölümleri">
 
 <div class="more-menu"><button type="button" id="moreAccounts" class="more-menu-item"><span class="more-menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx='9' cy='11' r='2'/><path d='M4 6h16v14H4zM14 10h4M14 14h4'/></svg></span><span class="more-menu-text"><strong>Müşteri Hesapları</strong><small>Kapora, tahsilat ve kalan alacak</small></span><span class="more-menu-chevron" aria-hidden="true">›</span></button>
 <button type="button" id="moreFinance" class="more-menu-item"><span class="more-menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x='3' y='5' width='18' height='15' rx='2'/><path d='M3 10h18M8 15h4'/></svg></span><span class="more-menu-text"><strong>Mali Yönetim</strong><small>Gelir, gider ve nakit takibi</small></span><span class="more-menu-chevron" aria-hidden="true">›</span></button>
 <button type="button" id="moreStock" class="more-menu-item"><span class="more-menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x='3' y='4' width='18' height='16' rx='2'/><path d='M3 9h18M8 14h8M8 17h8'/></svg></span><span class="more-menu-text"><strong>Stok ve Malzeme</strong><small>Malzeme girişleri ve çıkışları</small></span><span class="more-menu-chevron" aria-hidden="true">›</span></button>
-<button type="button" id="moreDocuments" class="more-menu-item"><span class="more-menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d='M6 3h9l4 5v13H6zM15 3v5h4M9 14h6M9 17h6'/></svg></span><span class="more-menu-text"><strong>PDF Belgeler</strong><small>Teklif ve iş formu hazırlama</small></span><span class="more-menu-chevron" aria-hidden="true">›</span></button></div>
-<div class="more-note"><strong>Her şey yerli yerinde</strong><p>Bu düzenleme yalnızca görünümü sadeleştirir. Teklif, stok ve mali kayıtların değişmez.</p><button type="button" id="moreRefresh" class="more-refresh">Ana Ekranı Yenile ↻</button></div></section>
+</div>
+</section>
 <section id="quoteView" class="is-hidden" role="tabpanel" aria-labelledby="quoteTab"><div class="stats"><div class="stat"><b id="statAll">0</b><small>Görüntülenen</small></div><div class="stat"><b id="statNew">0</b><small>Yeni</small></div><div class="stat"><b id="statReview">0</b><small>İşlemde</small></div><div class="stat"><b id="statDone">0</b><small>Tamamlandı</small></div></div>
 <div class="grid-admin" id="requestGrid"><div class="admin-panel" id="requestListPanel"><h2>Gelen Talepler <small style="font-size:11px;color:#737c76;font-weight:500"> (son 300 kayıt)</small></h2><div class="filters"><input id="search" placeholder="İsim, telefon veya hizmet ara" aria-label="Taleplerde ara"><select id="filter" aria-label="Durum filtrele"><option value="">Tüm Durumlar</option><option value="pending">Yeni + Görüşülüyor</option><option value="new">Yeni</option><option value="reviewing">Görüşülüyor</option><option value="approved">Onaylandı</option><option value="in_production">Üretimde</option><option value="completed">Tamamlandı</option><option value="cancelled">İptal</option></select><select id="ratingFilter" aria-label="Müşteri değerlendirmesi filtrele"><option value="">Tüm Puanlar</option><option value="3">★★★ İyi</option><option value="2">★★ Orta</option><option value="1">★ Kötü</option><option value="unrated">Değerlendirilmedi</option></select></div><div id="requestList" class="request-list"><p class="empty">Yükleniyor…</p></div></div>
 <div class="admin-panel" id="requestDetailPanel"><div class="detail-title"><h2>Talep Detayı</h2><button type="button" id="backToRequests" class="back-list">← Taleplere Dön</button></div><div id="detail" class="detail-pad"><p class="empty">Detayları görmek için soldan talep seçin.</p></div></div></div>
@@ -955,7 +1012,7 @@ select.tek-native-select{
  <div class="work-grid">
   <section class="work-card">
    <div class="work-card-head"><h3>İş Listesi <span id="workTotal" class="work-count">0</span></h3><p id="workVisibleCount">En yeni 500 iş gösterilir</p></div>
-   <div class="work-filters"><input id="workSearch" type="search" placeholder="Müşteri veya iş ara" aria-label="İşlerde ara"><select id="workFilter" aria-label="İş durumunu filtrele"><option value="">Tüm İşler</option><option value="planned">Planlandı</option><option value="in_progress">Üretimde</option><option value="ready">Teslime Hazır</option><option value="overdue">Geciken</option><option value="soon">7 Gün İçinde</option><option value="delivered">Teslim Edildi</option><option value="cancelled">İptal</option></select></div>
+   <div class="work-filters"><input id="workSearch" type="search" placeholder="Müşteri veya iş ara" aria-label="İşlerde ara"><select id="workFilter" aria-label="İş durumunu filtrele"><option value="">Tüm İşler</option><option value="planned">Planlandı</option><option value="in_progress">Üretimde</option><option value="ready">Teslime Hazır</option><option value="priority">Yaklaşan ve Geciken</option><option value="overdue">Geciken</option><option value="soon">7 Gün İçinde</option><option value="delivered">Teslim Edildi</option><option value="cancelled">İptal</option></select></div>
    <div id="workList" class="work-list"><p class="empty">İş Takibi açıldığında işler yüklenir.</p></div>
   </section>
   <section class="work-card work-form-shell" id="workEditor">
