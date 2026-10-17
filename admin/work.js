@@ -85,9 +85,10 @@ export function initWork(sb,{documents}){
   const term=$("workSearch").value.trim().toLocaleLowerCase("tr-TR");
   const filter=$("workFilter").value;
   const visible=jobs.filter(job=>{
+   if(filter==="priority"&&!(workLate(job)||workNear(job)))return false;
    if(filter==="overdue"&&!workLate(job))return false;
    if(filter==="soon"&&!workNear(job))return false;
-   if(filter&&filter!=="overdue"&&filter!=="soon"&&job.status!==filter)return false;
+   if(filter&&filter!=="priority"&&filter!=="overdue"&&filter!=="soon"&&job.status!==filter)return false;
    return !term||[job.title,job.notes,job.quote?.customer_name,job.quote?.service,job.quote?.customer_phone].some(x=>String(x||"").toLocaleLowerCase("tr-TR").includes(term));
   }).sort((a,b)=>{
    const rank=x=>workLate(x)?0:workNear(x)?1:workIsActive(x)?2:3;
