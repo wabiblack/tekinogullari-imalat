@@ -85,6 +85,7 @@ export function initInlineSelects(){
   });
   choices.addEventListener("keydown",event=>{if(event.key==="Escape"){close();trigger.focus();event.preventDefault();}});
   select.addEventListener("change",sync);
+  select.addEventListener("tek-select-sync",sync);
   select.addEventListener("invalid",()=>{open();trigger.focus({preventScroll:true})});
   const observer=new MutationObserver(()=>{itemsSignature="";sync()});
   observer.observe(select,{childList:true,subtree:true});
@@ -104,11 +105,11 @@ export function initInlineSelects(){
  for(const tab of document.querySelectorAll(".admin-tab,.mobile-bottom-item")){
   tab.addEventListener("click",()=>{closeAll();queueMicrotask(()=>{for(const select of document.querySelectorAll("select.tek-native-select"))select.dispatchEvent(new Event("tek-select-sync"));})});
  }
- for(const select of document.querySelectorAll("select.tek-native-select")){
-  select.addEventListener("tek-select-sync",()=>{
-   const wrapper=select.nextElementSibling;
-   const label=wrapper?.querySelector(".tek-inline-label");
-   if(label)label.textContent=select.selectedOptions?.[0]?.textContent||"Seçim yap";
-  });
- }
+ // Other modules set .value programmatically without firing change.
+ // Keep displayed labels synchronized without triggering form events or data writes.
+ window.setInterval(()=>{
+  if(document.visibilityState!=="visible")return;
+  for(const select of document.querySelectorAll("select.tek-native-select"))
+   select.dispatchEvent(new Event("tek-select-sync"));
+ },1000);
 }
