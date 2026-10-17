@@ -1,10 +1,10 @@
 import {createClient} from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import {initFinance} from "./finance.js?v=10";
 import {initAccounts} from "./accounts.js?v=4";
-import {initWork} from "./work.js?v=8";
+import {initWork} from "./work.js?v=9";
 import {initStock} from "./stock.js?v=2";
 import {initDocuments} from "./documents.js?v=3";
-import {initHome} from "./home.js?v=4";
+import {initHome} from "./home.js?v=5";
 import {initCompactPaging} from "./paging.js?v=1";
 import {initInlineSelects} from "./inline-selects.js?v=2";
 const sb=createClient("https://xrlipgbetpohjewhlbml.supabase.co","sb_publishable_KR4wJm1CbhzSSJqwTbk57A_f8LThNpD",{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
@@ -487,9 +487,6 @@ for(const id of ["homeTab","quoteTab","workTab","accountTab","stockTab","finance
 $("moreAccounts").addEventListener("click",()=>$("accountTab").click());
 $("moreFinance").addEventListener("click",()=>$("financeTab").click());
 $("moreStock").addEventListener("click",()=>$("stockTab").click());
-$("moreDocuments").addEventListener("click",()=>documents.openBlank());
-$("moreRefresh").addEventListener("click",()=>$("homeTab").click());
-$("homeQuickPdf").addEventListener("click",()=>documents.openBlank());
 $("homeQuickPayment").addEventListener("click",()=>{
  $("moreView").classList.add("is-hidden");
  void finance.startNewIncome();
