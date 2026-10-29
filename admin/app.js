@@ -157,10 +157,30 @@ function renderWhatsApp(q){
 const showLogin=msg=>{document.body.classList.remove("tek-app-mode");loading.classList.add("is-hidden");login.classList.remove("is-hidden");dashboard.classList.add("is-hidden");logout.style.display="none";$("loginError").textContent=msg||""};
 const showDashboard=()=>{document.body.classList.add("tek-app-mode");loading.classList.add("is-hidden");login.classList.add("is-hidden");dashboard.classList.remove("is-hidden");logout.style.display="block"};
 async function validateUser(){
- const {data:{session}}=await sb.auth.getSession();
+ let session;
+ try{
+  const result=await sb.auth.getSession();
+  if(result.error)throw result.error;
+  session=result.data?.session;
+ }catch(error){
+  console.warn("Oturum kontrolü yapılamadı:",error);
+  return showLogin("Sunucuya bağlanılamıyor. Lütfen daha sonra yeniden deneyin.");
+ }
  if(!session)return showLogin();
- const {data:authorized,error}=await sb.rpc("is_tek_admin");
- if(error||!authorized){await sb.auth.signOut();return showLogin("Bu hesap için yönetici yetkisi tanımlı değil.")}
+ let authorized,error;
+ try{
+  const result=await sb.rpc("is_tek_admin");
+  authorized=result.data;error=result.error;
+ }catch(cause){error=cause}
+ if(error){
+  console.warn("Yönetici yetki kontrolüne erişilemedi:",error);
+  // A transient RPC/database outage is not evidence of an unauthorized account.
+  return showLogin("Yönetici sunucusuna şu anda ulaşılamıyor. Oturumun korunuyor; sayfayı yeniden açabilirsin.");
+ }
+ if(!authorized){
+  await sb.auth.signOut();
+  return showLogin("Bu hesap için yönetici yetkisi tanımlı değil.");
+ }
  showDashboard();$("moreView").classList.add("is-hidden");await loadQuotes();
  const fromNotification=new URLSearchParams(location.search).get("view");
  if(fromNotification==="jobs")$("workTab").click();
@@ -369,11 +389,22 @@ async function renderDetail(){
  detail.append(renderWhatsApp(q));
 }
 $("loginForm").addEventListener("submit",async e=>{
- e.preventDefault();const button=e.currentTarget.querySelector("button"),email=$("email").value.trim(),password=$("password").value;
+ e.preventDefault();
+ const button=e.currentTarget.querySelector("button"),email=$("email").value.trim(),password=$("password").value;
  button.disabled=true;button.textContent="Giriş yapılıyor…";$("loginError").textContent="";
- const {error}=await sb.auth.signInWithPassword({email,password});
- if(error)showLogin("Giriş başarısız. E-posta veya şifreyi kontrol edin.");else await validateUser();
- button.disabled=false;button.textContent="Giriş Yap ↗";
+ try{
+  const {error}=await sb.auth.signInWithPassword({email,password});
+  if(error){
+   const status=Number(error.status||0);
+   const credentials=status===400||error.code==="invalid_credentials";
+   showLogin(credentials?"E-posta veya şifreyi kontrol et.":"Giriş sunucusuna bağlanılamıyor. Lütfen yeniden dene.");
+  }else await validateUser();
+ }catch(error){
+  console.warn("Giriş bağlantı hatası:",error);
+  showLogin("Giriş sunucusuna ulaşılamıyor. Lütfen bağlantını kontrol edip yeniden dene.");
+ }finally{
+  button.disabled=false;button.textContent="Giriş Yap ↗";
+ }
 });
 $("logout").addEventListener("click",async()=>{
  const native=window.TekinAndroid;
