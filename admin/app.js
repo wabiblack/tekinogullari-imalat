@@ -5,7 +5,7 @@ import {initWork} from "./work.js?v=9";
 import {initStock} from "./stock.js?v=2";
 import {initDocuments} from "./documents.js?v=3";
 import {initHome} from "./home.js?v=5";
-import {initCompactPaging} from "./paging.js?v=1";
+import {initCompactPaging} from "./paging.js?v=2";
 import {initInlineSelects} from "./inline-selects.js?v=2";
 const sb=createClient("https://xrlipgbetpohjewhlbml.supabase.co","sb_publishable_KR4wJm1CbhzSSJqwTbk57A_f8LThNpD",{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const statusLabels={new:"Yeni",reviewing:"Görüşülüyor",approved:"Onaylandı",in_production:"Üretimde",completed:"Tamamlandı",cancelled:"İptal"};
@@ -288,6 +288,8 @@ function renderList(){
   }
   list.append(card);
  }
+ // Opening and closing details should not jump the offer list back to its first item.
+ list.scrollTop=previousScroll;
 }
 async function saveCustomerRating(quoteId,stars,feedback,buttons){
  if(!quoteId)return;
