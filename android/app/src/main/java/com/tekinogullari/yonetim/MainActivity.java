@@ -103,6 +103,12 @@ public final class MainActivity extends Activity {
         setContentView(webView);
 
         WebSettings settings = webView.getSettings();
+        // Present the authenticated dashboard as a fixed-scale app, not a browser.
+        // Scrolling, keyboard focus and the separate Android print/PDF flow still work.
+        settings.setSupportZoom(false);
+        settings.setBuiltInZoomControls(false);
+        settings.setDisplayZoomControls(false);
+        settings.setTextZoom(100);
         settings.setJavaScriptEnabled(true);
         webView.addJavascriptInterface(new NotificationBridge(), "TekinAndroid");
         settings.setDomStorageEnabled(true);
