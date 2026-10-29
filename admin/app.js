@@ -69,8 +69,16 @@ function selectRequest(id){
  }
 }
 function backToRequests(){
- if(isMobile()&&history.state?.tekDetailId){history.back();return}
- chosenId=null;setMobileDetail(false);renderList();
+ // Close immediately. Relying on an asynchronous browser history traversal
+ // can leave the detail open in Safari standalone mode and Android WebView.
+ chosenId=null;
+ setMobileDetail(false);
+ renderList();
+ if(isMobile()&&history.state?.tekDetailId){
+  const state={...history.state};
+  delete state.tekDetailId;
+  history.replaceState(state,"",location.pathname+location.search);
+ }
 }
 window.addEventListener("popstate",event=>{
  if(event.state?.tekDetailId&&isMobile()){
@@ -575,7 +583,13 @@ const tekInnerViews=["homeView","quoteView","workView","accountView","stockView"
 const tekIsVisible=id=>!$(id).classList.contains("is-hidden");
 function tekCurrentView(){
  if($("dashboard").classList.contains("is-hidden"))return null;
- return tekInnerViews.find(tekIsVisible)||null;
+ // A transition may temporarily leave multiple panels marked visible.
+ // Prefer the most recently selected section rather than the first DOM match.
+ const views=tekInnerViews.filter(tekIsVisible);
+ if(!views.length)return null;
+ if(views.includes("moreView"))return "moreView";
+ const active=views.find(id=>id!=="homeView");
+ return active||"homeView";
 }
 function tekAccountOpen(){
  return [...$("accountList").querySelectorAll("details.account-card")].find(x=>x.open)||null;
@@ -625,14 +639,18 @@ function tekBackOneLevel(){
  }
  if(["accountView","stockView","financeView"].includes(page)){
   if(tekNestedParent==="home")$("homeTab").click();
-  else if(tekNestedParent==="accounts")$("accountTab").click();
+  else if(tekNestedParent==="accounts")openCompactMore();
   else openCompactMore();
  }else if(page==="moreView"||page==="quoteView"||page==="workView"){
   $("homeTab").click();
  }
  tekUpdateBack();
 }
-$("tekBack").addEventListener("click",tekBackOneLevel);
+$("tekBack").addEventListener("click",event=>{
+ event.preventDefault();
+ tekBackOneLevel();
+ requestAnimationFrame(tekUpdateBack);
+});
 // Capture origin before the existing navigation handlers change the current view.
 $("homeReceivableCard").addEventListener("click",()=>{tekNestedParent="home"},true);
 $("homeQuickPayment").addEventListener("click",()=>{tekNestedParent="home"},true);
