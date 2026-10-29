@@ -1,0 +1,23 @@
+{
+  "id": "/admin/",
+  "name": "TEKİNOĞULLARI İMALAT Yönetim",
+  "short_name": "Tekinoğulları",
+  "description": "Teklif, iş, stok ve mali yönetim uygulaması",
+  "start_url": "/admin/",
+  "scope": "/admin/",
+  "display": "standalone",
+  "display_override": [
+    "standalone"
+  ],
+  "orientation": "portrait",
+  "background_color": "#222629",
+  "theme_color": "#222629",
+  "icons": [
+    {
+      "src": "/assets/to-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
