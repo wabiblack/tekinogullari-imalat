@@ -55,10 +55,9 @@ const isMobile=()=>window.matchMedia("(max-width:800px)").matches;
 function setMobileDetail(open){
  const grid=$("requestGrid");
  grid.classList.toggle("mobile-detail-active",open);
- if(isMobile()){
-  const target=open?$("requestDetailPanel"):$("requestListPanel");
-  requestAnimationFrame(()=>target.scrollIntoView({block:"start",behavior:"auto"}));
- }
+ // The mobile page is a locked app viewport; scrolling its outer panels into view
+ // hides the fixed toolbar on iOS. Only the inner detail pane should scroll.
+ if(isMobile()&&open)$("detail").scrollTop=0;
 }
 function selectRequest(id){
  chosenId=id;
@@ -263,7 +262,9 @@ async function updateQuickStatus(id,expected,target,button=null,allowUndo=true){
  }finally{if(button&&button.isConnected){button.disabled=false;button.textContent=nextStatus[expected]?.label||"Kaydet"}}
 }
 function renderList(){
- const list=$("requestList");list.replaceChildren();
+ const list=$("requestList");
+ const previousScroll=list.scrollTop;
+ list.replaceChildren();
  const term=$("search").value.trim().toLocaleLowerCase("tr-TR"),filter=$("filter").value,ratingFilter=$("ratingFilter").value;
  const subset=requests.filter(x=>(!filter||(filter==="pending"?["new","reviewing"].includes(x.status):x.status===filter))&&(!ratingFilter||(ratingFilter==="unrated"?getStars(x)===0:getStars(x)===Number(ratingFilter)))&&(!term||[x.customer_name,x.customer_phone,x.service,x.details].some(v=>String(v||"").toLocaleLowerCase("tr-TR").includes(term))));
  if(!subset.length){list.append(el("p","Bu koşullara uygun talep bulunamadı.","empty"));return}
