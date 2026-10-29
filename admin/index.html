@@ -954,7 +954,44 @@ select.tek-native-select{
  body.tek-app-mode #accountView .account-controls{border-radius:10px 10px 0 0}
 }
 
-</style><script type="module" src="/admin/app.js?v=25"></script></head>
+
+/* Fix: offers require vertical touch scrolling inside the fixed mobile layout.
+   The page, original header and bottom menu remain fixed. */
+@media(max-width:800px){
+ body.tek-app-mode #quoteView{
+  display:flex;flex-direction:column;min-height:0;overflow:hidden
+ }
+ body.tek-app-mode #quoteView #requestGrid{
+  flex:1 1 auto;min-height:0;max-height:100%;overflow:hidden
+ }
+ body.tek-app-mode #quoteView #requestListPanel,
+ body.tek-app-mode #quoteView #requestDetailPanel{
+  flex:1 1 auto;min-width:0;min-height:0;max-height:100%;
+  display:flex;flex-direction:column;overflow:hidden
+ }
+ body.tek-app-mode #quoteView #requestListPanel .filters{
+  flex:0 0 auto
+ }
+ body.tek-app-mode #quoteView #requestList{
+  flex:1 1 auto;min-height:0;max-height:none;
+  overflow-x:hidden!important;overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-y:contain;
+  touch-action:pan-y;
+ }
+ body.tek-app-mode #quoteView #requestDetailPanel #detail{
+  flex:1 1 auto;min-height:0;max-height:100%;
+  overflow-x:hidden!important;overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-y:contain;
+  touch-action:pan-y;
+  padding-bottom:calc(22px + env(safe-area-inset-bottom,0px));
+ }
+ /* No quote-list pagination; swipe through the actual records. */
+ body.tek-app-mode #quoteView #requestListPanel>.tek-pager{display:none!important}
+}
+
+</style><script type="module" src="/admin/app.js?v=26"></script></head>
 <body>
 <div id="tekSplash" class="tek-splash" role="status" aria-label="TEKİNOĞULLARI İMALAT yönetim paneli açılıyor">
  <div class="tek-splash-halo" aria-hidden="true"></div>
