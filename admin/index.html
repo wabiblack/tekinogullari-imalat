@@ -1011,7 +1011,132 @@ select.tek-native-select{
  input,textarea,select{font-size:16px!important}
 }
 
-</style><script type="module" src="/admin/app.js?v=26"></script></head>
+
+/* Smooth, short, composited micro-animations. Everything stays within the app viewport. */
+:root{
+ --tek-motion-quick:150ms;
+ --tek-motion-medium:235ms;
+ --tek-motion-ease:cubic-bezier(.22,1,.36,1);
+}
+@keyframes tek-page-enter{
+ from{opacity:.42;transform:translate3d(0,9px,0)}
+ to{opacity:1;transform:translate3d(0,0,0)}
+}
+@keyframes tek-panel-forward{
+ from{opacity:.25;transform:translate3d(18px,0,0)}
+ to{opacity:1;transform:translate3d(0,0,0)}
+}
+@keyframes tek-panel-return{
+ from{opacity:.25;transform:translate3d(-12px,0,0)}
+ to{opacity:1;transform:translate3d(0,0,0)}
+}
+@keyframes tek-form-enter{
+ from{opacity:.5;transform:translate3d(0,20px,0)}
+ to{opacity:1;transform:translate3d(0,0,0)}
+}
+@keyframes tek-feedback-enter{
+ from{opacity:0;transform:translate3d(0,8px,0)}
+ to{opacity:1;transform:translate3d(0,0,0)}
+}
+@media(max-width:800px){
+ body.tek-app-mode #dashboard>section:not(.is-hidden){
+  animation:tek-page-enter var(--tek-motion-medium) var(--tek-motion-ease) both;
+ }
+ /* List and detail move *within* their fixed container, never the entire page. */
+ body.tek-app-mode #requestGrid.mobile-detail-active #requestDetailPanel{
+  animation:tek-panel-forward 250ms var(--tek-motion-ease) both;
+ }
+ body.tek-app-mode #requestGrid:not(.mobile-detail-active) #requestListPanel{
+  animation:tek-panel-return 210ms var(--tek-motion-ease) both;
+ }
+ body.tek-app-mode #workView #workEditor.work-form-open,
+ body.tek-app-mode #financeView .fin-card.tek-form-open,
+ body.tek-app-mode #stockView .stock-form-card:not(.is-hidden),
+ body.tek-app-mode #accountView .account-card[open]{
+  animation:tek-form-enter 245ms var(--tek-motion-ease) both;
+ }
+ body.tek-app-mode #docOverlay:not(.is-hidden) .doc-sheet{
+  animation:tek-form-enter 260ms var(--tek-motion-ease) both;
+ }
+ body.tek-app-mode #docOverlay:not(.is-hidden){animation:tek-scene-in 180ms ease-out both}
+ body.tek-app-mode .tek-back:not([hidden]){animation:tek-feedback-enter 165ms var(--tek-motion-ease) both}
+ body.tek-app-mode #dashboard .mobile-bottom-item{
+  transition:background-color var(--tek-motion-medium) ease,
+    color var(--tek-motion-quick) ease,
+    border-color var(--tek-motion-quick) ease,
+    transform var(--tek-motion-quick) ease;
+ }
+ body.tek-app-mode #dashboard .mobile-bottom-item.active{
+  background:#fff0e4;color:#964509
+ }
+ body.tek-app-mode #dashboard .mobile-bottom-item.active svg{
+  animation:tek-nav-pop var(--tek-motion-medium) var(--tek-motion-ease) both;
+ }
+ body.tek-app-mode #dashboard .home-metric,
+ body.tek-app-mode #dashboard .home-quick-action,
+ body.tek-app-mode #dashboard .more-menu-item,
+ body.tek-app-mode #dashboard .request,
+ body.tek-app-mode #dashboard .work-item,
+ body.tek-app-mode #dashboard .tek-back{
+  -webkit-tap-highlight-color:transparent;
+  transition:background-color var(--tek-motion-quick) ease,
+    border-color var(--tek-motion-quick) ease,
+    color var(--tek-motion-quick) ease,
+    transform var(--tek-motion-quick) ease;
+ }
+ body.tek-app-mode #dashboard .home-metric:active,
+ body.tek-app-mode #dashboard .home-quick-action:active,
+ body.tek-app-mode #dashboard .more-menu-item:active,
+ body.tek-app-mode #dashboard .request:active,
+ body.tek-app-mode #dashboard .work-item:active,
+ body.tek-app-mode #dashboard .tek-back:active{
+  transform:scale(.985);
+ }
+ body.tek-app-mode #dashboard .more-menu-item{
+  transform-origin:center left;
+ }
+ body.tek-app-mode .status-toast:not(.is-hidden),
+ body.tek-app-mode .stock-notice:not(.is-hidden),
+ body.tek-app-mode .work-feedback:not(.is-hidden){
+  animation:tek-feedback-enter 190ms ease-out both;
+ }
+ /* Keep native scrolling buttery: no transforms/filters on list containers. */
+ body.tek-app-mode #requestList,
+ body.tek-app-mode #detail,
+ body.tek-app-mode #stockList{
+  -webkit-overflow-scrolling:touch;
+  scroll-behavior:auto;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ body.tek-app-mode #dashboard>section:not(.is-hidden),
+ body.tek-app-mode #requestGrid.mobile-detail-active #requestDetailPanel,
+ body.tek-app-mode #requestGrid:not(.mobile-detail-active) #requestListPanel,
+ body.tek-app-mode #workView #workEditor.work-form-open,
+ body.tek-app-mode #financeView .fin-card.tek-form-open,
+ body.tek-app-mode #stockView .stock-form-card:not(.is-hidden),
+ body.tek-app-mode #accountView .account-card[open],
+ body.tek-app-mode #docOverlay:not(.is-hidden),
+ body.tek-app-mode #docOverlay:not(.is-hidden) .doc-sheet,
+ body.tek-app-mode .tek-back:not([hidden]),
+ body.tek-app-mode #dashboard .mobile-bottom-item.active svg,
+ body.tek-app-mode .status-toast:not(.is-hidden),
+ body.tek-app-mode .stock-notice:not(.is-hidden),
+ body.tek-app-mode .work-feedback:not(.is-hidden){
+  animation:none!important;
+ }
+ body.tek-app-mode #dashboard .mobile-bottom-item,
+ body.tek-app-mode #dashboard .home-metric,
+ body.tek-app-mode #dashboard .home-quick-action,
+ body.tek-app-mode #dashboard .more-menu-item,
+ body.tek-app-mode #dashboard .request,
+ body.tek-app-mode #dashboard .work-item,
+ body.tek-app-mode #dashboard .tek-back{
+  transition:none!important;
+ }
+}
+
+</style><script type="module" src="/admin/app.js?v=27"></script></head>
 <body>
 <div id="tekSplash" class="tek-splash" role="status" aria-label="TEKİNOĞULLARI İMALAT yönetim paneli açılıyor">
  <div class="tek-splash-halo" aria-hidden="true"></div>
