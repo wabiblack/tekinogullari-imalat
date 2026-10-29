@@ -2,7 +2,7 @@
 // This is presentation-only; source items, admin permissions and Supabase records stay untouched.
 export function initCompactPaging(){
  const configs=[
-  ["requestList",3],["workList",3],["accountList",3],
+  ["workList",3],["accountList",3],
   ["stockList",2],["stockHistory",3],["finList",3]
  ];
  const compact=()=>window.matchMedia("(max-width:800px)").matches;
