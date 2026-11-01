@@ -13,7 +13,7 @@ function finPeriodDates(value){
 }
 export function initFinance(sb){
  const $=id=>document.getElementById(id),date=finLocalDate;
- let entries=[],editing=null,quotes=new Map(),loadSerial=0;
+ let entries=[],outstanding=[],editing=null,quotes=new Map(),loadSerial=0;
  const make=(tag,value,cls)=>{const n=document.createElement(tag);if(value!=null)n.textContent=String(value);if(cls)n.className=cls;return n};
  const formCard=()=>$("finForm").closest(".fin-card");
  function showMobileForm(){
@@ -53,7 +53,10 @@ export function initFinance(sb){
  }
  function renderList(){
   const list=$("finList");list.replaceChildren();
-  if(!entries.length){list.append(make("p","Seçilen dönemde henüz gelir veya gider kaydı bulunmuyor.","empty"));return}
+  if(!entries.length&&!outstanding.length){
+   list.append(make("p","Bu dönemde hareket ve tahsil edilmemiş alacak yok.","empty"));
+   return;
+  }
   for(const item of entries){
    const row=make("div",null,"fin-record"),top=make("div",null,"fin-record-top");
    const left=make("div"),title=make("div",item.description,"fin-record-name");
@@ -67,6 +70,28 @@ export function initFinance(sb){
    const del=make("button","Sil","danger");del.type="button";del.addEventListener("click",()=>void deleteEntry(item));
    actions.append(edit,del);row.append(top,actions);list.append(row);
   }
+  // A receivable is not a cash transaction. Display it here for convenience,
+  // never include it in income, expenses or cash balance totals.
+  if(outstanding.length){
+   list.append(make("p","TAHSİL EDİLMEMİŞ ALACAKLAR · KASA GELİRİ DEĞİL","tek-due-heading"));
+   for(const debt of outstanding){
+    const item=make("button",null,"fin-record tek-due-row");
+    item.type="button";
+    const top=make("div",null,"fin-record-top");
+    const left=make("div");
+    left.append(make("div",debt.customer_name||"Müşteri","fin-record-name"),
+     make("div",debt.job_title||debt.service||"İş","fin-record-meta"));
+    top.append(left,make("strong",finMoney.format(Number(debt.remaining)),"fin-record-price"));
+    item.append(top);
+    item.addEventListener("click",()=>{
+     $("accountSearch").value=debt.customer_name||"";
+     $("accountFilter").value="debt";
+     $("accountTab").click();
+     $("accountSearch").dispatchEvent(new Event("input",{bubbles:true}));
+    });
+    list.append(item);
+   }
+  }
  }
  async function load({silent=false}={}){
   const seq=++loadSerial,{start,end}=bounds();
@@ -75,7 +100,12 @@ export function initFinance(sb){
   let query=sb.from("finance_transactions").select("id,entry_date,kind,category,description,amount,quote_id,created_at").order("entry_date",{ascending:false}).order("created_at",{ascending:false}).limit(300);
   if(start)query=query.gte("entry_date",start);
   if(end)query=query.lte("entry_date",end);
-  const [summary,result]=await Promise.all([sb.rpc("tek_finance_summary",{from_date:start,to_date:end}),query]);
+  const [summary,result,balances,receivables]=await Promise.all([
+   sb.rpc("tek_finance_summary",{from_date:start,to_date:end}),
+   query,
+   sb.rpc("tek_customer_account_balances").range(0,499),
+   sb.rpc("tek_home_receivables_summary")
+  ]);
   if(seq!==loadSerial)return;
   if(summary.error||result.error){
    if(!silent)$("finList").replaceChildren(make("p","Mali kayıtlar yüklenemedi. Oturumunuzu kontrol edip tekrar giriş yapın.","error"));
@@ -91,6 +121,12 @@ export function initFinance(sb){
   $("finNet").parentElement.classList.toggle("negative",net<0);
   $("finNet").parentElement.classList.toggle("positive",net>=0);
   entries=result.data||[];
+  outstanding=balances.error?[]:(balances.data||[]).filter(x=>x.job_status!=="cancelled"&&
+   x.agreed_price!==null&&x.agreed_price!==undefined&&Number(x.remaining)>0.005)
+   .sort((a,b)=>Number(b.remaining)-Number(a.remaining));
+  const amount=Number(receivables.data);
+  $("finOutstanding").textContent=!receivables.error&&Number.isFinite(amount)?
+   finMoney.format(amount):"—";
   renderList();
  }
  function editEntry(item){
