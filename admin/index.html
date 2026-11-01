@@ -1152,7 +1152,56 @@ select.tek-native-select{
 }
 @media(prefers-reduced-motion:reduce){.compact-subnav-item{transition:none!important}}
 
-</style><script type="module" src="/admin/app.js?v=28"></script></head>
+
+/* One-feed admin UI. All historic data and functional edit screens remain intact. */
+@media(max-width:800px){
+ body.tek-app-mode #compactSubnav{display:none!important}
+ body.tek-app-mode #workView>.work-stats{display:none!important}
+ body.tek-app-mode #workView .work-grid>.work-card:first-child{flex:1 1 auto;min-height:0;max-height:none}
+ body.tek-app-mode #workView .work-grid .work-list{
+  flex:1 1 auto;min-height:0;max-height:none;
+  overflow-y:auto!important;overflow-x:hidden!important;
+  -webkit-overflow-scrolling:touch;touch-action:pan-y;overscroll-behavior-y:contain;
+ }
+ body.tek-app-mode #workView .work-item{min-height:68px;padding:12px 12px}
+ body.tek-app-mode #workView .work-item .work-item-meta{font-size:11px;line-height:1.35}
+ body.tek-app-mode #workView .work-item .work-item-bottom{font-size:11px}
+ body.tek-app-mode #workView .tek-unified-quote{border-left:3px solid #ff7200}
+ body.tek-app-mode #workView .work-filters{gap:7px}
+ body.tek-app-mode #workView .work-filters input{min-height:40px}
+ body.tek-app-mode #workView .work-filters .tek-inline-select{min-width:0}
+ body.tek-app-mode #workView .work-grid>.work-card:first-child>.work-card-head{display:none!important}
+ body.tek-app-mode #financeView .fin-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+ body.tek-app-mode #financeView .fin-stats>.fin-stat:nth-child(4){display:none}
+ body.tek-app-mode #financeView .fin-stats>.fin-receivables{display:block}
+ body.tek-app-mode #financeView .fin-grid{min-height:0;flex:1 1 auto}
+ body.tek-app-mode #financeView .fin-grid>.fin-card:last-child{min-height:0;flex:1 1 auto}
+ body.tek-app-mode #financeView .fin-grid>.fin-card:last-child>.fin-list{
+  flex:1 1 auto;min-height:0;max-height:none;
+  overflow-y:auto!important;overflow-x:hidden!important;
+  -webkit-overflow-scrolling:touch;touch-action:pan-y;overscroll-behavior-y:contain
+ }
+ body.tek-app-mode #financeView .fin-grid>.fin-card:last-child>header{display:none!important}
+ body.tek-app-mode #financeView .fin-grid>.fin-card:last-child>.fin-footer{display:none}
+ body.tek-app-mode #financeView .fin-heading{min-height:34px;margin-bottom:5px}
+ body.tek-app-mode #financeView .fin-period{flex:none;margin-bottom:8px}
+ body.tek-app-mode #financeView .fin-stats{flex:none;margin-bottom:8px}
+ body.tek-app-mode #financeView .fin-receivables strong{color:#bc5212}
+ body.tek-app-mode .tek-cash-tools{flex:none;position:relative;margin:0 0 7px;font-size:11px;color:#6c7670}
+ body.tek-app-mode .tek-cash-tools>summary{display:inline-flex;list-style:none;cursor:pointer;align-items:center;gap:4px;font-weight:750;border:0;background:transparent;padding:3px 2px;color:#727e76}
+ body.tek-app-mode .tek-cash-tools>summary:after{content:"⌄";font-size:13px}
+ body.tek-app-mode .tek-cash-tools[open]>summary:after{content:"⌃"}
+ body.tek-app-mode .tek-cash-tools>summary::-webkit-details-marker{display:none}
+ body.tek-app-mode .tek-cash-tools>div{display:flex;gap:7px;margin:6px 0 0}
+ body.tek-app-mode .tek-cash-tools button{flex:1;padding:8px;font-size:12px;font-weight:750;background:#fff;border:1px solid #dce2dd;border-radius:9px;color:#38413b}
+ body.tek-app-mode .tek-due-heading{margin:10px 0 4px;padding:10px 10px 4px;font-size:11px;font-weight:800;letter-spacing:.03em;color:#a65016;border-top:1px solid #e8eae6}
+ body.tek-app-mode .tek-due-row{display:block;width:100%;border:0;border-bottom:1px solid #edf0ec;border-radius:0;background:white;padding:12px;text-align:left}
+ body.tek-app-mode .tek-due-row .fin-record-price{color:#af561d;font-weight:850}
+}
+@media(min-width:801px){.tek-cash-tools{display:none}}
+@media(prefers-reduced-motion:reduce){.tek-cash-tools button{transition:none!important}}
+
+</style><script type="module" src="/admin/app.js?v=29"></script></head>
 <body>
 <div id="tekSplash" class="tek-splash" role="status" aria-label="TEKİNOĞULLARI İMALAT yönetim paneli açılıyor">
  <div class="tek-splash-halo" aria-hidden="true"></div>
@@ -1255,7 +1304,7 @@ select.tek-native-select{
 
 <section id="workView" class="is-hidden" role="tabpanel" aria-labelledby="workTab">
  <p class="work-notice is-hidden" id="workNotice" role="status" aria-live="polite"></p>
- <div class="work-head"><div><h2>İş Takip Sistemi</h2><p>Onaylanan teklifleri işe dönüştür, üretimi ve teslim tarihlerini takip et.</p></div><div class="work-head-buttons"><button id="workNew" type="button" class="btn">+ Yeni İş</button><button id="workRefresh" type="button" class="btn outline">Yenile ↻</button></div></div>
+ <div class="work-head"><div><h2>İş Takip Sistemi</h2><p>Onaylanan teklifleri işe dönüştür, üretimi ve teslim tarihlerini takip et.</p></div><div class="work-head-buttons"><button id="workNew" type="button" class="btn">+ Yeni</button><button id="workRefresh" type="button" class="btn outline">Yenile ↻</button></div></div>
  <div class="work-stats" aria-label="İş durumu özeti">
   <div class="work-stat"><strong id="workActive">0</strong><small>Aktif İş</small></div>
   <div class="work-stat work-late-stat"><strong id="workLate">0</strong><small>Geciken</small></div>
@@ -1364,9 +1413,10 @@ select.tek-native-select{
 </section>
 
 <section id="financeView" class="is-hidden" role="tabpanel" aria-labelledby="financeTab">
-  <div class="fin-heading"><div><p class="eyebrow">MALİ YÖNETİM</p><h2>Gelir ve Giderler</h2></div><div class="tek-heading-actions"><button id="finNew" type="button" class="btn">+ Yeni Kayıt</button><button id="finRefresh" type="button" class="btn outline">Yenile ↻</button></div></div>
+  <div class="fin-heading"><div><p class="eyebrow">MALİ YÖNETİM</p><h2>Gelir ve Giderler</h2></div><div class="tek-heading-actions"><button id="finNew" type="button" class="btn">+ Gelir / Gider</button><button id="finRefresh" type="button" class="btn outline">Yenile ↻</button></div></div>
+  <details class="tek-cash-tools" id="cashTools"><summary>Diğer kayıtlar</summary><div><button type="button" id="cashOpenAccounts">Müşteri Hesapları</button><button type="button" id="cashOpenStock">Malzemeler</button></div></details>
   <div class="fin-period"><label>Dönem <select id="finPeriod"><option value="month">Bu Ay</option><option value="lastmonth">Geçen Ay</option><option value="year">Bu Yıl</option><option value="all">Tüm Zamanlar</option><option value="custom">Tarih Aralığı</option></select></label><div id="finDates" class="is-hidden"><label>Başlangıç <input type="date" id="finStart"></label><label>Bitiş <input type="date" id="finEnd"></label><button type="button" id="finApply" class="btn outline">Uygula</button></div></div>
-  <div class="fin-stats"><div class="fin-stat"><small>Toplam Gelir</small><strong id="finIncome">₺0,00</strong></div><div class="fin-stat"><small>Toplam Gider</small><strong id="finExpense">₺0,00</strong></div><div class="fin-stat fin-net"><small>Net Nakit Farkı</small><strong id="finNet">₺0,00</strong></div><div class="fin-stat"><small>Kayıt Sayısı</small><strong id="finCount">0</strong></div></div>
+  <div class="fin-stats"><div class="fin-stat"><small>Toplam Gelir</small><strong id="finIncome">₺0,00</strong></div><div class="fin-stat"><small>Toplam Gider</small><strong id="finExpense">₺0,00</strong></div><div class="fin-stat fin-net"><small>Net Nakit Farkı</small><strong id="finNet">₺0,00</strong></div><div class="fin-stat"><small>Kayıt Sayısı</small><strong id="finCount">0</strong></div><div class="fin-stat fin-receivables"><small>Kalan Alacak · Toplam</small><strong id="finOutstanding">—</strong></div></div>
   <div class="fin-grid">
    <section class="fin-card"><header><h3 id="finFormTitle">Yeni Mali Kayıt</h3><p>Gelen ya da çıkan parayı kaydet.</p></header><form id="finForm" class="fin-form">
     <div class="fin-duo"><label>İşlem Türü<select id="finKind" required><option value="income">Gelir / Tahsilat</option><option value="expense">Gider / Ödeme</option></select></label><label>İşlem Tarihi<input id="finDate" type="date" required></label></div>
