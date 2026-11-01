@@ -471,64 +471,67 @@ const work=initWork(sb,{documents});
 const home=initHome(sb,{openQuote:id=>{$("quoteTab").click();selectRequest(id)}});
 initCompactPaging();
 initInlineSelects();
-$("mobileHome").addEventListener("click",()=>{$("homeTab").click()});
-$("mobileQuotes").addEventListener("click",()=>{
- $("quoteTab").click();
- if(isMobile()&&$("requestGrid").classList.contains("mobile-detail-active"))backToRequests();
- window.scrollTo({top:0,behavior:"auto"});
-});
-$("mobileAccounts").addEventListener("click",()=>{$("accountTab").click();window.scrollTo({top:0,behavior:"auto"})});
-$("mobileStock").addEventListener("click",()=>{$("stockTab").click();window.scrollTo({top:0,behavior:"auto"})});
-$("mobileFinance").addEventListener("click",()=>{
- $("financeTab").click();
- window.scrollTo({top:0,behavior:"auto"});
-});
-$("mobileWork").addEventListener("click",()=>{ $("workTab").click();window.scrollTo({top:0,behavior:"auto"}) });
-
-/* Simplified 4-tab mobile navigation: preserve existing module-specific section buttons. */
-const primaryMobileSections=[
- ["mobileHome","homeView"],
- ["mobileQuotes","quoteView"],
- ["mobileWork","workView"]
-];
-const legacyMoreSections=["accountView","stockView","financeView"];
+/* One clean mobile navigation: ANA SAYFA / İŞLER / KASA.
+   Existing quote, work, finance, account and stock modules remain the single source of truth. */
+const compactWorkViews=new Set(["quoteView","workView"]);
+const compactCashViews=new Set(["financeView","accountView","stockView"]);
 function paintCompactNav(){
- const moreOpen=!$("moreView").classList.contains("is-hidden");
- for(const [button,view] of primaryMobileSections){
-  const selected=!moreOpen&&!$(view).classList.contains("is-hidden");
-  $(button).classList.toggle("active",selected);
-  if(selected)$(button).setAttribute("aria-current","page");
-  else $(button).removeAttribute("aria-current");
+ const current=["homeView","workView","quoteView","financeView","accountView","stockView"]
+  .find(id=>!$(id).classList.contains("is-hidden"))||null;
+ const homeSelected=current==="homeView",workSelected=compactWorkViews.has(current),cashSelected=compactCashViews.has(current);
+ for(const [id,selected] of [["mobileHome",homeSelected],["mobileWork",workSelected],["mobileMore",cashSelected]]){
+  const btn=$(id);
+  btn.classList.toggle("active",selected);
+  if(selected)btn.setAttribute("aria-current","page");
+  else btn.removeAttribute("aria-current");
  }
- const extraOpen=moreOpen||legacyMoreSections.some(id=>!$(id).classList.contains("is-hidden"));
- $("mobileMore").classList.toggle("active",extraOpen);
- if(extraOpen)$("mobileMore").setAttribute("aria-current","page");
- else $("mobileMore").removeAttribute("aria-current");
- $("mobileMore").setAttribute("aria-expanded",String(moreOpen));
+ const compact=isMobile()&&!$("dashboard").classList.contains("is-hidden")&&(workSelected||cashSelected);
+ $("compactSubnav").classList.toggle("is-hidden",!compact);
+ $("workSubnav").classList.toggle("is-hidden",!compact||!workSelected);
+ $("cashSubnav").classList.toggle("is-hidden",!compact||!cashSelected);
+ for(const [id,selected] of [
+  ["compactJobs",current==="workView"],["compactQuotes",current==="quoteView"],
+  ["compactTransactions",current==="financeView"],["compactReceivables",current==="accountView"],
+  ["compactMaterials",current==="stockView"]]){
+  const btn=$(id);
+  btn.setAttribute("aria-pressed",String(selected));
+ }
 }
 function openCompactMore(){
- for(const id of ["homeView","quoteView","workView","accountView","stockView","financeView"])
-  $(id).classList.add("is-hidden");
- for(const id of ["homeTab","quoteTab","workTab","accountTab","stockTab","financeTab"]){
-  $(id).classList.remove("active");
-  $(id).setAttribute("aria-selected","false");
- }
- $("moreView").classList.remove("is-hidden");
- $("refresh").classList.add("is-hidden");
- $("adminPageTitle").textContent="Diğer İşlemler";
- paintCompactNav();
- window.scrollTo({top:0,behavior:"auto"});
+ // Old More menu is kept in the HTML for compatibility but never shown on mobile.
+ $("financeTab").click();
 }
-$("mobileMore").addEventListener("click",openCompactMore);
+$("mobileHome").addEventListener("click",()=>$("homeTab").click());
+$("mobileWork").addEventListener("click",()=>$("workTab").click());
+$("mobileMore").addEventListener("click",()=>{$("financeTab").click()});
+$("compactJobs").addEventListener("click",()=>$("workTab").click());
+$("compactQuotes").addEventListener("click",()=>{
+ if($("requestGrid").classList.contains("mobile-detail-active"))backToRequests();
+ $("quoteTab").click();
+});
+$("compactTransactions").addEventListener("click",()=>{$("financeTab").click()});
+$("compactReceivables").addEventListener("click",()=>{
+ tekNestedParent="cash";
+ $("accountTab").click();
+});
+$("compactMaterials").addEventListener("click",()=>{
+ tekNestedParent="cash";
+ $("stockTab").click();
+});
+// Former buttons are kept as hidden compatibility hooks, never as fourth/fifth tabs.
+$("mobileQuotes").addEventListener("click",()=>$("quoteTab").click());
+$("mobileAccounts").addEventListener("click",()=>$("accountTab").click());
+$("mobileStock").addEventListener("click",()=>$("stockTab").click());
+$("mobileFinance").addEventListener("click",()=>$("financeTab").click());
 for(const id of ["homeTab","quoteTab","workTab","accountTab","stockTab","financeTab"]){
  $(id).addEventListener("click",()=>{
   $("moreView").classList.add("is-hidden");
   paintCompactNav();
  });
 }
-$("moreAccounts").addEventListener("click",()=>$("accountTab").click());
-$("moreFinance").addEventListener("click",()=>$("financeTab").click());
-$("moreStock").addEventListener("click",()=>$("stockTab").click());
+$("moreAccounts").addEventListener("click",()=>{$("accountTab").click()});
+$("moreFinance").addEventListener("click",()=>{$("financeTab").click()});
+$("moreStock").addEventListener("click",()=>{$("stockTab").click()});
 $("homeQuickPayment").addEventListener("click",()=>{
  $("moreView").classList.add("is-hidden");
  void finance.startNewIncome();
@@ -596,16 +599,17 @@ function tekAccountOpen(){
 }
 function tekUpdateBack(){
  const page=tekCurrentView();
+ paintCompactNav();
  const btn=$("tekBack");
  btn.hidden=!isMobile()||!page||page==="homeView";
  const title={
   homeView:"Günün Özeti",
-  quoteView:tekIsVisible("quoteView")&&$("requestGrid").classList.contains("mobile-detail-active")?"Teklif Detayı":"Teklifler",
+  quoteView:tekIsVisible("quoteView")&&$("requestGrid").classList.contains("mobile-detail-active")?"Teklif Detayı":"İşler",
   workView:"İşler",
-  accountView:"Müşteri Hesapları",
-  stockView:"Stok",
-  financeView:"Mali Yönetim",
-  moreView:"Diğer"
+  accountView:"Kasa",
+  stockView:"Kasa",
+  financeView:"Kasa",
+  moreView:"Kasa"
  }[page];
  if(title&&$("adminPageTitle").textContent!==title)$("adminPageTitle").textContent=title;
  const step=page==="quoteView"&&$("requestGrid").classList.contains("mobile-detail-active")?"Teklif listesine dön":
@@ -613,13 +617,13 @@ function tekUpdateBack(){
   page==="financeView"&&$("finForm").closest(".fin-card")?.classList.contains("tek-form-open")?"Mali listeye dön":
   page==="stockView"&&(!$("stockEditor").classList.contains("is-hidden")||!$("stockMovementForm").classList.contains("is-hidden"))?"Stok listesine dön":
   page==="accountView"&&tekAccountOpen()?"Hesap listesine dön":
-  ["accountView","stockView","financeView"].includes(page)&&tekNestedParent==="more"?"Diğer menüsüne dön":"Ana sayfaya dön";
+  (page==="accountView"||page==="stockView")&&tekNestedParent!=="home"?"Kasa hareketlerine dön":"Ana sayfaya dön";
  btn.setAttribute("aria-label",step);
 }
 function tekBackOneLevel(){
  const page=tekCurrentView();
  if(!page||page==="homeView")return;
- if(!tekIsVisible("docOverlay")){$("docClose").click();tekUpdateBack();return}
+ if(tekIsVisible("docOverlay")){$("docClose").click();tekUpdateBack();return}
  if(page==="quoteView"&&$("requestGrid").classList.contains("mobile-detail-active")){
   backToRequests();tekUpdateBack();return;
  }
@@ -637,11 +641,10 @@ function tekBackOneLevel(){
   const item=tekAccountOpen();
   if(item){item.open=false;tekUpdateBack();return}
  }
- if(["accountView","stockView","financeView"].includes(page)){
+ if(page==="accountView"||page==="stockView"){
   if(tekNestedParent==="home")$("homeTab").click();
-  else if(tekNestedParent==="accounts")openCompactMore();
-  else openCompactMore();
- }else if(page==="moreView"||page==="quoteView"||page==="workView"){
+  else $("financeTab").click();
+ }else{
   $("homeTab").click();
  }
  tekUpdateBack();
