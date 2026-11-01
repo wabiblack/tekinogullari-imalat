@@ -20,7 +20,7 @@ const workNear=job=>{
 export function initWork(sb,{documents}){
  const $=id=>document.getElementById(id);
  const el=(type,text,cls)=>{const n=document.createElement(type);if(text!==undefined&&text!==null)n.textContent=String(text);if(cls)n.className=cls;return n};
- let jobs=[],quotes=[],editingId=null,loaded=false,requestSerial=0,profitMap=new Map();
+ let jobs=[],quotes=[],incomingQuotes=[],editingId=null,loaded=false,requestSerial=0,profitMap=new Map();
  const feedback=(message,error=false)=>{
   const out=$("workFeedback");out.textContent=message;
   out.className="work-feedback "+(message?(error?"error":"success"):"");
@@ -101,8 +101,36 @@ export function initWork(sb,{documents}){
    }
    return b.created_at.localeCompare(a.created_at);
   });
-  $("workVisibleCount").textContent=visible.length+" iş listeleniyor (en son 500 kayıt)";
-  if(!visible.length){list.append(el("p",jobs.length?"Bu filtreye uyan iş bulunamadı.":"Henüz iş kaydı yok. Onaylanan tekliften ilk işi oluşturabilirsin.","empty"));return}
+  const linkedQuotes=new Set(jobs.map(job=>job.quote_id));
+  const unlinked=incomingQuotes.filter(quote=>{
+   if(linkedQuotes.has(quote.id)||filter)return false;
+   return !term||[quote.customer_name,quote.service,quote.customer_phone].some(x=>
+    String(x||"").toLocaleLowerCase("tr-TR").includes(term));
+  }).sort((a,b)=>{
+   const priority=q=>q.status==="new"?0:q.status==="reviewing"?1:
+    q.status==="approved"?2:q.status==="in_production"?3:q.status==="completed"?4:5;
+   return priority(a)-priority(b)||b.created_at.localeCompare(a.created_at);
+  });
+  $("workVisibleCount").textContent=(visible.length+unlinked.length)+" kayıt";
+  if(!visible.length&&!unlinked.length){
+   list.append(el("p",jobs.length||incomingQuotes.length?"Bu aramaya uygun kayıt yok.":"Henüz teklif veya iş yok.","empty"));
+   return;
+  }
+  // A quote with an existing work order appears only once, as that work order.
+  for(const quote of unlinked){
+   const card=el("button",null,"work-item tek-unified-quote");
+   card.type="button";
+   card.setAttribute("aria-label",quote.customer_name+" teklif detayını aç");
+   const row=el("div",null,"work-item-top");
+   const status={new:"Yeni teklif",reviewing:"Görüşülüyor",approved:"Onaylandı",
+    in_production:"Üretimde",completed:"Tamamlandı",cancelled:"İptal"}[quote.status]||"Teklif";
+   row.append(el("strong",quote.service||"Teklif"),el("span",status,"work-status "+quote.status));
+   card.append(row,el("div",quote.customer_name||"Müşteri","work-item-meta"));
+   card.append(el("div",new Date(quote.created_at).toLocaleDateString("tr-TR")+" · Teklif","work-item-bottom"));
+   card.addEventListener("click",()=>window.dispatchEvent(
+    new CustomEvent("tek-open-quote",{detail:{id:quote.id}})));
+   list.append(card);
+  }
   for(const job of visible){
    const card=el("button",null,"work-item"+(editingId===job.id?" selected":""));
    card.type="button";card.setAttribute("aria-label",(job.quote?.customer_name||"Müşteri")+" "+job.title+" işini düzenle");
@@ -128,15 +156,19 @@ export function initWork(sb,{documents}){
  async function load({silent=false}={}){
   const seq=++requestSerial;
   if(!silent)$("workList").replaceChildren(el("p","İşler yükleniyor…","empty"));
-  const [jobResult,profitResult]=await Promise.all([
+  const [jobResult,profitResult,quoteResult]=await Promise.all([
    sb.from("tek_work_orders")
     .select("id,quote_id,title,agreed_price,start_date,due_date,status,notes,created_at,updated_at,quote:quote_requests(customer_name,customer_phone,service)")
     .order("created_at",{ascending:false}).limit(500),
-   sb.rpc("tek_work_profit_summary").limit(500)
+   sb.rpc("tek_work_profit_summary").limit(500),
+   sb.from("quote_requests")
+    .select("id,customer_name,customer_phone,service,status,created_at")
+    .order("created_at",{ascending:false}).limit(500)
   ]);
   if(seq!==requestSerial)return;
   if(jobResult.error){if(!silent)$("workList").replaceChildren(el("p","İş kayıtları açılamadı. Girişini kontrol edip tekrar dene.","error"));return}
   jobs=jobResult.data||[];loaded=true;
+  incomingQuotes=quoteResult.error?[]:(quoteResult.data||[]);
   profitMap=profitResult.error?new Map():new Map((profitResult.data||[]).map(p=>[p.work_id,p]));
   render();fillQuoteOptions();
   if(editingId)showProfit(editingId);
