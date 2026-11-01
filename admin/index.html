@@ -1201,7 +1201,7 @@ select.tek-native-select{
 @media(min-width:801px){.tek-cash-tools{display:none}}
 @media(prefers-reduced-motion:reduce){.tek-cash-tools button{transition:none!important}}
 
-</style><script type="module" src="/admin/app.js?v=29"></script></head>
+</style><script type="module" src="/admin/app.js?v=30"></script></head>
 <body>
 <div id="tekSplash" class="tek-splash" role="status" aria-label="TEKİNOĞULLARI İMALAT yönetim paneli açılıyor">
  <div class="tek-splash-halo" aria-hidden="true"></div>
@@ -1304,7 +1304,7 @@ select.tek-native-select{
 
 <section id="workView" class="is-hidden" role="tabpanel" aria-labelledby="workTab">
  <p class="work-notice is-hidden" id="workNotice" role="status" aria-live="polite"></p>
- <div class="work-head"><div><h2>İş Takip Sistemi</h2><p>Onaylanan teklifleri işe dönüştür, üretimi ve teslim tarihlerini takip et.</p></div><div class="work-head-buttons"><button id="workNew" type="button" class="btn">+ Yeni</button><button id="workRefresh" type="button" class="btn outline">Yenile ↻</button></div></div>
+ <div class="work-head"><div><h2>İş Takip Sistemi</h2><p>Onaylanan teklifleri işe dönüştür, üretimi ve teslim tarihlerini takip et.</p></div><div class="work-head-buttons"><button id="workNew" type="button" class="btn">+ İş Başlat</button><button id="workRefresh" type="button" class="btn outline">Yenile ↻</button></div></div>
  <div class="work-stats" aria-label="İş durumu özeti">
   <div class="work-stat"><strong id="workActive">0</strong><small>Aktif İş</small></div>
   <div class="work-stat work-late-stat"><strong id="workLate">0</strong><small>Geciken</small></div>
@@ -1324,8 +1324,9 @@ select.tek-native-select{
     <label>İş Adı<input type="text" id="workTitle" minlength="2" maxlength="150" required placeholder="Örn. Ferforje kapı imalatı"></label>
     <div class="work-duo"><label>İş Bedeli (TL)<input id="workPrice" type="number" inputmode="decimal" min="0" max="999999999999.99" step="0.01" placeholder="Belirlenmediyse boş bırak"></label><label>İş Durumu<select id="workStatus"><option value="planned">Planlandı</option><option value="in_progress">Üretimde</option><option value="ready">Teslime Hazır</option><option value="delivered">Teslim Edildi</option><option value="cancelled">İptal</option></select></label></div>
     <div class="work-duo"><label>Başlangıç<input type="date" id="workStart" required></label><label>Hedef Teslim Tarihi<input type="date" id="workDue"></label></div>
+    <label>İşi Yapan (isteğe bağlı)<input type="text" id="workDoer" maxlength="80" placeholder="Ben / Abim / Usta"></label>
     <label>İş Notları<textarea id="workNotes" maxlength="2000" rows="5" placeholder="Ölçüler, kullanılacak malzeme, yapılacaklar..."></textarea></label>
-    <p class="work-note">İş bedeli tahsilat değildir. Gelir ve kaporayı ayrıca Mali Yönetim'e kaydetmelisin.</p>
+    <p class="work-note">İş bedeli tahsilat değildir. Gelir ve kaporayı Kasa'ya bir kez kaydet.</p>
     <div class="work-form-actions"><button type="submit" id="workSave" class="btn">İşi Kaydet</button><button type="button" id="workCancel" class="btn outline">Vazgeç</button></div>
     <div id="workProfitBox" class="work-profit-box is-hidden">
   <div class="work-profit-head"><strong>Tahmini İş Kârı</strong><small>İş bedeli - malzeme tüketimi - diğer giderler</small></div>
