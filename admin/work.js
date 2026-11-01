@@ -32,6 +32,7 @@ export function initWork(sb,{documents}){
  }
  function resetForm(closeOnMobile=false){
   editingId=null;$("workForm").reset();
+  $("workDoer").value="";
   $("workProfitBox").classList.add("is-hidden");
   $("workPdf").classList.add("is-hidden");
   $("workProfitRefresh").classList.add("is-hidden");
@@ -145,6 +146,7 @@ export function initWork(sb,{documents}){
    bottom.append(el("span",dateText+statusText,"work-date"+(workLate(job)?" late":workNear(job)?" soon":"")));
    if(job.agreed_price!==null&&job.agreed_price!==undefined)bottom.append(el("b",workMoney.format(Number(job.agreed_price)),"work-price"));
    card.append(bottom);
+   if(job.performed_by)card.append(el("span","Yapan: "+job.performed_by,"work-item-meta"));
    const profit=profitMap.get(job.id);
    if(profit){
     card.append(el("span",profit.estimated_profit==null?"Kâr için iş bedeli gir":("Tahmini kâr: "+workMoney.format(profit.estimated_profit)),"work-item-meta"+(profit.estimated_profit<0?" work-profit-negative":"")));
@@ -158,12 +160,12 @@ export function initWork(sb,{documents}){
   if(!silent)$("workList").replaceChildren(el("p","İşler yükleniyor…","empty"));
   const [jobResult,profitResult,quoteResult]=await Promise.all([
    sb.from("tek_work_orders")
-    .select("id,quote_id,title,agreed_price,start_date,due_date,status,notes,created_at,updated_at,quote:quote_requests(customer_name,customer_phone,service)")
+    .select("id,quote_id,title,agreed_price,start_date,due_date,status,notes,performed_by,created_at,updated_at,quote:quote_requests(customer_name,customer_phone,service)")
     .order("created_at",{ascending:false}).limit(500),
    sb.rpc("tek_work_profit_summary").limit(500),
    sb.from("quote_requests")
     .select("id,customer_name,customer_phone,service,status,created_at")
-    .order("created_at",{ascending:false}).limit(500)
+    .order("created_at",{ascending:false}).limit(300)
   ]);
   if(seq!==requestSerial)return;
   if(jobResult.error){if(!silent)$("workList").replaceChildren(el("p","İş kayıtları açılamadı. Girişini kontrol edip tekrar dene.","error"));return}
@@ -199,6 +201,7 @@ export function initWork(sb,{documents}){
   $("workDue").value=job.due_date||"";
   $("workStatus").value=job.status;
   $("workNotes").value=job.notes||"";
+  $("workDoer").value=job.performed_by||"";
   $("workPdf").classList.remove("is-hidden");
   $("workProfitRefresh").classList.remove("is-hidden");
   showProfit(id);
@@ -269,7 +272,8 @@ export function initWork(sb,{documents}){
   event.preventDefault();
   if(!$("workForm").reportValidity())return;
   const quote_id=$("workQuote").value;
-  const title=$("workTitle").value.trim(),notes=$("workNotes").value.trim();
+  const title=$("workTitle").value.trim(),notes=$("workNotes").value.trim(),
+   performed_by=$("workDoer").value.trim();
   const status=$("workStatus").value;
   const start_date=$("workStart").value,due_date=$("workDue").value||null;
   const entered=$("workPrice").value.trim();
@@ -277,12 +281,13 @@ export function initWork(sb,{documents}){
   if(!quote_id){feedback("Bir müşteri teklifi seçmelisin.",true);return}
   if(title.length<2||title.length>150){feedback("İş adı 2 ile 150 karakter arasında olmalı.",true);return}
   if(notes.length>2000){feedback("Notlar en fazla 2000 karakter olabilir.",true);return}
+  if(performed_by.length>80){feedback("İşi yapan adı en fazla 80 karakter olabilir.",true);return}
   if(!Object.hasOwn(workStatuses,status)){feedback("Geçerli bir iş durumu seçmelisin.",true);return}
   if(agreed_price!==null&&(!Number.isFinite(agreed_price)||agreed_price<0||agreed_price>999999999999.99)){
    feedback("Geçerli, sıfır veya pozitif bir iş bedeli yaz.",true);return;
   }
   if(due_date&&due_date<start_date){feedback("Teslim tarihi başlangıçtan önce olamaz.",true);return}
-  const payload={title,agreed_price,status,start_date,due_date,notes};
+  const payload={title,agreed_price,status,start_date,due_date,notes,performed_by:performed_by||null};
   if(!editingId)payload.quote_id=quote_id;
   const save=$("workSave");save.disabled=true;save.textContent="Kaydediliyor…";feedback("");
   try{
