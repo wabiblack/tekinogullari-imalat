@@ -11,13 +11,13 @@ export function initHome(sb){
  let generation=0;
  const label=(id,value)=>{$(id).textContent=String(value)};
  const goTab=id=>{$(id).click();window.scrollTo({top:0,behavior:"auto"})};
- const goQuotes=status=>{
-  $("filter").value=status;
-  $("ratingFilter").value="";
-  $("search").value="";
-  $("requestGrid").classList.remove("mobile-detail-active");
-  goTab("quoteTab");
-  $("filter").dispatchEvent(new Event("change",{bubbles:true}));
+ const goQuotes=()=>{
+  // The unified İşler feed begins with new/unconverted offers.
+  // No second quote list or duplicate entry form for everyday navigation.
+  $("workFilter").value="";
+  $("workSearch").value="";
+  goTab("workTab");
+  $("workFilter").dispatchEvent(new Event("change",{bubbles:true}));
  };
  const goJobs=filter=>{
   $("workFilter").value=filter;
