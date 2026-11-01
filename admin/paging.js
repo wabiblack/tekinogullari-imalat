@@ -2,8 +2,8 @@
 // This is presentation-only; source items, admin permissions and Supabase records stay untouched.
 export function initCompactPaging(){
  const configs=[
-  ["workList",3],["accountList",3],
-  ["stockList",2],["stockHistory",3],["finList",3]
+  // Main İşler and Kasa feeds scroll naturally; keep paging only for secondary tools.
+  ["accountList",3],["stockList",2],["stockHistory",3]
  ];
  const compact=()=>window.matchMedia("(max-width:800px)").matches;
  for(const [id,maxPerPage] of configs){
