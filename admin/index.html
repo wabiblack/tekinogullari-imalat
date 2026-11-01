@@ -1136,7 +1136,23 @@ select.tek-native-select{
  }
 }
 
-</style><script type="module" src="/admin/app.js?v=27"></script></head>
+
+/* Three clear destinations: home, jobs, cash. The existing modules remain intact. */
+.compact-subnav{display:none}
+@media(max-width:800px){
+ body.tek-app-mode .mobile-bottom-nav{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+ body.tek-app-mode .mobile-bottom-nav .legacy-mobile-item{display:none!important}
+ body.tek-app-mode #compactSubnav:not(.is-hidden){display:flex;flex:none;min-height:38px;margin:0 0 9px}
+ body.tek-app-mode .compact-subnav-group:not(.is-hidden){display:grid;width:100%;grid-auto-columns:minmax(0,1fr);grid-auto-flow:column;align-items:stretch;padding:3px;gap:3px;background:#eceeea;border:1px solid #e0e4df;border-radius:12px;min-height:38px}
+ body.tek-app-mode .compact-subnav-group.is-hidden{display:none!important}
+ body.tek-app-mode .compact-subnav-item{border:0;background:transparent;color:#68736b;font-weight:750;font-size:12px;min-height:34px;border-radius:9px;padding:5px 4px;cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent;transition:background-color 150ms ease,color 150ms ease,box-shadow 150ms ease}
+ body.tek-app-mode .compact-subnav-item[aria-pressed="true"]{background:#fff;color:#a94c14;box-shadow:0 1px 4px #16271715}
+ body.tek-app-mode .compact-subnav-item:active{transform:scale(.985)}
+ body.tek-app-mode #moreView{display:none!important}
+}
+@media(prefers-reduced-motion:reduce){.compact-subnav-item{transition:none!important}}
+
+</style><script type="module" src="/admin/app.js?v=28"></script></head>
 <body>
 <div id="tekSplash" class="tek-splash" role="status" aria-label="TEKİNOĞULLARI İMALAT yönetim paneli açılıyor">
  <div class="tek-splash-halo" aria-hidden="true"></div>
@@ -1171,6 +1187,17 @@ select.tek-native-select{
 <section id="dashboard" class="is-hidden"><div class="dashboard-head"><div class="tek-title-row"><button type="button" id="tekBack" class="tek-back" hidden aria-label="Önceki ekrana dön"><svg aria-hidden="true" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg><span>Geri</span></button><div><p class="eyebrow">TEKİNOĞULLARI İMALAT / Yönetim</p><h1 id="adminPageTitle">Günün Özeti</h1></div></div><button class="btn outline" id="refresh">Yenile ↻</button></div>
 <p id="notificationHint" class="notification-hint is-hidden" role="status" aria-live="polite"></p>
 <div class="admin-tabs" role="tablist" aria-label="Yönetim bölümleri"><button type="button" id="homeTab" class="admin-tab active" role="tab" aria-selected="true" aria-controls="homeView">Ana Ekran</button><button type="button" id="quoteTab" class="admin-tab" role="tab" aria-selected="false" aria-controls="quoteView">Teklif Talepleri</button><button type="button" id="workTab" class="admin-tab" role="tab" aria-selected="false" aria-controls="workView">İş Takibi</button><button type="button" id="accountTab" class="admin-tab" role="tab" aria-selected="false" aria-controls="accountView">Müşteri Hesapları</button><button type="button" id="stockTab" class="admin-tab" role="tab" aria-selected="false" aria-controls="stockView">Stok ve Malzeme</button><button type="button" id="financeTab" class="admin-tab" role="tab" aria-selected="false" aria-controls="financeView">Mali Yönetim</button></div>
+<div id="compactSubnav" class="compact-subnav is-hidden" aria-label="Bölüm içi işlemler">
+ <div id="workSubnav" class="compact-subnav-group is-hidden" role="group" aria-label="İşler">
+  <button type="button" id="compactJobs" class="compact-subnav-item" aria-pressed="true">İş Takibi</button>
+  <button type="button" id="compactQuotes" class="compact-subnav-item" aria-pressed="false">Teklifler</button>
+ </div>
+ <div id="cashSubnav" class="compact-subnav-group is-hidden" role="group" aria-label="Kasa">
+  <button type="button" id="compactTransactions" class="compact-subnav-item" aria-pressed="true">Hareketler</button>
+  <button type="button" id="compactReceivables" class="compact-subnav-item" aria-pressed="false">Alacaklar</button>
+  <button type="button" id="compactMaterials" class="compact-subnav-item" aria-pressed="false">Stok</button>
+ </div>
+</div>
 <section id="homeView" role="tabpanel" aria-labelledby="homeTab" class="home-view">
  <div class="home-overview-intro">
   <span>BUGÜN İLGİLENMEN GEREKENLER</span>
@@ -1385,7 +1412,7 @@ select.tek-native-select{
     <span>Ana Sayfa</span>
   </button>
 
-  <button type="button" id="mobileQuotes" class="mobile-bottom-item" aria-label="Teklifler">
+  <button type="button" id="mobileQuotes" class="mobile-bottom-item legacy-mobile-item" tabindex="-1" aria-hidden="true" aria-label="Teklifler">
     <svg aria-hidden="true" viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4.5V3h6v1.5M9 10h6M9 14h6"/></svg>
     <span>Teklifler</span>
   </button>
@@ -1393,16 +1420,16 @@ select.tek-native-select{
     <svg aria-hidden="true" viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/></svg>
     <span>İşler</span>
   </button>
-  <button type="button" id="mobileMore" class="mobile-bottom-item" aria-label="Diğer bölümler" aria-expanded="false"><svg aria-hidden="true" viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span>Diğer</span></button>
-  <button type="button" id="mobileAccounts" class="mobile-bottom-item" aria-label="Müşteri Hesapları">
+  <button type="button" id="mobileMore" class="mobile-bottom-item" aria-label="Kasa"><svg aria-hidden="true" viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18M8 15h4"/></svg><span>Kasa</span></button>
+  <button type="button" id="mobileAccounts" class="mobile-bottom-item legacy-mobile-item" tabindex="-1" aria-hidden="true" aria-label="Müşteri Hesapları">
     <svg aria-hidden="true" viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="15" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6 17c.6-2 5.4-2 6 0M15 10h3M15 14h3"/></svg>
     <span>Hesaplar</span>
   </button>
-  <button type="button" id="mobileStock" class="mobile-bottom-item" aria-label="Stok ve Malzeme">
+  <button type="button" id="mobileStock" class="mobile-bottom-item legacy-mobile-item" tabindex="-1" aria-hidden="true" aria-label="Stok ve Malzeme">
     <svg aria-hidden="true" viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 14h8M8 17h8"/></svg>
     <span>Stok</span>
   </button>
-  <button type="button" id="mobileFinance" class="mobile-bottom-item" aria-label="Mali Yönetim">
+  <button type="button" id="mobileFinance" class="mobile-bottom-item legacy-mobile-item" tabindex="-1" aria-hidden="true" aria-label="Mali Yönetim">
     <svg aria-hidden="true" viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h3"/></svg>
     <span>Mali</span>
   </button>
