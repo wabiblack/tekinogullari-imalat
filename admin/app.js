@@ -617,7 +617,8 @@ function tekUpdateBack(){
   page==="financeView"&&$("finForm").closest(".fin-card")?.classList.contains("tek-form-open")?"Mali listeye dön":
   page==="stockView"&&(!$("stockEditor").classList.contains("is-hidden")||!$("stockMovementForm").classList.contains("is-hidden"))?"Stok listesine dön":
   page==="accountView"&&tekAccountOpen()?"Hesap listesine dön":
-  (page==="accountView"||page==="stockView")&&tekNestedParent!=="home"?"Kasa hareketlerine dön":"Ana sayfaya dön";
+  (page==="accountView"||page==="stockView")&&tekNestedParent!=="home"?"Kasa hareketlerine dön":
+  page==="quoteView"?"İş listesine dön":"Ana sayfaya dön";
  btn.setAttribute("aria-label",step);
 }
 function tekBackOneLevel(){
@@ -644,6 +645,9 @@ function tekBackOneLevel(){
  if(page==="accountView"||page==="stockView"){
   if(tekNestedParent==="home")$("homeTab").click();
   else $("financeTab").click();
+ }else if(page==="quoteView"){
+  // Quotes live inside İşler. Back first returns to the work list.
+  $("workTab").click();
  }else{
   $("homeTab").click();
  }
