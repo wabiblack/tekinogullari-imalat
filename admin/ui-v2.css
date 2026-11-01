@@ -1,0 +1,579 @@
+/*
+ TEKİNOĞULLARI İMALAT | Yönetim Arayüzü 2.0
+ One visual system, three mobile destinations, no changes to data/auth/TO art.
+ This stylesheet is deliberately loaded AFTER the legacy inline CSS.
+*/
+:root{
+ --tek-ink:#222629;
+ --tek-orange:#ff7200;
+ --tek-orange-deep:#b64d06;
+ --ui-bg:#f5f5f2;
+ --ui-card:#ffffff;
+ --ui-line:#e6e8e3;
+ --ui-muted:#758079;
+ --ui-radius:16px;
+ --ui-ease:cubic-bezier(.2,.8,.2,1);
+}
+@media(max-width:800px){
+ html{overflow:hidden;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+ body.tek-app-mode{
+  background:var(--ui-bg)!important;
+  color:var(--tek-ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+  font-size:14px;line-height:1.4;
+  overflow:hidden;overscroll-behavior:none;
+ }
+ body.tek-app-mode *,body.tek-app-mode *::before,body.tek-app-mode *::after{box-sizing:border-box}
+ body.tek-app-mode .admin-header{
+  height:64px!important;min-height:64px;
+  padding:0!important;background:var(--tek-ink)!important;
+  border-bottom:1px solid #ffffff12;box-shadow:none;
+ }
+ body.tek-app-mode .admin-header .container{
+  height:100%;width:100%;max-width:none;
+  padding:0 17px!important;
+  display:flex;align-items:center;justify-content:space-between;
+ }
+ body.tek-app-mode .admin-brand{gap:11px}
+ body.tek-app-mode .admin-brand-mark{
+  width:43px;height:43px;border-radius:12px;
+  background:white;border:0;box-shadow:0 1px 7px #0002;
+ }
+ body.tek-app-mode .admin-brand-mark img{width:36px;height:30px}
+ body.tek-app-mode .admin-header .admin-brand-copy strong{
+  font-size:13px!important;letter-spacing:.03em;
+  line-height:1.15;font-weight:850;color:#fff;
+ }
+ body.tek-app-mode .admin-brand-copy span{
+  font-size:11px!important;color:#bec5c0;line-height:1.2;
+ }
+ body.tek-app-mode #logout{
+  min-height:36px!important;border:1px solid #ffffff46;
+  border-radius:9px;padding:5px 10px;font-size:12px;
+  background:#ffffff0d;color:#fff;
+ }
+ body.tek-app-mode .admin-wrap{
+  width:100%;max-width:100%;
+  height:calc(100dvh - 64px)!important;
+  max-height:calc(100dvh - 64px)!important;
+  min-height:0;margin:0!important;
+  padding:14px 14px calc(83px + env(safe-area-inset-bottom,0px))!important;
+  overflow:hidden;display:flex;flex-direction:column;
+  background:var(--ui-bg);
+ }
+ body.tek-app-mode #app>p#loading{padding:12px 0}
+ body.tek-app-mode #dashboard{
+  flex:1;min-height:0;display:flex;flex-direction:column;
+  overflow:hidden;padding:0!important;
+ }
+ body.tek-app-mode #dashboard>.dashboard-head{
+  flex:none;min-height:46px;margin:0 0 11px!important;
+  padding:0 2px;display:flex;align-items:center;
+ }
+ body.tek-app-mode .dashboard-head .eyebrow{display:none!important}
+ body.tek-app-mode #dashboard>.dashboard-head h1{
+  margin:0;font-size:25px!important;font-weight:850;letter-spacing:-.045em;
+  line-height:1.15;color:var(--tek-ink);
+ }
+ body.tek-app-mode .tek-title-row{gap:10px;align-items:center}
+ body.tek-app-mode .tek-back:not([hidden]){
+  display:inline-flex;min-width:38px;min-height:38px;
+  gap:0;padding:7px;align-items:center;justify-content:center;
+  border:1px solid #dfdfda;border-radius:11px;background:#fff;
+  box-shadow:0 1px 3px #22262908;color:#343b36;
+  font-size:0!important;
+ }
+ body.tek-app-mode .tek-back svg{width:22px;height:22px}
+ body.tek-app-mode #dashboard>#notificationHint:not(.is-hidden){
+  flex:none;margin:0 0 9px;padding:8px 11px;border-radius:10px;font-size:12px
+ }
+ body.tek-app-mode #dashboard .admin-tabs,
+ body.tek-app-mode #compactSubnav,
+ body.tek-app-mode #moreView,
+ body.tek-app-mode #dashboard #refresh{display:none!important}
+ body.tek-app-mode #dashboard>section:not(.is-hidden){
+  flex:1 1 auto;min-width:0;min-height:0;
+  display:flex;flex-direction:column;overflow:hidden;
+ }
+ body.tek-app-mode #dashboard .btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  border-radius:12px;background:var(--tek-orange);border:1px solid var(--tek-orange);
+  color:#20221e;font-size:13px;font-weight:850;letter-spacing:0;
+  padding:10px 16px;min-height:42px;box-shadow:none;
+  transition:background-color .16s ease,transform .16s ease;
+ }
+ body.tek-app-mode #dashboard .btn:active{transform:scale(.98)}
+ body.tek-app-mode #dashboard .btn.outline{
+  background:#fff;border-color:#dfe3dc;color:#384138
+ }
+ body.tek-app-mode #dashboard input,
+ body.tek-app-mode #dashboard textarea,
+ body.tek-app-mode #dashboard select,
+ body.tek-app-mode #dashboard .tek-inline-trigger{
+  color:#25302a;background:#fff;border:1px solid #dce2db;
+  border-radius:12px;min-height:44px;font-size:16px!important;
+  box-shadow:none;outline-offset:1px;
+ }
+ body.tek-app-mode #dashboard input:focus,
+ body.tek-app-mode #dashboard textarea:focus,
+ body.tek-app-mode #dashboard .tek-inline-trigger:focus-visible{
+  outline:2px solid #ff720077;border-color:var(--tek-orange)
+ }
+ body.tek-app-mode #dashboard input::placeholder{color:#9ca49e}
+ body.tek-app-mode #dashboard .tek-inline-trigger{
+  padding:9px 12px!important;font-weight:700
+ }
+ body.tek-app-mode #dashboard .tek-inline-choices{
+  border-color:#dfe3dc;border-radius:12px;
+  background:#fff;box-shadow:0 8px 24px #2226290c
+ }
+
+ /* Bottom bar: three unmistakable, thumb-friendly destinations. */
+ body.tek-app-mode #dashboard .mobile-bottom-nav{
+  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  position:fixed;z-index:120;
+  left:0;right:0;bottom:0;
+  padding:8px 13px calc(9px + env(safe-area-inset-bottom,0px))!important;
+  gap:8px!important;
+  background:#fff;border-top:1px solid #e9eae5;
+  box-shadow:0 -6px 28px #22262909;
+ }
+ body.tek-app-mode #dashboard .mobile-bottom-nav .legacy-mobile-item{display:none!important}
+ body.tek-app-mode #dashboard .mobile-bottom-item{
+  min-height:56px;min-width:0;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;gap:3px;
+  border:1px solid transparent;border-radius:13px;
+  padding:6px 5px;background:transparent;
+  color:#828b84;font-size:12px!important;font-weight:750;
+  line-height:1.15;letter-spacing:-.01em;
+  -webkit-tap-highlight-color:transparent;
+  transition:color .18s ease,background .18s ease,transform .18s var(--ui-ease);
+ }
+ body.tek-app-mode #dashboard .mobile-bottom-item svg{
+  height:22px;width:22px;flex-shrink:0
+ }
+ body.tek-app-mode #dashboard .mobile-bottom-item.active{
+  color:var(--tek-orange-deep)!important;background:#fff2e7!important;
+  border-color:#ffe4cf;
+ }
+ body.tek-app-mode #dashboard .mobile-bottom-item.active svg{color:#ee6b07}
+ body.tek-app-mode #dashboard .mobile-bottom-item:active{transform:scale(.96)}
+
+ /* Home: 4 calm information cards and the month's actual cash, nothing else. */
+ body.tek-app-mode #homeView{
+  overflow-y:auto!important;overflow-x:hidden!important;
+  -webkit-overflow-scrolling:touch;touch-action:pan-y;
+  overscroll-behavior-y:contain;align-items:stretch;
+  padding:0 2px 14px;gap:0!important;
+ }
+ body.tek-app-mode #homeView .home-overview-intro{
+  flex:none;display:flex;align-items:center;justify-content:space-between;
+  margin:1px 1px 12px!important;gap:6px;min-height:18px
+ }
+ body.tek-app-mode #homeView .home-overview-intro>span{
+  color:#78827b;font-size:11px!important;letter-spacing:.085em;
+  font-weight:850;line-height:1.3;
+ }
+ body.tek-app-mode #homeView .home-overview-intro>small{
+  display:block!important;color:#a5ada6;font-size:10px!important;
+  max-width:45%;text-align:right;line-height:1.2;
+ }
+ body.tek-app-mode #homeView .home-dashboard-four{
+  flex:none!important;display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  grid-template-rows:repeat(2,minmax(118px,auto))!important;
+  gap:10px!important;min-height:0!important;
+  margin:0 0 19px!important;overflow:visible;
+ }
+ body.tek-app-mode #homeView .home-dashboard-four .home-metric{
+  position:relative;display:flex;flex-direction:column;align-items:flex-start;
+  min-width:0;min-height:118px!important;padding:13px 13px 12px!important;
+  gap:3px!important;
+  border:1px solid #e5e8e1;border-radius:16px!important;
+  background:#fff!important;box-shadow:0 3px 13px #28322a08;
+  color:var(--tek-ink);text-align:left;
+ }
+ body.tek-app-mode #homeView .home-dashboard-four .home-metric-new{
+  border-color:#f1d7c2;background:#fffaf6!important
+ }
+ body.tek-app-mode #homeView .home-dashboard-four .home-metric-icon{
+  position:absolute;top:12px;right:12px;
+  display:grid!important;place-items:center;
+  width:30px;height:30px;border-radius:10px;
+  background:#f5f5f2;color:#808981;
+ }
+ body.tek-app-mode #homeView .home-dashboard-four .home-metric-new .home-metric-icon{
+  background:#fff0e4;color:#e26c0e
+ }
+ body.tek-app-mode #homeView .home-dashboard-four .home-metric-icon svg{
+  height:17px!important;width:17px!important
+ }
+ body.tek-app-mode #homeView .home-dashboard-four .home-metric small{
+  max-width:calc(100% - 22px);
+  font-size:12px!important;font-weight:760;
+  color:#68736b;line-height:1.25;white-space:normal;
+ }
+ body.tek-app-mode #homeView .home-dashboard-four .home-metric strong{
+  max-width:100%;font-size:clamp(23px,5.4vw,29px)!important;
+  line-height:1.15!important;letter-spacing:-.04em;
+  font-weight:850;font-variant-numeric:tabular-nums;
+  margin-top:auto;margin-bottom:1px;overflow-wrap:anywhere;
+ }
+ body.tek-app-mode #homeView .home-dashboard-four #homeReceivableCard strong{
+  font-size:clamp(17px,4.25vw,24px)!important
+ }
+ body.tek-app-mode #homeView .home-dashboard-four .home-metric-desc{
+  display:block!important;color:#929b92!important;
+  font-size:10px!important;line-height:1.2;
+  max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+ }
+ body.tek-app-mode #homeView .home-finance-header{
+  display:flex!important;flex:none;align-items:center;
+  justify-content:space-between;margin:0 1px 9px!important;
+  gap:6px;min-height:22px;
+ }
+ body.tek-app-mode #homeView .home-finance-header h3{
+  color:#27302a;font-size:15px!important;font-weight:850;margin:0
+ }
+ body.tek-app-mode #homeView .home-finance-header #homeMonth{
+  color:#8b968d;font-size:11px;white-space:nowrap
+ }
+ body.tek-app-mode #homeView .home-financials{
+  flex:none;display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:8px!important;margin:0 0 16px!important;
+ }
+ body.tek-app-mode #homeView .home-financials .home-finance-tile{
+  min-width:0;min-height:75px!important;
+  padding:11px 9px!important;border-radius:13px!important;
+  background:#fff;border:1px solid #e6e8e3;
+  display:flex;flex-direction:column;justify-content:space-between;
+  box-shadow:none;
+ }
+ body.tek-app-mode #homeView .home-financials .home-finance-tile small{
+  font-size:11px!important;color:#778178;margin:0 0 5px!important;line-height:1.25
+ }
+ body.tek-app-mode #homeView .home-financials .home-finance-tile strong{
+  color:#303d33;font-size:clamp(12px,3.2vw,16px)!important;
+  line-height:1.18;font-weight:850;font-variant-numeric:tabular-nums;
+  overflow-wrap:anywhere;word-break:normal;
+ }
+ body.tek-app-mode #homeView .home-financials #homeIncome{color:#208054}
+ body.tek-app-mode #homeView .home-financials #homeExpense{color:#b95043}
+ body.tek-app-mode #homeView .home-quick-simple{
+  flex:none;margin:0 0 2px!important;padding:0!important;gap:5px;
+ }
+ body.tek-app-mode #homeView .home-quick-caption{
+  display:block;margin:0 0 5px;font-size:11px;
+  color:#818c82;font-weight:800
+ }
+ body.tek-app-mode #homeView .home-quick-simple .home-quick-action{
+  width:100%;max-width:none;min-height:53px!important;
+  display:flex;align-items:center;gap:12px;
+  background:var(--tek-ink)!important;color:#fff!important;
+  border:0;border-radius:14px!important;
+  padding:10px 14px!important;box-shadow:0 4px 12px #22262916
+ }
+ body.tek-app-mode #homeView .home-quick-simple .home-quick-action>svg{color:var(--tek-orange)}
+ body.tek-app-mode #homeView .home-quick-simple .home-quick-action strong{
+  color:#fff;font-size:14px!important;font-weight:800
+ }
+ body.tek-app-mode #homeView .home-quick-simple .home-quick-action small{
+  display:block;color:#bfc6bf;font-size:11px;margin-top:2px
+ }
+ body.tek-app-mode #homeView .home-quick-simple .home-quick-action>span:last-child{
+  margin-left:auto;color:#ffa45c;font-size:23px
+ }
+ body.tek-app-mode #homeView .home-finance-disclaimer{
+  display:none!important;
+ }
+
+ /* Unified İşler: normal list with clean status chips and search. */
+ body.tek-app-mode #workView .work-head{
+  display:flex;justify-content:flex-end;align-items:center;
+  flex:none;min-height:42px;margin:0 0 11px!important;
+ }
+ body.tek-app-mode #workView .work-head>div:first-child{display:none!important}
+ body.tek-app-mode #workView .work-head-buttons{width:100%;justify-content:flex-end}
+ body.tek-app-mode #workView #workNew{
+  min-height:42px;padding:10px 17px!important;border-radius:12px
+ }
+ body.tek-app-mode #workView .work-grid{
+  flex:1;min-height:0;display:flex;flex-direction:column;gap:0
+ }
+ body.tek-app-mode #workView .work-grid>.work-card:first-child{
+  flex:1 1 auto;min-height:0;max-height:100%;
+  display:flex;flex-direction:column;
+  border:1px solid #e5e8e3;border-radius:17px;
+  background:#fff;overflow:hidden;
+  box-shadow:0 3px 15px #22262906
+ }
+ body.tek-app-mode #workView .work-grid>.work-card:first-child>.work-card-head{display:none!important}
+ body.tek-app-mode #workView .work-stats{display:none!important}
+ body.tek-app-mode #workView .work-filters{
+  display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);
+  flex:none;gap:8px;padding:12px!important;
+  background:#fff;border-bottom:1px solid var(--ui-line);
+ }
+ body.tek-app-mode #workView .work-filters input{
+  min-width:0;height:44px!important;min-height:44px!important;
+  font-size:16px!important;padding:9px 11px!important
+ }
+ body.tek-app-mode #workView .work-filters .tek-inline-trigger{
+  height:44px!important;min-height:44px!important;font-size:13px!important
+ }
+ body.tek-app-mode #workView .work-grid .work-list{
+  flex:1 1 auto;min-height:0;max-height:none!important;
+  overflow-y:auto!important;overflow-x:hidden!important;
+  touch-action:pan-y;-webkit-overflow-scrolling:touch;
+  overscroll-behavior-y:contain;
+  padding:7px 10px 12px;background:#fff
+ }
+ body.tek-app-mode #workView .work-item{
+  display:block;width:100%;min-height:90px!important;
+  padding:13px 13px 12px!important;margin:0 0 8px;
+  border:1px solid #e8ebe6!important;border-radius:13px;
+  background:#fff!important;
+  box-shadow:0 1px 4px #22262906;text-align:left;
+ }
+ body.tek-app-mode #workView .tek-unified-quote{
+  border-left:3px solid #ff7200!important;background:#fffbf8!important
+ }
+ body.tek-app-mode #workView .work-item-top{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  gap:8px;margin-bottom:5px;
+ }
+ body.tek-app-mode #workView .work-item-top strong{
+  min-width:0;flex:1;color:#26302a;
+  font-size:15px!important;font-weight:850;line-height:1.28;
+ }
+ body.tek-app-mode #workView .work-status{
+  flex-shrink:0;max-width:45%;padding:4px 7px;
+  border-radius:8px;font-size:10px!important;
+  line-height:1.25;text-align:center;white-space:normal
+ }
+ body.tek-app-mode #workView .work-item-meta{
+  color:#788279;font-size:12px!important;line-height:1.4!important;margin:4px 0!important
+ }
+ body.tek-app-mode #workView .work-item-bottom{
+  color:#7f887e;display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:6px;font-size:11px!important;margin-top:8px
+ }
+ body.tek-app-mode #workView .work-price{color:#343b35;font-size:13px}
+ body.tek-app-mode #workView .work-list>.empty{padding:30px 16px;font-size:13px;color:#7a847b}
+
+ /* Kasa: four real financial numbers + one scrollable ledger. */
+ body.tek-app-mode #financeView .fin-heading{
+  display:flex!important;align-items:center;justify-content:flex-end;
+  flex-direction:row!important;flex:none;
+  min-height:43px;margin:0 0 10px!important;
+ }
+ body.tek-app-mode #financeView .fin-heading>div:first-child{display:none!important}
+ body.tek-app-mode #financeView .fin-heading .tek-heading-actions{display:flex}
+ body.tek-app-mode #financeView #finNew{min-height:42px}
+ body.tek-app-mode #financeView .tek-cash-tools{
+  flex:none;margin:0 0 9px!important;
+ }
+ body.tek-app-mode #financeView .tek-cash-tools>summary{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 2px!important;color:#79837a;
+  font-size:12px!important;font-weight:750;min-height:26px
+ }
+ body.tek-app-mode #financeView .tek-cash-tools>div{display:flex;gap:8px;margin:6px 0 0}
+ body.tek-app-mode #financeView .tek-cash-tools button{
+  min-height:39px;background:#fff;color:#354039;
+  border:1px solid #dfe3dd;border-radius:11px;
+  font-size:12px;font-weight:750
+ }
+ body.tek-app-mode #financeView .fin-period{
+  display:flex;flex:none;align-items:center;min-height:43px;
+  margin:0 0 10px!important;padding:0;
+ }
+ body.tek-app-mode #financeView .fin-period label{
+  display:flex;align-items:center;gap:9px;
+  font-size:12px!important;font-weight:750;color:#778279
+ }
+ body.tek-app-mode #financeView .fin-period .tek-inline-trigger{
+  min-width:148px;min-height:40px!important;
+  padding:7px 11px!important;font-size:13px!important;
+ }
+ body.tek-app-mode #financeView .fin-stats{
+  flex:none;display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:9px!important;margin:0 0 12px!important;
+ }
+ body.tek-app-mode #financeView .fin-stats>.fin-stat{
+  min-width:0;min-height:86px!important;
+  border:1px solid #e5e8e1!important;
+  border-radius:15px!important;
+  background:#fff;box-shadow:0 2px 7px #22262906;
+  padding:12px 13px!important;
+  display:flex;flex-direction:column;justify-content:space-between;
+ }
+ body.tek-app-mode #financeView .fin-stats>.fin-stat:nth-child(4){display:none!important}
+ body.tek-app-mode #financeView .fin-stats>.fin-receivables{display:flex!important}
+ body.tek-app-mode #financeView .fin-stat small{
+  color:#7d887e;font-size:11px!important;
+  font-weight:700;line-height:1.3;margin:0 0 7px
+ }
+ body.tek-app-mode #financeView .fin-stat strong{
+  color:#303934;font-size:clamp(16px,4.2vw,23px)!important;
+  line-height:1.14;font-weight:850;font-variant-numeric:tabular-nums;
+  letter-spacing:-.035em;overflow-wrap:anywhere
+ }
+ body.tek-app-mode #financeView #finIncome{color:#25815a}
+ body.tek-app-mode #financeView #finExpense{color:#bd5b45}
+ body.tek-app-mode #financeView #finOutstanding{color:#b35b15}
+ body.tek-app-mode #financeView .fin-grid{
+  flex:1 1 auto;min-height:0;max-height:100%;
+  display:flex;flex-direction:column;gap:0;
+ }
+ body.tek-app-mode #financeView .fin-grid>.fin-card:first-child:not(.tek-form-open){display:none!important}
+ body.tek-app-mode #financeView .fin-grid>.fin-card:last-child{
+  flex:1 1 auto;min-height:0;display:flex;flex-direction:column;
+  border:1px solid #e6e9e3;border-radius:16px;
+  background:white;overflow:hidden;
+ }
+ body.tek-app-mode #financeView .fin-grid>.fin-card:last-child>header{display:none!important}
+ body.tek-app-mode #financeView .fin-grid>.fin-card:last-child>.fin-footer{display:none!important}
+ body.tek-app-mode #financeView .fin-grid>.fin-card:last-child>.fin-list{
+  flex:1 1 auto;min-height:0;max-height:none!important;
+  overflow-y:auto!important;overflow-x:hidden!important;
+  touch-action:pan-y;-webkit-overflow-scrolling:touch;
+  overscroll-behavior-y:contain;
+  padding:7px 10px 12px;
+ }
+ body.tek-app-mode #financeView .fin-record{
+  border:1px solid #e8ece6;border-radius:12px;
+  margin:0 0 7px;padding:12px 12px;
+  min-width:0;background:#fff
+ }
+ body.tek-app-mode #financeView .fin-record-top{
+  display:flex;flex-direction:row;justify-content:space-between;
+  align-items:flex-start;gap:9px
+ }
+ body.tek-app-mode #financeView .fin-record-top>div:first-child{flex:1;min-width:0}
+ body.tek-app-mode #financeView .fin-record-name{
+  color:#303a34;font-size:14px!important;font-weight:800;line-height:1.35
+ }
+ body.tek-app-mode #financeView .fin-record-meta{
+  color:#818b82;font-size:11px!important;line-height:1.35;margin-top:5px
+ }
+ body.tek-app-mode #financeView .fin-record-price{
+  flex-shrink:0;color:#303a34;font-size:14px!important;
+  font-weight:850;white-space:normal;text-align:right;
+  max-width:45%;line-height:1.25;overflow-wrap:anywhere
+ }
+ body.tek-app-mode #financeView .fin-record-price.income{color:#22805a}
+ body.tek-app-mode #financeView .fin-record-price.expense{color:#b65043}
+ body.tek-app-mode #financeView .fin-record-actions{display:flex;gap:12px;margin:7px 0 0}
+ body.tek-app-mode #financeView .fin-record-actions button{
+  color:#768077;font-size:12px;text-decoration:none;min-height:25px
+ }
+ body.tek-app-mode #financeView .fin-record-actions button.danger{color:#b6584b}
+ body.tek-app-mode #financeView .tek-due-heading{
+  margin:14px 0 8px;padding:9px 2px 0;
+  color:#aa591e;font-size:11px;letter-spacing:.02em;
+  border-top:1px solid #e7e9e3
+ }
+ body.tek-app-mode #financeView .tek-due-row{
+  width:100%;display:block;border:1px solid #f0e2d3;
+  border-radius:12px;margin:0 0 8px;padding:12px 13px;
+  background:#fffbf8;text-align:left
+ }
+ body.tek-app-mode #financeView .tek-due-row .fin-record-price{color:#b15d1c}
+
+ /* Detail and edit sheets: their contents scroll; header, toolbar and back remain in place. */
+ body.tek-app-mode #workView #workEditor.work-form-open,
+ body.tek-app-mode #financeView .fin-grid>.fin-card:first-child.tek-form-open{
+  position:fixed;z-index:150;inset:64px 0 0!important;
+  border:0;border-radius:0;background:var(--ui-bg);
+  overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;
+  box-shadow:0 -15px 30px #0000000b;
+ }
+ body.tek-app-mode #workView #workEditor .work-card-head,
+ body.tek-app-mode #financeView .fin-grid>.fin-card:first-child>header{
+  position:sticky;top:0;z-index:2;
+  padding:16px 18px!important;
+  border-bottom:1px solid #e4e7df;background:#fff
+ }
+ body.tek-app-mode #workView #workEditor .work-card-head h3,
+ body.tek-app-mode #financeView #finFormTitle{font-size:19px!important;color:#222629}
+ body.tek-app-mode #workView #workEditor .work-card-head p,
+ body.tek-app-mode #financeView .fin-grid>.fin-card:first-child>header p{
+  color:#8a958b;font-size:12px
+ }
+ body.tek-app-mode #workView .work-form,
+ body.tek-app-mode #financeView .fin-form{
+  display:grid;gap:15px;flex:1;
+  padding:18px 16px calc(26px + env(safe-area-inset-bottom,0px))!important
+ }
+ body.tek-app-mode #workView .work-form label,
+ body.tek-app-mode #financeView .fin-form label{
+  color:#46544b;font-size:13px;font-weight:760;gap:7px
+ }
+ body.tek-app-mode #workView .work-form input,
+ body.tek-app-mode #workView .work-form textarea,
+ body.tek-app-mode #financeView .fin-form input,
+ body.tek-app-mode #financeView .fin-form textarea{
+  min-height:48px;background:white;border-radius:12px;
+  padding:12px;font-size:16px!important
+ }
+ body.tek-app-mode #workView .work-form-actions,
+ body.tek-app-mode #financeView .fin-actions{display:flex;gap:8px}
+ body.tek-app-mode #workView .work-form-actions button,
+ body.tek-app-mode #financeView .fin-actions button{flex:1;min-height:47px}
+ body.tek-app-mode #workView .work-profit-box{
+  border:1px solid #e7e9e3;border-radius:14px;background:white;overflow:hidden
+ }
+ body.tek-app-mode #workView .work-profit-note{
+  color:#879189;font-size:11px;line-height:1.5
+ }
+
+ /* Advanced views: still reachable, same tokens and touch-friendly controls. */
+ body.tek-app-mode #accountView .account-card,
+ body.tek-app-mode #stockView .stock-panel,
+ body.tek-app-mode #quoteView .admin-panel{
+  background:#fff;border:1px solid #e5e8e2;border-radius:15px;
+ }
+ body.tek-app-mode #quoteView #requestList,
+ body.tek-app-mode #quoteView #detail,
+ body.tek-app-mode #accountView #accountList,
+ body.tek-app-mode #stockView #stockList,
+ body.tek-app-mode #stockView #stockHistory{
+  overflow-y:auto!important;-webkit-overflow-scrolling:touch;touch-action:pan-y;
+ }
+ body.tek-app-mode #quoteView .request-card{
+  border-bottom:1px solid #eceee9;background:#fff
+ }
+ body.tek-app-mode #quoteView .request{
+  background:#fff;padding:13px 14px!important;
+  font-size:14px;color:#313b35
+ }
+ body.tek-app-mode #quoteView .request .meta{font-size:12px;color:#879088}
+ body.tek-app-mode #quoteView #detail{padding:16px!important}
+ body.tek-app-mode .detail-pad h3{font-size:21px!important}
+ body.tek-app-mode .status-toast{border-radius:14px}
+
+ /* Small iPhone/short viewport: preserve content via inner scrolling, never shrink text to 9px. */
+ body.tek-app-mode #homeView,
+ body.tek-app-mode #workView .work-grid .work-list,
+ body.tek-app-mode #financeView .fin-grid>.fin-card:last-child>.fin-list{
+  scrollbar-width:none
+ }
+ body.tek-app-mode #homeView::-webkit-scrollbar,
+ body.tek-app-mode #workView .work-grid .work-list::-webkit-scrollbar,
+ body.tek-app-mode #financeView .fin-grid>.fin-card:last-child>.fin-list::-webkit-scrollbar{display:none}
+}
+@media(max-width:800px) and (max-height:700px){
+ body.tek-app-mode .admin-wrap{padding-top:10px!important}
+ body.tek-app-mode #dashboard>.dashboard-head{min-height:38px;margin-bottom:8px!important}
+ body.tek-app-mode #homeView .home-dashboard-four{
+  grid-template-rows:repeat(2,minmax(108px,auto))!important;margin-bottom:13px!important
+ }
+ body.tek-app-mode #homeView .home-financials{margin-bottom:12px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ body.tek-app-mode #dashboard .btn,
+ body.tek-app-mode #dashboard .mobile-bottom-item{transition:none!important}
+}
