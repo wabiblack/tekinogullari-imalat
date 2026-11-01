@@ -1,11 +1,11 @@
 import {createClient} from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import {initFinance} from "./finance.js?v=10";
+import {initFinance} from "./finance.js?v=11";
 import {initAccounts} from "./accounts.js?v=4";
-import {initWork} from "./work.js?v=9";
+import {initWork} from "./work.js?v=10";
 import {initStock} from "./stock.js?v=2";
 import {initDocuments} from "./documents.js?v=3";
 import {initHome} from "./home.js?v=5";
-import {initCompactPaging} from "./paging.js?v=2";
+import {initCompactPaging} from "./paging.js?v=3";
 import {initInlineSelects} from "./inline-selects.js?v=2";
 const sb=createClient("https://xrlipgbetpohjewhlbml.supabase.co","sb_publishable_KR4wJm1CbhzSSJqwTbk57A_f8LThNpD",{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const statusLabels={new:"Yeni",reviewing:"Görüşülüyor",approved:"Onaylandı",in_production:"Üretimde",completed:"Tamamlandı",cancelled:"İptal"};
@@ -51,7 +51,7 @@ async function checkForegroundNewQuotes(){
 
 const $=id=>document.getElementById(id);
 let requests=[],chosenId=null;
-let tekQuoteFromUnifiedWork=false;
+let tekQuoteFromUnifiedWork=null;
 const isMobile=()=>window.matchMedia("(max-width:800px)").matches;
 function setMobileDetail(open){
  const grid=$("requestGrid");
@@ -192,7 +192,7 @@ async function validateUser(){
  showDashboard();$("moreView").classList.add("is-hidden");await loadQuotes();
  const fromNotification=new URLSearchParams(location.search).get("view");
  if(fromNotification==="jobs")$("workTab").click();
- else if(fromNotification==="quotes")$("quoteTab").click();
+ else if(fromNotification==="quotes")$("workTab").click();
  else $("homeTab").click();
  void startQuoteNotifications();
 }
@@ -469,11 +469,11 @@ const accounts=initAccounts(sb,{finance});
 const documents=initDocuments();
 const stock=initStock(sb);
 const work=initWork(sb,{documents});
-const home=initHome(sb,{openQuote:id=>{$("quoteTab").click();selectRequest(id)}});
+const home=initHome(sb,{openQuote:id=>{tekQuoteFromUnifiedWork="home";$("quoteTab").click();selectRequest(id)}});
 window.addEventListener("tek-open-quote",event=>{
  const id=event.detail?.id;
  if(!id||!requests.some(quote=>quote.id===id))return;
- tekQuoteFromUnifiedWork=true;
+ tekQuoteFromUnifiedWork="work";
  $("quoteTab").click();
  selectRequest(id);
 });
@@ -511,7 +511,7 @@ function openCompactMore(){
 }
 $("mobileHome").addEventListener("click",()=>$("homeTab").click());
 for(const id of ["homeTab","workTab","financeTab","accountTab","stockTab"]){
- $(id).addEventListener("click",()=>{tekQuoteFromUnifiedWork=false},true);
+ $(id).addEventListener("click",()=>{tekQuoteFromUnifiedWork=null},true);
 }
 $("mobileWork").addEventListener("click",()=>$("workTab").click());
 $("mobileMore").addEventListener("click",()=>{$("financeTab").click()});
@@ -652,8 +652,9 @@ function tekBackOneLevel(){
  if(page==="quoteView"&&$("requestGrid").classList.contains("mobile-detail-active")){
   backToRequests();
   if(tekQuoteFromUnifiedWork){
-   tekQuoteFromUnifiedWork=false;
-   $("workTab").click();
+   const origin=tekQuoteFromUnifiedWork;
+   tekQuoteFromUnifiedWork=null;
+   $(origin==="home"?"homeTab":"workTab").click();
   }
   tekUpdateBack();return;
  }
@@ -676,8 +677,9 @@ function tekBackOneLevel(){
   else $("financeTab").click();
  }else if(page==="quoteView"){
   // Quotes are a detail of the single İşler feed, not a separate main screen.
-  tekQuoteFromUnifiedWork=false;
-  $("workTab").click();
+  const origin=tekQuoteFromUnifiedWork;
+  tekQuoteFromUnifiedWork=null;
+  $(origin==="home"?"homeTab":"workTab").click();
  }else{
   $("homeTab").click();
  }
