@@ -51,6 +51,7 @@ async function checkForegroundNewQuotes(){
 
 const $=id=>document.getElementById(id);
 let requests=[],chosenId=null;
+let tekQuoteFromUnifiedWork=false;
 const isMobile=()=>window.matchMedia("(max-width:800px)").matches;
 function setMobileDetail(open){
  const grid=$("requestGrid");
@@ -469,6 +470,13 @@ const documents=initDocuments();
 const stock=initStock(sb);
 const work=initWork(sb,{documents});
 const home=initHome(sb,{openQuote:id=>{$("quoteTab").click();selectRequest(id)}});
+window.addEventListener("tek-open-quote",event=>{
+ const id=event.detail?.id;
+ if(!id||!requests.some(quote=>quote.id===id))return;
+ tekQuoteFromUnifiedWork=true;
+ $("quoteTab").click();
+ selectRequest(id);
+});
 initCompactPaging();
 initInlineSelects();
 /* One clean mobile navigation: ANA SAYFA / İŞLER / KASA.
@@ -502,6 +510,9 @@ function openCompactMore(){
  $("financeTab").click();
 }
 $("mobileHome").addEventListener("click",()=>$("homeTab").click());
+for(const id of ["homeTab","workTab","financeTab","accountTab","stockTab"]){
+ $(id).addEventListener("click",()=>{tekQuoteFromUnifiedWork=false},true);
+}
 $("mobileWork").addEventListener("click",()=>$("workTab").click());
 $("mobileMore").addEventListener("click",()=>{$("financeTab").click()});
 $("compactJobs").addEventListener("click",()=>$("workTab").click());
@@ -537,6 +548,19 @@ $("homeQuickPayment").addEventListener("click",()=>{
  void finance.startNewIncome();
  paintCompactNav();
 });
+$("cashOpenAccounts").addEventListener("click",()=>{
+ tekNestedParent="cash";
+ $("accountSearch").value="";
+ $("accountFilter").value="debt";
+ $("accountTab").click();
+});
+$("cashOpenStock").addEventListener("click",()=>{
+ tekNestedParent="cash";
+ $("stockTab").click();
+});
+$("financeView").addEventListener("click",event=>{
+ if(event.target.closest(".tek-due-row"))tekNestedParent="cash";
+},true);
 
 /* Background updates only the visible section, without interrupting an active edit.
    Also sync on app resume; each section's own save handlers already reload data. */
@@ -626,7 +650,12 @@ function tekBackOneLevel(){
  if(!page||page==="homeView")return;
  if(tekIsVisible("docOverlay")){$("docClose").click();tekUpdateBack();return}
  if(page==="quoteView"&&$("requestGrid").classList.contains("mobile-detail-active")){
-  backToRequests();tekUpdateBack();return;
+  backToRequests();
+  if(tekQuoteFromUnifiedWork){
+   tekQuoteFromUnifiedWork=false;
+   $("workTab").click();
+  }
+  tekUpdateBack();return;
  }
  if(page==="workView"&&$("workEditor").classList.contains("work-form-open")){
   $("workCancel").click();tekUpdateBack();return;
@@ -646,7 +675,8 @@ function tekBackOneLevel(){
   if(tekNestedParent==="home")$("homeTab").click();
   else $("financeTab").click();
  }else if(page==="quoteView"){
-  // Quotes live inside İşler. Back first returns to the work list.
+  // Quotes are a detail of the single İşler feed, not a separate main screen.
+  tekQuoteFromUnifiedWork=false;
   $("workTab").click();
  }else{
   $("homeTab").click();
